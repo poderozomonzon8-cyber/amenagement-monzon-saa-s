@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useTransition } from 'react'
-import { getCompanySettings, updateCompanySettings, getTemplates } from '@/app/actions/invoice-templates'
+import { getCompanySettings, updateCompanySettings, getInvoiceTemplates } from '@/app/actions/invoice-templates'
 import { CompanySettings, InvoiceTemplate } from '@/lib/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -25,7 +25,7 @@ export function InvoiceDesignEditor() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [s, t] = await Promise.all([getCompanySettings(), getTemplates()])
+        const [s, t] = await Promise.all([getCompanySettings(), getInvoiceTemplates()])
         setSettings(s)
         setTemplates(t)
       } catch (err) {

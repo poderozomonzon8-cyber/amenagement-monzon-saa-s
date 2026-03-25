@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { CompanySettings, InvoiceTemplate } from '@/lib/types'
 
-export async function getTemplates() {
+export async function getInvoiceTemplates() {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -15,8 +15,8 @@ export async function getTemplates() {
   return data as InvoiceTemplate[]
 }
 
-// Re-export as getInvoiceTemplates for backward compatibility
-export { getTemplates as getInvoiceTemplates }
+// Alias for compatibility
+export const getTemplates = getInvoiceTemplates
 
 // Get company settings with limit instead of single - returns defaults if not found
 export async function getCompanySettings() {
