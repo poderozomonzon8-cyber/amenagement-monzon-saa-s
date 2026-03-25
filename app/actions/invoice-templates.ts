@@ -3,6 +3,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { CompanySettings, InvoiceTemplate } from '@/lib/types'
 
+// Alias for cached bundler compatibility
+export const getInvoiceTemplates = async () => getTemplates()
+
 export async function getTemplates() {
   const supabase = await createClient()
 
