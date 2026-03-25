@@ -1,5 +1,5 @@
 'use server'
-
+// v1.0.1 - Exports: getInvoiceTemplates, getTemplates, getCompanySettings, updateCompanySettings, uploadLogo, uploadSignature
 import { createClient } from '@/lib/supabase/server'
 import { CompanySettings, InvoiceTemplate } from '@/lib/types'
 
