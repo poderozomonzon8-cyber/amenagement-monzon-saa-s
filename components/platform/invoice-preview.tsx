@@ -26,7 +26,14 @@ export function InvoicePreview({ invoiceId, onClose, onStatusChange }: InvoicePr
         setSettings(set)
       })
       .finally(() => setLoading(false))
-  }, [invoiceId])
+
+    // Add keyboard support for ESC key
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [invoiceId, onClose])
 
   const handlePrint = () => {
     const content = printRef.current
@@ -104,7 +111,7 @@ export function InvoicePreview({ invoiceId, onClose, onStatusChange }: InvoicePr
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 overflow-y-auto">
       <div className="bg-card rounded-lg w-full max-w-4xl my-8">
         {/* Toolbar */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-secondary/50">
           <h2 className="font-serif text-lg text-foreground">
             {typeLabel} {invoice.invoice_number}
           </h2>
@@ -120,7 +127,11 @@ export function InvoicePreview({ invoiceId, onClose, onStatusChange }: InvoicePr
                 <Send size={16} className="mr-1" /> Envoyer
               </Button>
             )}
-            <button onClick={onClose} className="ml-2 text-muted-foreground hover:text-foreground">
+            <button 
+              onClick={onClose} 
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors rounded-sm"
+              title="Fermer (Esc)"
+            >
               <X size={20} />
             </button>
           </div>
