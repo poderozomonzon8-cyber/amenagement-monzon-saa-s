@@ -19,6 +19,7 @@ import {
   X,
   UserCog,
   Briefcase,
+  BarChart3,
 } from "lucide-react"
 
 const navSections = [
@@ -30,6 +31,7 @@ const navSections = [
       { icon: FileText, label: "Facturation", href: "#billing", id: "billing" },
       { icon: Users, label: "Employés", href: "#admin-employees", id: "admin-employees" },
       { icon: UserCog, label: "Utilisateurs", href: "#users", id: "users" },
+      { icon: BarChart3, label: "Rapports", href: "#reporting", id: "reporting" },
     ],
   },
   {

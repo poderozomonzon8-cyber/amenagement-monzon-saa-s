@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useTransition } from 'react'
-import { getCompanySettings, updateCompanySettings, getInvoiceTemplates } from '@/app/actions/invoice-templates'
-import { CompanySettings, InvoiceTemplate } from '@/lib/types'
+import { getCompanySettings, updateCompanySettings } from '@/app/actions/invoice-templates'
+import { CompanySettings } from '@/lib/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,7 +12,6 @@ import { createBrowserClient } from '@supabase/ssr'
 
 export function InvoiceDesignEditor() {
   const [settings, setSettings] = useState<CompanySettings | null>(null)
-  const [templates, setTemplates] = useState<InvoiceTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const [isPending, startTransition] = useTransition()
   const [toast, setToast] = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
@@ -25,9 +24,8 @@ export function InvoiceDesignEditor() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [s, t] = await Promise.all([getCompanySettings(), getInvoiceTemplates()])
+        const s = await getCompanySettings()
         setSettings(s)
-        setTemplates(t)
       } catch (err) {
         console.error('Failed to load settings:', err)
       } finally {

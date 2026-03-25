@@ -13,6 +13,7 @@ import { CMSEditor } from '@/components/platform/cms-editor'
 import { AdminEmployees } from '@/components/platform/admin-employees'
 import { InvoiceDesignEditor } from '@/components/platform/invoice-design-editor'
 import { UserManagement } from '@/components/platform/user-management'
+import { Reporting } from '@/components/platform/reporting'
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState('dashboard')
@@ -76,6 +77,8 @@ export default function Dashboard() {
         return <CMSEditor />
       case 'invoice-design':
         return <InvoiceDesignEditor />
+      case 'reporting':
+        return <Reporting />
       default:
         return <AdminDashboard />
     }
