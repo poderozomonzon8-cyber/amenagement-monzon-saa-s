@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useTransition } from 'react'
 import { getEmployees, createEmployee, deleteEmployee } from '@/app/actions/employees'
-import { getTimeEntries } from '@/app/actions/time-entries'
+import { getTimeEntries, updateTimeEntry, deleteTimeEntry } from '@/app/actions/time-entries'
 import { getProjects } from '@/app/actions/projects'
 import { Employee, TimeEntry, Project } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { 
   Users, Clock, Plus, Trash2, X, Search, 
-  Calendar, Briefcase, DollarSign, ChevronDown
+  Calendar, Briefcase, Edit3, Save
 } from 'lucide-react'
 
 interface EmployeeWithProfile extends Employee {
@@ -28,6 +28,8 @@ export function AdminEmployees() {
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeWithProfile | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [editingEntry, setEditingEntry] = useState<string | null>(null)
+  const [editHours, setEditHours] = useState('')
   
   // Toast
   const [toast, setToast] = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
@@ -75,8 +77,8 @@ export function AdminEmployees() {
     ? timeEntries.filter(t => t.employee_id === selectedEmployee.id)
     : []
 
-  // Delete handler
-  const handleDelete = (id: string) => {
+  // Delete employee handler
+  const handleDeleteEmployee = (id: string) => {
     if (!confirm('Supprimer cet employé?')) return
     startTransition(async () => {
       try {
@@ -84,6 +86,47 @@ export function AdminEmployees() {
         setEmployees(prev => prev.filter(e => e.id !== id))
         if (selectedEmployee?.id === id) setSelectedEmployee(null)
         showToast('Employé supprimé.', 'ok')
+      } catch {
+        showToast('Erreur lors de la suppression.', 'err')
+      }
+    })
+  }
+
+  // Edit time entry handler
+  const handleEditEntry = (entry: TimeEntry) => {
+    setEditingEntry(entry.id)
+    setEditHours(entry.hours.toString())
+  }
+
+  // Save time entry handler
+  const handleSaveEntry = (entryId: string) => {
+    const newHours = parseFloat(editHours)
+    if (isNaN(newHours) || newHours < 0) {
+      showToast('Heures invalides.', 'err')
+      return
+    }
+    startTransition(async () => {
+      try {
+        await updateTimeEntry(entryId, { hours: newHours })
+        setTimeEntries(prev => prev.map(e => 
+          e.id === entryId ? { ...e, hours: newHours } : e
+        ))
+        setEditingEntry(null)
+        showToast('Heures modifiées.', 'ok')
+      } catch {
+        showToast('Erreur lors de la modification.', 'err')
+      }
+    })
+  }
+
+  // Delete time entry handler
+  const handleDeleteEntry = (entryId: string) => {
+    if (!confirm('Supprimer cette entrée?')) return
+    startTransition(async () => {
+      try {
+        await deleteTimeEntry(entryId)
+        setTimeEntries(prev => prev.filter(e => e.id !== entryId))
+        showToast('Entrée supprimée.', 'ok')
       } catch {
         showToast('Erreur lors de la suppression.', 'err')
       }
@@ -235,7 +278,7 @@ export function AdminEmployees() {
                   </p>
                 </div>
                 <button
-                  onClick={() => handleDelete(selectedEmployee.id)}
+                  onClick={() => handleDeleteEmployee(selectedEmployee.id)}
                   disabled={isPending}
                   className="p-2 text-muted-foreground hover:text-red-400 transition-colors"
                 >
@@ -261,10 +304,11 @@ export function AdminEmployees() {
                   ) : (
                     selectedEntries.slice(0, 10).map(entry => {
                       const project = projects.find(p => p.id === entry.project_id)
+                      const isEditing = editingEntry === entry.id
                       return (
                         <div key={entry.id} className="bg-secondary rounded-sm p-3">
                           <div className="flex items-center justify-between">
-                            <div>
+                            <div className="flex-1">
                               <p className="text-sm text-foreground">
                                 {project?.name || 'Projet inconnu'}
                               </p>
@@ -273,9 +317,51 @@ export function AdminEmployees() {
                                 {entry.description && ` — ${entry.description}`}
                               </p>
                             </div>
-                            <p className="text-sm text-primary font-medium">
-                              {entry.hours}h
-                            </p>
+                            <div className="flex items-center gap-2">
+                              {isEditing ? (
+                                <>
+                                  <input
+                                    type="number"
+                                    step="0.5"
+                                    value={editHours}
+                                    onChange={e => setEditHours(e.target.value)}
+                                    className="w-16 bg-input border border-border rounded-sm px-2 py-1 text-sm text-foreground text-right"
+                                  />
+                                  <button
+                                    onClick={() => handleSaveEntry(entry.id)}
+                                    disabled={isPending}
+                                    className="p-1.5 text-green-400 hover:bg-green-400/20 rounded-sm transition-colors"
+                                  >
+                                    <Save className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => setEditingEntry(null)}
+                                    className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <p className="text-sm text-primary font-medium">
+                                    {entry.hours}h
+                                  </p>
+                                  <button
+                                    onClick={() => handleEditEntry(entry)}
+                                    className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                                  >
+                                    <Edit3 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteEntry(entry.id)}
+                                    disabled={isPending}
+                                    className="p-1.5 text-muted-foreground hover:text-red-400 transition-colors"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )

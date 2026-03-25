@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef, useTransition } from 'react'
-import { createTimeEntry, getTimeEntries } from '@/app/actions/time-entries'
+import { createTimeEntry, getTimeEntries, updateTimeEntry, deleteTimeEntry } from '@/app/actions/time-entries'
 import { getProjects } from '@/app/actions/projects'
 import { getOrCreateEmployee } from '@/app/actions/employees'
 import { TimeEntry, Project, Employee } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Clock, Camera, Briefcase, Play, Square, CheckCircle, Loader2, Upload, Plus } from 'lucide-react'
+import { Clock, Camera, Briefcase, Play, Square, CheckCircle, Loader2, Upload, Plus, Edit3, Trash2, Save, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const recentPhotos = [
@@ -43,6 +43,8 @@ export function EmployeeApp() {
   const [date, setDate]                       = useState(new Date().toISOString().split('T')[0])
   const [isPending, startTransition]          = useTransition()
   const [toast, setToast]                     = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
+  const [editingEntry, setEditingEntry]       = useState<string | null>(null)
+  const [editHours, setEditHours]             = useState('')
 
   const showToast = (msg: string, type: 'ok' | 'err' = 'ok') => {
     setToast({ msg, type })
@@ -112,6 +114,47 @@ export function EmployeeApp() {
         showToast('Heures enregistrées.')
       } catch (e: any) {
         showToast(e.message || 'Erreur.', 'err')
+      }
+    })
+  }
+
+  // Edit entry handler
+  const handleEditEntry = (entry: TimeEntry) => {
+    setEditingEntry(entry.id)
+    setEditHours(entry.hours.toString())
+  }
+
+  // Save entry handler
+  const handleSaveEntry = (entryId: string) => {
+    const newHours = parseFloat(editHours)
+    if (isNaN(newHours) || newHours < 0 || newHours > 24) {
+      showToast('Heures invalides (0-24).', 'err')
+      return
+    }
+    startTransition(async () => {
+      try {
+        await updateTimeEntry(entryId, { hours: newHours })
+        setEntries(prev => prev.map(e => 
+          e.id === entryId ? { ...e, hours: newHours } : e
+        ))
+        setEditingEntry(null)
+        showToast('Heures modifiées.', 'ok')
+      } catch {
+        showToast('Erreur lors de la modification.', 'err')
+      }
+    })
+  }
+
+  // Delete entry handler
+  const handleDeleteEntry = (entryId: string) => {
+    if (!confirm('Supprimer cette entrée?')) return
+    startTransition(async () => {
+      try {
+        await deleteTimeEntry(entryId)
+        setEntries(prev => prev.filter(e => e.id !== entryId))
+        showToast('Entrée supprimée.', 'ok')
+      } catch {
+        showToast('Erreur lors de la suppression.', 'err')
       }
     })
   }
@@ -234,15 +277,62 @@ export function EmployeeApp() {
                 <h2 className="font-serif text-sm text-foreground">Entrées récentes</h2>
               </div>
               <div className="divide-y divide-border/50">
-                {entries.slice(0, 10).map((e) => (
-                  <div key={e.id} className="flex items-center justify-between px-4 py-3">
-                    <div>
-                      <p className="text-sm text-foreground">{e.description || 'Sans description'}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString('fr-FR')}</p>
+                {entries.slice(0, 10).map((e) => {
+                  const isEditing = editingEntry === e.id
+                  return (
+                    <div key={e.id} className="flex items-center justify-between px-4 py-3">
+                      <div className="flex-1">
+                        <p className="text-sm text-foreground">{e.description || 'Sans description'}</p>
+                        <p className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString('fr-FR')}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {isEditing ? (
+                          <>
+                            <input
+                              type="number"
+                              step="0.5"
+                              value={editHours}
+                              onChange={ev => setEditHours(ev.target.value)}
+                              className="w-14 bg-input border border-border rounded-sm px-2 py-1 text-sm text-foreground text-right"
+                            />
+                            <button
+                              onClick={() => handleSaveEntry(e.id)}
+                              disabled={isPending}
+                              className="p-1 text-green-400 hover:bg-green-400/20 rounded-sm transition-colors"
+                            >
+                              <Save className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => setEditingEntry(null)}
+                              className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-sm font-medium text-primary">{e.hours}h</span>
+                            <button
+                              onClick={() => handleEditEntry(e)}
+                              className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                              title="Modifier"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEntry(e.id)}
+                              disabled={isPending}
+                              className="p-1 text-muted-foreground hover:text-red-400 transition-colors"
+                              title="Supprimer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
-                    <span className="text-sm font-medium text-primary">{e.hours}h</span>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
               <div className="px-4 py-3 border-t border-border bg-secondary flex justify-between">
                 <span className="text-sm text-muted-foreground">Total (semaine)</span>
