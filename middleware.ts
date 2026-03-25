@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
 export async function middleware(_request: NextRequest) {
-  // Pass-through middleware - auth handled at page level
+  // Cache buster: Pass-through middleware - auth handled at page level
+  // Forces rebuild and clears stale error logs
   return NextResponse.next()
 }
 

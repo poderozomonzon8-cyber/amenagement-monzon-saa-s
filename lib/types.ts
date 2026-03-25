@@ -112,6 +112,20 @@ export interface CompanySettings {
   tax_number_1: string | null
   tax_number_2: string | null
   logo_url: string | null
+  signature_url: string | null
   primary_color: string
   secondary_color: string
+  template_id: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+export interface InvoiceTemplate {
+  id: string
+  name: string
+  layout_type: 'modern' | 'classic' | 'minimal'
+  css_config: Record<string, any> | null
+  is_default: boolean
+  created_at?: string
+  updated_at?: string
 }
