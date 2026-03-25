@@ -23,9 +23,10 @@ export async function createProject(data: {
   return project as Project
 }
 
-export async function getProjects() {
+export async function getProjects(): Promise<Project[]> {
   const supabase = await createClient()
 
+  // Order by name - projects table does not have created_at column
   const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
@@ -35,7 +36,7 @@ export async function getProjects() {
   return (projects || []) as Project[]
 }
 
-export async function getProjectById(id: string) {
+export async function getProjectById(id: string): Promise<Project> {
   const supabase = await createClient()
 
   const { data: project, error } = await supabase
@@ -48,7 +49,7 @@ export async function getProjectById(id: string) {
   return project as Project
 }
 
-export async function updateProject(id: string, data: Partial<Project>) {
+export async function updateProject(id: string, data: Partial<Project>): Promise<Project> {
   const supabase = await createClient()
 
   const { data: project, error } = await supabase
@@ -62,7 +63,7 @@ export async function updateProject(id: string, data: Partial<Project>) {
   return project as Project
 }
 
-export async function deleteProject(id: string) {
+export async function deleteProject(id: string): Promise<boolean> {
   const supabase = await createClient()
 
   const { error } = await supabase
