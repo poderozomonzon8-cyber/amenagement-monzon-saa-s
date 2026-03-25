@@ -19,24 +19,38 @@ export async function getCompanySettings() {
   const { data, error } = await supabase
     .from('company_settings')
     .select('*')
-    .single()
+    .limit(1)
   
   if (error) throw new Error(error.message)
-  return data as CompanySettings
+  
+  // Return first record or empty object with defaults
+  return (data?.[0] || {
+    id: '',
+    company_name: 'Aménagement Monzon',
+    address: null,
+    phone: null,
+    email: null,
+    logo_url: null,
+    signature_url: null,
+    primary_color: '#C9A84C',
+    secondary_color: '#0A0A0A',
+  }) as CompanySettings
 }
 
 export async function updateCompanySettings(settings: Partial<CompanySettings>) {
   const supabase = await createClient()
+  
+  if (!settings.id) throw new Error('ID is required')
   
   const { data, error } = await supabase
     .from('company_settings')
     .update(settings)
     .eq('id', settings.id)
     .select()
-    .single()
+    .limit(1)
   
   if (error) throw new Error(error.message)
-  return data as CompanySettings
+  return (data?.[0] || settings) as CompanySettings
 }
 
 export async function uploadLogo(file: File) {

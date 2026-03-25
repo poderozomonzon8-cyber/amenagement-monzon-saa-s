@@ -47,14 +47,25 @@ export async function createEmployee(data: {
 }): Promise<Employee> {
   const supabase = await createClient()
 
+  // Check if employee already exists to avoid duplicate FK violation
+  const { data: existing } = await supabase
+    .from('employees')
+    .select('id')
+    .eq('profile_id', data.profile_id)
+    .limit(1)
+
+  if (existing?.length) {
+    return getEmployeeByProfileId(data.profile_id) as any
+  }
+
   const { data: employee, error } = await supabase
     .from('employees')
     .insert(data)
     .select()
-    .single()
+    .limit(1)
 
   if (error) throw new Error(error.message)
-  return employee as Employee
+  return (employee?.[0] || {}) as Employee
 }
 
 export async function getOrCreateEmployee(profileId: string, email?: string): Promise<Employee> {
