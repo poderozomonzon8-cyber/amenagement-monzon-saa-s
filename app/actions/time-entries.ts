@@ -5,7 +5,7 @@ import { TimeEntry } from '@/lib/types'
 
 export async function createTimeEntry(data: {
   employee_id: string
-  project_id: string
+  project_id: string | null
   hours: number
   date: string
   description?: string

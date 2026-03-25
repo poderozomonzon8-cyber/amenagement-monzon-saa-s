@@ -1,5 +1,4 @@
 'use server'
-// Aménagement Monzon - Projects CRUD
 
 import { createClient } from '@/lib/supabase/server'
 import { Project } from '@/lib/types'
@@ -7,10 +6,10 @@ import { Project } from '@/lib/types'
 export async function createProject(data: {
   name: string
   status: string
-  client_id: string
-  start_date: string | null
-  end_date: string | null
-  budget: number | null
+  client_id?: string | null
+  start_date?: string | null
+  end_date?: string | null
+  budget?: number | null
 }) {
   const supabase = await createClient()
 
@@ -30,7 +29,7 @@ export async function getProjects() {
   const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
-    .order('name', { ascending: true })
+    .order('name')
 
   if (error) throw new Error(error.message)
   return (projects || []) as Project[]

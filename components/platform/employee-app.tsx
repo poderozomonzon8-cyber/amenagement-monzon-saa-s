@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useTransition } from 'react'
 import { createTimeEntry, getTimeEntries } from '@/app/actions/time-entries'
 import { getProjects } from '@/app/actions/projects'
-import { TimeEntry, Project } from '@/lib/types'
+import { getOrCreateEmployee } from '@/app/actions/employees'
+import { TimeEntry, Project, Employee } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { Clock, Camera, Briefcase, Play, Square, CheckCircle, Loader2, Upload, Plus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -26,7 +27,7 @@ export function EmployeeApp() {
   const [projects, setProjects]     = useState<Project[]>([])
   const [entries, setEntries]       = useState<TimeEntry[]>([])
   const [loading, setLoading]       = useState(true)
-  const [userId, setUserId]         = useState<string | null>(null)
+  const [employee, setEmployee]     = useState<Employee | null>(null)
   const [userName, setUserName]     = useState('Employé')
 
   // timer state
@@ -48,23 +49,31 @@ export function EmployeeApp() {
     setTimeout(() => setToast(null), 3000)
   }
 
-  // Load user + data
+  // Load user + employee record + data
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUserId(user.id)
-        setUserName(user.email?.split('@')[0] || 'Employé')
-      }
-    })
-    Promise.all([getProjects(), getTimeEntries()])
-      .then(([projs, ents]) => {
+    const loadData = async () => {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        if (user) {
+          setUserName(user.email?.split('@')[0] || 'Employé')
+          // Get or create employee record for this profile
+          const emp = await getOrCreateEmployee(user.id)
+          setEmployee(emp)
+        }
+        
+        const [projs, ents] = await Promise.all([getProjects(), getTimeEntries()])
         setProjects(projs)
         setEntries(ents)
         if (projs.length > 0) setSelectedProject(projs[0].id)
-      })
-      .catch(() => showToast('Erreur lors du chargement.', 'err'))
-      .finally(() => setLoading(false))
+      } catch {
+        showToast('Erreur lors du chargement.', 'err')
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
   }, [])
 
   // Timer logic
@@ -86,11 +95,11 @@ export function EmployeeApp() {
 
   const handleSubmit = () => {
     if (!hoursInput || isNaN(parseFloat(hoursInput))) { showToast('Entrez un nombre d\'heures valide.', 'err'); return }
-    if (!userId) { showToast('Vous n\'êtes pas connecté.', 'err'); return }
+    if (!employee) { showToast('Profil employé non trouvé.', 'err'); return }
     startTransition(async () => {
       try {
         const entry = await createTimeEntry({
-          employee_id: userId,
+          employee_id: employee.id,
           project_id:  selectedProject || null,
           hours:       parseFloat(hoursInput),
           date,

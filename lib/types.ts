@@ -36,7 +36,7 @@ export interface Project {
 export interface TimeEntry {
   id: string
   employee_id: string
-  project_id: string
+  project_id: string | null
   hours: number
   description: string | null
   date: string
