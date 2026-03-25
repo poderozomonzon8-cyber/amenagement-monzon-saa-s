@@ -2,6 +2,44 @@
 
 import { createClient } from '@/lib/supabase/server'
 
+// Email sending via Resend (set RESEND_API_KEY in env vars)
+async function sendInvitationEmail(email: string, role: string, inviteUrl: string) {
+  const apiKey = process.env.RESEND_API_KEY
+  
+  if (!apiKey) {
+    console.warn('[v0] RESEND_API_KEY not set - email not sent. Invite URL:', inviteUrl)
+    return
+  }
+  
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'noreply@amenagementmonzon.com',
+        to: email,
+        subject: `Invitation Aménagement Monzon - ${role === 'client' ? 'Client Portal' : 'Employee App'}`,
+        html: `
+          <h2>Bienvenue à Aménagement Monzon</h2>
+          <p>Vous avez été invité à rejoindre notre plateforme en tant que <strong>${role === 'client' ? 'client' : 'employé'}</strong>.</p>
+          <p><a href="${inviteUrl}" style="padding: 10px 20px; background: #C9A84C; color: #000; text-decoration: none; border-radius: 4px; display: inline-block;">Accepter l'invitation</a></p>
+          <p>Ce lien expire dans 7 jours.</p>
+          <p>Si vous n'avez pas demandé cette invitation, veuillez l'ignorer.</p>
+        `,
+      }),
+    })
+    
+    if (!response.ok) {
+      console.error('[v0] Email send failed:', await response.text())
+    }
+  } catch (err) {
+    console.error('[v0] Email send exception:', err)
+  }
+}
+
 export interface Invitation {
   id: string
   email: string
@@ -34,7 +72,7 @@ export async function getInvitations(): Promise<Invitation[]> {
   return (data || []) as Invitation[]
 }
 
-// Create invitation
+// Create invitation and send email
 export async function createInvitation(data: {
   email: string
   role: 'employee' | 'client'
@@ -55,10 +93,15 @@ export async function createInvitation(data: {
       expires_at,
     })
     .select()
-    .single()
+    .limit(1)
   
   if (error) throw new Error(error.message)
-  return invitation as Invitation
+  
+  // Send invitation email
+  const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/invite/${token}`
+  await sendInvitationEmail(data.email, data.role, inviteUrl)
+  
+  return (invitation?.[0] || {}) as Invitation
 }
 
 // Get invitation by token
@@ -71,10 +114,10 @@ export async function getInvitationByToken(token: string): Promise<Invitation | 
     .eq('token', token)
     .is('used_at', null)
     .gt('expires_at', new Date().toISOString())
-    .single()
+    .limit(1)
   
   if (error) return null
-  return data as Invitation
+  return (data?.[0] || null) as Invitation | null
 }
 
 // Mark invitation as used

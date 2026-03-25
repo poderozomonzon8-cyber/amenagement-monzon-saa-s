@@ -3,9 +3,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { CompanySettings, InvoiceTemplate } from '@/lib/types'
 
-// Alias for cached bundler compatibility
-export const getInvoiceTemplates = async () => getTemplates()
-
 export async function getTemplates() {
   const supabase = await createClient()
 
@@ -17,6 +14,9 @@ export async function getTemplates() {
   if (error) throw new Error(error.message)
   return data as InvoiceTemplate[]
 }
+
+// Re-export as getInvoiceTemplates for backward compatibility
+export { getTemplates as getInvoiceTemplates }
 
 // Get company settings with limit instead of single - returns defaults if not found
 export async function getCompanySettings() {

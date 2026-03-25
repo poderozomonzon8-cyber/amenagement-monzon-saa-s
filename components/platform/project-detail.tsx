@@ -5,6 +5,8 @@ import { getInvoices } from '@/app/actions/invoices'
 import { getPayments } from '@/app/actions/payments'
 import { getClients } from '@/app/actions/clients'
 import { getTimeEntries } from '@/app/actions/time-entries'
+import { getProjectWithClient } from '@/app/actions/client-projects'
+import { ClientAssignment } from './client-assignment'
 import { Project, Invoice, Payment, Client, TimeEntry } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import {
@@ -40,6 +42,7 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [isPending, startTransition] = useTransition()
+  const [projectData, setProjectData] = useState(project)
 
   useEffect(() => {
     Promise.all([
@@ -47,15 +50,18 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
       getPayments(),
       getClients(),
       getTimeEntries(),
-    ]).then(([inv, pay, cli, time]) => {
+      getProjectWithClient(project.id),
+    ]).then(([inv, pay, cli, time, projData]) => {
       setInvoices(inv.filter(i => i.project_id === project.id))
       setPayments(pay)
       setClients(cli)
       setTimeEntries(time.filter(t => t.project_id === project.id))
+      setProjectData(projData || project)
     }).finally(() => setLoading(false))
-  }, [project.id])
+  }, [project.id, project])
 
-  const client = clients.find(c => c.id === project.client_id)
+  const client = clients.find(c => c.id === projectData.client_id)
+  const clientInfo = projectData.clients?.profiles
   const projectInvoices = invoices
   const projectPayments = payments.filter(p => 
     projectInvoices.some(i => i.id === p.invoice_id)
@@ -91,20 +97,21 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
       <div className="relative bg-card border border-border rounded-sm w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-start justify-between px-6 py-5 border-b border-border shrink-0">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h2 className="font-serif text-xl text-foreground">{project.name}</h2>
-              <span className={cn('text-xs px-2 py-0.5 rounded-sm', statusColor[project.status])}>
-                {statusLabel[project.status]}
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-3">
+              <h2 className="font-serif text-xl text-foreground">{projectData.name}</h2>
+              <span className={cn('text-xs px-2 py-0.5 rounded-sm', statusColor[projectData.status])}>
+                {statusLabel[projectData.status]}
               </span>
             </div>
-            {client && (
-              <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5" /> Client: {client.address || 'Non spécifié'}
-              </p>
-            )}
+            <ClientAssignment
+              projectId={projectData.id}
+              currentClientId={projectData.client_id}
+              currentClientName={clientInfo?.full_name}
+              onAssigned={() => getProjectWithClient(projectData.id).then(setProjectData)}
+            />
           </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground ml-4">
             <X className="w-5 h-5" />
           </button>
         </div>
