@@ -41,10 +41,16 @@ export function InvoiceDesignEditor() {
     if (!settings) return
     startTransition(async () => {
       try {
-        await updateCompanySettings(settings)
-        showToast('Paramètres sauvegardés.', 'ok')
-      } catch {
-        showToast('Erreur lors de la sauvegarde.', 'err')
+        // Only update if there's an actual change
+        if (settings.logo_url?.startsWith('http') || settings.signature_url?.startsWith('http')) {
+          await updateCompanySettings(settings)
+          showToast('Paramètres sauvegardés.', 'ok')
+        } else {
+          showToast('Aucun changement à sauvegarder.', 'ok')
+        }
+      } catch (err) {
+        console.error('Save error:', err)
+        showToast('Erreur lors de la sauvegarde. Les images sont chargées localement.', 'err')
       }
     })
   }
