@@ -19,12 +19,16 @@ export async function getEmployeeByProfileId(profileId: string): Promise<Employe
 export async function ensureProfileExists(profileId: string, email?: string): Promise<boolean> {
   const supabase = await createClient()
   
+  console.log('[v0] ensureProfileExists called with:', profileId, email)
+  
   // Check if profile exists
-  const { data: existing } = await supabase
+  const { data: existing, error: checkError } = await supabase
     .from('profiles')
     .select('id')
     .eq('id', profileId)
     .single()
+  
+  console.log('[v0] Profile check result:', existing, checkError?.message)
   
   if (existing) return true
   
@@ -36,6 +40,8 @@ export async function ensureProfileExists(profileId: string, email?: string): Pr
       role: 'employee',
       full_name: email?.split('@')[0] || 'Utilisateur',
     })
+  
+  console.log('[v0] Profile insert result:', error?.message || 'success')
   
   return !error
 }
