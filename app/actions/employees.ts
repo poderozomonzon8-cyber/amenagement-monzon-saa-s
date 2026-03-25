@@ -10,10 +10,10 @@ export async function getEmployeeByProfileId(profileId: string): Promise<Employe
     .from('employees')
     .select('*')
     .eq('profile_id', profileId)
-    .single()
+    .limit(1)
 
   if (error) return null
-  return data as Employee
+  return (data?.[0] || null) as Employee | null
 }
 
 export async function ensureProfileExists(profileId: string, email?: string): Promise<boolean> {
@@ -24,9 +24,9 @@ export async function ensureProfileExists(profileId: string, email?: string): Pr
     .from('profiles')
     .select('id')
     .eq('id', profileId)
-    .single()
+    .limit(1)
   
-  if (existing) return true
+  if (existing?.length) return true
   
   // Create profile if it doesn't exist
   const { error } = await supabase
