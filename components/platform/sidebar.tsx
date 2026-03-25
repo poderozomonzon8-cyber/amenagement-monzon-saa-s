@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { UserProfile } from "./auth-ui"
 import {
   LayoutDashboard,
   FolderKanban,
@@ -39,12 +40,23 @@ const navSections = [
 
 interface SidebarProps {
   activeSection: string
-  onNavigate: (id: string) => void
+  setActiveSection: (id: string) => void
+  userRole?: string
 }
 
-export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
+export function Sidebar({ activeSection, setActiveSection, userRole = "admin" }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Filter sections based on user role
+  const visibleSections = navSections.map(section => ({
+    ...section,
+    items: section.items.filter(item => {
+      if (userRole === 'employee') return ['projects', 'employee'].includes(item.id)
+      if (userRole === 'client') return ['client'].includes(item.id)
+      return true
+    })
+  })).filter(section => section.items.length > 0)
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
@@ -63,7 +75,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-4 px-2">
-        {navSections.map((section) => (
+        {visibleSections.map((section) => (
           <div key={section.label} className="mb-6">
             {!collapsed && (
               <p className="text-muted-foreground text-[10px] uppercase tracking-widest px-3 mb-2">{section.label}</p>
@@ -72,7 +84,7 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
               {section.items.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => { onNavigate(item.id); setMobileOpen(false) }}
+                  onClick={() => { setActiveSection(item.id); setMobileOpen(false) }}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-colors w-full text-left",
                     activeSection === item.id
@@ -89,17 +101,8 @@ export function Sidebar({ activeSection, onNavigate }: SidebarProps) {
         ))}
       </nav>
 
-      {/* Bottom */}
-      <div className="border-t border-border p-2">
-        <button className={cn("flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors w-full", collapsed && "justify-center")}>
-          <Settings className="w-4 h-4 shrink-0" />
-          {!collapsed && <span>Paramètres</span>}
-        </button>
-        <button className={cn("flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-muted-foreground hover:text-destructive-foreground hover:bg-destructive/10 transition-colors w-full", collapsed && "justify-center")}>
-          <LogOut className="w-4 h-4 shrink-0" />
-          {!collapsed && <span>Déconnexion</span>}
-        </button>
-      </div>
+      {/* User Profile */}
+      {!collapsed && <UserProfile />}
 
       {/* Collapse toggle */}
       <button
