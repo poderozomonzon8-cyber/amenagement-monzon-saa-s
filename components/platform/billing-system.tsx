@@ -7,7 +7,7 @@ import { Invoice, Payment } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import {
   Plus, Search, Eye, Trash2, CheckCircle, Clock, XCircle, FileText,
-  CreditCard, Banknote, Smartphone, Building, X, Loader2, Download
+  CreditCard, Banknote, Smartphone, Building, X, Loader2, Download, Settings
 } from 'lucide-react'
 import { InvoiceForm } from './invoice-form'
 import { InvoicePreview } from './invoice-preview'
@@ -130,7 +130,11 @@ function AddPaymentModal({
   )
 }
 
-export function BillingSystem() {
+interface BillingSystemProps {
+  onOpenDesignEditor?: () => void
+}
+
+export function BillingSystem({ onOpenDesignEditor }: BillingSystemProps = {}) {
   const [tab, setTab]                 = useState<'invoices' | 'payments'>('invoices')
   const [invoices, setInvoices]       = useState<Invoice[]>([])
   const [payments, setPayments]       = useState<Payment[]>([])
@@ -222,10 +226,18 @@ export function BillingSystem() {
           <h1 className="font-serif text-2xl md:text-3xl text-foreground">Facturation</h1>
           <p className="text-muted-foreground text-sm mt-1">Gestion complète des factures, soumissions et paiements</p>
         </div>
-        <button onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-sm text-sm hover:bg-primary/90 transition-colors self-start">
-          <Plus className="w-4 h-4" /> Nouvelle facture
-        </button>
+        <div className="flex gap-2 self-start">
+          {onOpenDesignEditor && (
+            <button onClick={onOpenDesignEditor}
+              className="flex items-center gap-2 border border-border text-foreground px-4 py-2.5 rounded-sm text-sm hover:bg-secondary transition-colors">
+              <Settings className="w-4 h-4" /> Paramètres
+            </button>
+          )}
+          <button onClick={() => setShowCreate(true)}
+            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-sm text-sm hover:bg-primary/90 transition-colors">
+            <Plus className="w-4 h-4" /> Nouvelle facture
+          </button>
+        </div>
       </div>
 
       {/* Summary cards */}
