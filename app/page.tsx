@@ -1,16 +1,36 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+'use client'
 
-export default async function Home() {
-  const supabase = await createClient()
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export default function Home() {
+  const [checking, setChecking] = useState(true)
+  const router = useRouter()
+  const supabase = createClient()
 
-  if (user) {
-    redirect('/dashboard')
-  } else {
-    redirect('/auth/login')
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (session) {
+        router.replace('/dashboard')
+      } else {
+        router.replace('/auth/login')
+      }
+      setChecking(false)
+    }
+
+    checkUser()
+  }, [router, supabase])
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-foreground">Chargement...</div>
+      </div>
+    )
   }
+
+  return null
 }

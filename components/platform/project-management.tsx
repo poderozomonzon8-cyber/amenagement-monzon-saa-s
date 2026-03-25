@@ -1,15 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getProjects, updateProject, deleteProject } from '@/app/actions/projects'
+import { getProjects, deleteProject } from '@/app/actions/projects'
 import { Project } from '@/lib/types'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
-import {
-  Plus, Search, ChevronRight, Camera, Clock, DollarSign,
-  Calendar, MapPin, User, CheckSquare, X, Upload
-} from 'lucide-react'
+import { Plus, Search, X } from 'lucide-react'
 
 const statusColor: Record<string, string> = {
   in_progress: 'bg-primary/20 text-primary',
@@ -30,22 +25,11 @@ export function ProjectManagement() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-
-        if (!user) {
-          router.push('/auth/login')
-          return
-        }
-
-        const data = await getProjects(user.id)
+        const data = await getProjects()
         setProjects(data || [])
       } catch (error) {
         console.error('Error fetching projects:', error)
@@ -55,7 +39,7 @@ export function ProjectManagement() {
     }
 
     fetchProjects()
-  }, [router, supabase])
+  }, [])
 
   const handleDeleteProject = async (id: string) => {
     try {
@@ -68,9 +52,7 @@ export function ProjectManagement() {
   }
 
   const filtered = projects.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase())
+    (p) => p.name?.toLowerCase().includes(search.toLowerCase())
   )
 
   if (loading) {
@@ -122,16 +104,14 @@ export function ProjectManagement() {
                   {statusLabel[p.status]}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{p.description}</p>
               <div className="flex justify-between text-xs mb-1.5">
-                <span className="text-foreground">${p.budget.toLocaleString()}</span>
-                <span className="text-muted-foreground">${p.spent ? p.spent.toLocaleString() : '0'} dépensé</span>
+                <span className="text-foreground">${(p.budget || 0).toLocaleString()}</span>
+                <span className="text-muted-foreground">{p.status}</span>
               </div>
-              <div className="h-1 bg-secondary rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full"
-                  style={{ width: `${p.budget > 0 ? (p.spent / p.budget) * 100 : 0}%` }}
-                />
+              <div className="text-xs text-muted-foreground">
+                {p.start_date && <span>{new Date(p.start_date).toLocaleDateString('fr-FR')}</span>}
+                {p.start_date && p.end_date && <span> - </span>}
+                {p.end_date && <span>{new Date(p.end_date).toLocaleDateString('fr-FR')}</span>}
               </div>
             </button>
           ))
@@ -144,7 +124,7 @@ export function ProjectManagement() {
           <div className="flex items-start justify-between">
             <div>
               <h2 className="font-serif text-xl text-foreground">{selectedProject.name}</h2>
-              <p className="text-sm text-muted-foreground mt-1">{selectedProject.description}</p>
+              <p className="text-sm text-muted-foreground mt-1">Status: {statusLabel[selectedProject.status] || selectedProject.status}</p>
             </div>
             <button
               onClick={() => setSelectedProject(null)}
@@ -154,25 +134,21 @@ export function ProjectManagement() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y border-border">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-4 border-y border-border">
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Budget</p>
-              <p className="font-medium text-foreground text-lg">${selectedProject.budget.toLocaleString()}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Dépensé</p>
-              <p className="font-medium text-foreground text-lg">${selectedProject.spent ? selectedProject.spent.toLocaleString() : '0'}</p>
+              <p className="font-medium text-foreground text-lg">${(selectedProject.budget || 0).toLocaleString()}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Début</p>
               <p className="font-medium text-foreground text-lg">
-                {new Date(selectedProject.start_date).toLocaleDateString('fr-FR')}
+                {selectedProject.start_date ? new Date(selectedProject.start_date).toLocaleDateString('fr-FR') : '-'}
               </p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Fin</p>
               <p className="font-medium text-foreground text-lg">
-                {new Date(selectedProject.end_date).toLocaleDateString('fr-FR')}
+                {selectedProject.end_date ? new Date(selectedProject.end_date).toLocaleDateString('fr-FR') : '-'}
               </p>
             </div>
           </div>

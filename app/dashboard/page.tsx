@@ -9,7 +9,7 @@ import { ProjectManagement } from '@/components/platform/project-management'
 import { BillingSystem } from '@/components/platform/billing-system'
 import { ClientPortal } from '@/components/platform/client-portal'
 import { EmployeeApp } from '@/components/platform/employee-app'
-import { CmsEditor } from '@/components/platform/cms-editor'
+import { CMSEditor } from '@/components/platform/cms-editor'
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState('dashboard')
@@ -66,7 +66,7 @@ export default function Dashboard() {
       case 'employee':
         return <EmployeeApp />
       case 'cms':
-        return <CmsEditor />
+        return <CMSEditor />
       default:
         return <AdminDashboard />
     }
