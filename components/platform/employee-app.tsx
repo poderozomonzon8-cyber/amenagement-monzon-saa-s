@@ -1,171 +1,252 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { Clock, Camera, Briefcase, Play, Square, Upload, CheckCircle, Plus } from "lucide-react"
-
-const assignedProjects = [
-  { id: 1, name: "Villa Beaumont", role: "Maçon", location: "Outremont", hoursThisWeek: 38, totalHours: 320, nextTask: "Coulage dalle 3e étage" },
-  { id: 2, name: "Bureau Dupont", role: "Électricien", location: "Vieux-Montréal", hoursThisWeek: 0, totalHours: 142, nextTask: "Câblage tableau électrique" },
-]
-
-const weekLogs = [
-  { day: "Lundi", hours: 8.5, project: "Villa Beaumont", status: "logged" },
-  { day: "Mardi", hours: 8.0, project: "Villa Beaumont", status: "logged" },
-  { day: "Mercredi", hours: 7.5, project: "Villa Beaumont", status: "logged" },
-  { day: "Jeudi", hours: 8.0, project: "Villa Beaumont", status: "logged" },
-  { day: "Vendredi", hours: 6.0, project: "Villa Beaumont", status: "logged" },
-  { day: "Samedi", hours: 0, project: "—", status: "off" },
-  { day: "Dimanche", hours: 0, project: "—", status: "off" },
-]
+import { useState, useEffect, useRef, useTransition } from 'react'
+import { createTimeEntry, getTimeEntries } from '@/app/actions/time-entries'
+import { getProjects } from '@/app/actions/projects'
+import { TimeEntry, Project } from '@/lib/types'
+import { cn } from '@/lib/utils'
+import { Clock, Camera, Briefcase, Play, Square, CheckCircle, Loader2, Upload, Plus } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 const recentPhotos = [
-  { url: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&q=80", label: "Dalle 2e étage", date: "18 juil." },
-  { url: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&q=80", label: "Armature pilier", date: "17 juil." },
-  { url: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=300&q=80", label: "Façade nord", date: "15 juil." },
+  { url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&q=80', label: 'Dalle 2e étage',   date: '18 juil.' },
+  { url: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=300&q=80', label: 'Armature pilier',  date: '17 juil.' },
+  { url: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=300&q=80', label: 'Façade nord',      date: '15 juil.' },
 ]
 
-export function EmployeeApp() {
-  const [tab, setTab] = useState<"hours" | "photos" | "projects">("hours")
-  const [timerActive, setTimerActive] = useState(false)
-  const [elapsed, setElapsed] = useState("00:00:00")
-  const [selectedProject, setSelectedProject] = useState("Villa Beaumont")
-  const [hoursInput, setHoursInput] = useState("")
-  const [loggedToday, setLoggedToday] = useState(false)
+function formatElapsed(seconds: number) {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
+  return [h, m, s].map((v) => String(v).padStart(2, '0')).join(':')
+}
 
-  const totalWeek = weekLogs.reduce((s, l) => s + l.hours, 0)
+export function EmployeeApp() {
+  const [tab, setTab]               = useState<'hours' | 'photos' | 'projects'>('hours')
+  const [projects, setProjects]     = useState<Project[]>([])
+  const [entries, setEntries]       = useState<TimeEntry[]>([])
+  const [loading, setLoading]       = useState(true)
+  const [userId, setUserId]         = useState<string | null>(null)
+  const [userName, setUserName]     = useState('Employé')
+
+  // timer state
+  const [timerActive, setTimerActive] = useState(false)
+  const [elapsed, setElapsed]         = useState(0)
+  const intervalRef                   = useRef<ReturnType<typeof setInterval> | null>(null)
+  const startTimeRef                  = useRef<number>(0)
+
+  // form state
+  const [selectedProject, setSelectedProject] = useState('')
+  const [hoursInput, setHoursInput]           = useState('')
+  const [description, setDescription]         = useState('')
+  const [date, setDate]                       = useState(new Date().toISOString().split('T')[0])
+  const [isPending, startTransition]          = useTransition()
+  const [toast, setToast]                     = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
+
+  const showToast = (msg: string, type: 'ok' | 'err' = 'ok') => {
+    setToast({ msg, type })
+    setTimeout(() => setToast(null), 3000)
+  }
+
+  // Load user + data
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUserId(user.id)
+        setUserName(user.email?.split('@')[0] || 'Employé')
+      }
+    })
+    Promise.all([getProjects(), getTimeEntries()])
+      .then(([projs, ents]) => {
+        setProjects(projs)
+        setEntries(ents)
+        if (projs.length > 0) setSelectedProject(projs[0].id)
+      })
+      .catch(() => showToast('Erreur lors du chargement.', 'err'))
+      .finally(() => setLoading(false))
+  }, [])
+
+  // Timer logic
+  useEffect(() => {
+    if (timerActive) {
+      startTimeRef.current = Date.now() - elapsed * 1000
+      intervalRef.current = setInterval(() => {
+        setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000))
+      }, 1000)
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      // when stopping, fill hours field from elapsed
+      if (elapsed > 0) {
+        setHoursInput((elapsed / 3600).toFixed(2))
+      }
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+  }, [timerActive])
+
+  const handleSubmit = () => {
+    if (!hoursInput || isNaN(parseFloat(hoursInput))) { showToast('Entrez un nombre d\'heures valide.', 'err'); return }
+    if (!userId) { showToast('Vous n\'êtes pas connecté.', 'err'); return }
+    startTransition(async () => {
+      try {
+        const entry = await createTimeEntry({
+          employee_id: userId,
+          project_id:  selectedProject || null,
+          hours:       parseFloat(hoursInput),
+          date,
+          description: description || undefined,
+        } as any)
+        setEntries((prev) => [entry, ...prev])
+        setHoursInput('')
+        setDescription('')
+        setElapsed(0)
+        showToast('Heures enregistrées.')
+      } catch (e: any) {
+        showToast(e.message || 'Erreur.', 'err')
+      }
+    })
+  }
+
+  // Compute weekly total from entries this week
+  const weekStart = new Date()
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1)
+  weekStart.setHours(0, 0, 0, 0)
+  const weekTotal = entries
+    .filter((e) => new Date(e.date) >= weekStart)
+    .reduce((s, e) => s + e.hours, 0)
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Toast */}
+      {toast && (
+        <div className={cn('fixed bottom-6 right-6 z-50 px-4 py-3 rounded-sm text-sm shadow-lg border',
+          toast.type === 'ok' ? 'bg-card border-green-800 text-green-300' : 'bg-card border-red-800 text-red-300'
+        )}>
+          {toast.msg}
+        </div>
+      )}
+
       {/* Employee header */}
       <div className="bg-card border border-border rounded-sm px-5 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-            <span className="font-serif text-primary font-bold">J</span>
+            <span className="font-serif text-primary font-bold">{userName[0]?.toUpperCase()}</span>
           </div>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">App Employé</p>
-            <h1 className="font-serif text-lg text-foreground">Jean Dupont</h1>
+            <h1 className="font-serif text-lg text-foreground capitalize">{userName}</h1>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-xs text-muted-foreground">Semaine actuelle</p>
-          <p className="font-serif text-xl text-primary">{totalWeek}h</p>
+          <p className="text-xs text-muted-foreground">Cette semaine</p>
+          <p className="font-serif text-xl text-primary">{weekTotal.toFixed(1)}h</p>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-border">
         {([
-          { id: "hours", label: "Heures", icon: Clock },
-          { id: "photos", label: "Photos", icon: Camera },
-          { id: "projects", label: "Projets", icon: Briefcase },
+          { id: 'hours',    label: 'Heures',  icon: Clock     },
+          { id: 'photos',   label: 'Photos',  icon: Camera    },
+          { id: 'projects', label: 'Projets', icon: Briefcase },
         ] as const).map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={cn("flex items-center gap-2 px-4 py-2.5 text-sm border-b-2 -mb-px transition-colors",
-              tab === t.id ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
-            )}
-          >
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={cn('flex items-center gap-2 px-4 py-2.5 text-sm border-b-2 -mb-px transition-colors',
+              tab === t.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+            )}>
             <t.icon className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{t.label}</span>
           </button>
         ))}
       </div>
 
-      {tab === "hours" && (
+      {/* Hours tab */}
+      {tab === 'hours' && (
         <div className="flex flex-col gap-4">
-          {/* Timer widget */}
           <div className="bg-card border border-border rounded-sm p-5">
             <h2 className="font-serif text-base text-foreground mb-4">Enregistrer des heures</h2>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               <div>
                 <label className="text-xs text-muted-foreground uppercase tracking-wider block mb-1.5">Projet</label>
-                <select
-                  value={selectedProject}
-                  onChange={e => setSelectedProject(e.target.value)}
-                  className="w-full bg-input border border-border rounded-sm px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                >
-                  {assignedProjects.map(p => <option key={p.id}>{p.name}</option>)}
+                <select value={selectedProject} onChange={(e) => setSelectedProject(e.target.value)}
+                  className="w-full bg-input border border-border rounded-sm px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring">
+                  <option value="">— Aucun projet —</option>
+                  {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </select>
               </div>
               <div>
+                <label className="text-xs text-muted-foreground uppercase tracking-wider block mb-1.5">Date</label>
+                <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+                  className="w-full bg-input border border-border rounded-sm px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
+              </div>
+              <div>
                 <label className="text-xs text-muted-foreground uppercase tracking-wider block mb-1.5">Heures travaillées</label>
-                <input
-                  type="number"
-                  step="0.5"
-                  min="0"
-                  max="24"
-                  value={hoursInput}
-                  onChange={e => setHoursInput(e.target.value)}
+                <input type="number" step="0.5" min="0" max="24" value={hoursInput} onChange={(e) => setHoursInput(e.target.value)}
                   placeholder="ex: 8.5"
-                  className="w-full bg-input border border-border rounded-sm px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                />
+                  className="w-full bg-input border border-border rounded-sm px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground uppercase tracking-wider block mb-1.5">Description</label>
+                <input value={description} onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Tâches effectuées..."
+                  className="w-full bg-input border border-border rounded-sm px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
               </div>
             </div>
 
-            {/* Live timer */}
+            {/* Stopwatch */}
             <div className="bg-secondary rounded-sm p-4 mb-4 flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Chronomètre</p>
-                <p className="font-mono text-2xl text-foreground">{elapsed}</p>
+                <p className="font-mono text-2xl text-foreground">{formatElapsed(elapsed)}</p>
               </div>
-              <button
-                onClick={() => setTimerActive(!timerActive)}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-medium transition-colors",
-                  timerActive ? "bg-destructive/20 text-red-400 hover:bg-destructive/30" : "bg-primary/20 text-primary hover:bg-primary/30"
-                )}
-              >
+              <button onClick={() => setTimerActive(!timerActive)}
+                className={cn('flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-medium transition-colors',
+                  timerActive
+                    ? 'bg-destructive/20 text-red-400 hover:bg-destructive/30'
+                    : 'bg-primary/20 text-primary hover:bg-primary/30'
+                )}>
                 {timerActive ? <><Square className="w-4 h-4" /> Arrêter</> : <><Play className="w-4 h-4" /> Démarrer</>}
               </button>
             </div>
 
-            <button
-              onClick={() => setLoggedToday(true)}
-              disabled={loggedToday}
-              className={cn("w-full py-2.5 rounded-sm text-sm font-medium transition-colors",
-                loggedToday ? "bg-green-900/20 text-green-400 border border-green-900/30" : "bg-primary text-primary-foreground hover:bg-primary/90"
-              )}
-            >
-              {loggedToday ? <span className="flex items-center justify-center gap-2"><CheckCircle className="w-4 h-4" /> Heures enregistrées</span> : "Soumettre les heures"}
+            <button onClick={handleSubmit} disabled={isPending}
+              className="w-full py-2.5 rounded-sm text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+              {isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Enregistrement...</> : <><CheckCircle className="w-4 h-4" /> Soumettre les heures</>}
             </button>
           </div>
 
-          {/* Weekly log */}
-          <div className="bg-card border border-border rounded-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-border">
-              <h2 className="font-serif text-sm text-foreground">Journal de la semaine</h2>
-            </div>
-            <div className="divide-y divide-border/50">
-              {weekLogs.map((log) => (
-                <div key={log.day} className="flex items-center justify-between px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground w-20">{log.day}</span>
-                    {log.status === "logged" ? (
-                      <span className="text-xs text-muted-foreground">{log.project}</span>
-                    ) : (
-                      <span className="text-xs text-muted-foreground/50">Congé</span>
-                    )}
+          {/* Recent entries */}
+          {loading ? (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Chargement...</div>
+          ) : entries.length > 0 && (
+            <div className="bg-card border border-border rounded-sm overflow-hidden">
+              <div className="px-4 py-3 border-b border-border">
+                <h2 className="font-serif text-sm text-foreground">Entrées récentes</h2>
+              </div>
+              <div className="divide-y divide-border/50">
+                {entries.slice(0, 10).map((e) => (
+                  <div key={e.id} className="flex items-center justify-between px-4 py-3">
+                    <div>
+                      <p className="text-sm text-foreground">{e.description || 'Sans description'}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(e.date).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                    <span className="text-sm font-medium text-primary">{e.hours}h</span>
                   </div>
-                  <span className={cn("text-sm font-medium", log.hours > 0 ? "text-foreground" : "text-muted-foreground/50")}>
-                    {log.hours > 0 ? `${log.hours}h` : "—"}
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="px-4 py-3 border-t border-border bg-secondary flex justify-between">
+                <span className="text-sm text-muted-foreground">Total (semaine)</span>
+                <span className="text-sm font-semibold text-primary">{weekTotal.toFixed(1)}h</span>
+              </div>
             </div>
-            <div className="px-4 py-3 border-t border-border bg-secondary flex justify-between">
-              <span className="text-sm text-muted-foreground">Total semaine</span>
-              <span className="text-sm font-semibold text-primary">{totalWeek}h</span>
-            </div>
-          </div>
+          )}
         </div>
       )}
 
-      {tab === "photos" && (
+      {/* Photos tab */}
+      {tab === 'photos' && (
         <div className="flex flex-col gap-4">
-          {/* Upload zone */}
           <div className="border-2 border-dashed border-border rounded-sm p-8 flex flex-col items-center justify-center gap-3 hover:border-primary/50 transition-colors cursor-pointer bg-card">
             <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
               <Upload className="w-5 h-5 text-muted-foreground" />
@@ -176,15 +257,13 @@ export function EmployeeApp() {
             </div>
             <div className="flex gap-2 mt-1">
               <select className="bg-input border border-border rounded-sm px-2 py-1.5 text-xs text-foreground focus:outline-none">
-                {assignedProjects.map(p => <option key={p.id}>{p.name}</option>)}
+                {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
               <button className="bg-primary text-primary-foreground text-xs px-3 py-1.5 rounded-sm hover:bg-primary/90 transition-colors flex items-center gap-1">
                 <Plus className="w-3 h-3" /> Sélectionner
               </button>
             </div>
           </div>
-
-          {/* Recent uploads */}
           <div>
             <h3 className="font-serif text-sm text-foreground mb-3">Photos récentes</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -204,34 +283,40 @@ export function EmployeeApp() {
         </div>
       )}
 
-      {tab === "projects" && (
+      {/* Projects tab */}
+      {tab === 'projects' && (
         <div className="flex flex-col gap-4">
-          {assignedProjects.map((p) => (
-            <div key={p.id} className="bg-card border border-border rounded-sm p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-serif text-sm text-foreground">{p.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">{p.role} — {p.location}</p>
+          {loading ? (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Chargement...</div>
+          ) : projects.length === 0 ? (
+            <p className="text-muted-foreground text-sm">Aucun projet assigné.</p>
+          ) : (
+            projects.map((p) => {
+              const projectHours = entries.filter((e) => e.project_id === p.id).reduce((s, e) => s + e.hours, 0)
+              const weekHours = entries.filter((e) => e.project_id === p.id && new Date(e.date) >= weekStart).reduce((s, e) => s + e.hours, 0)
+              return (
+                <div key={p.id} className="bg-card border border-border rounded-sm p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-serif text-sm text-foreground">{p.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">{p.status}</p>
+                    </div>
+                    <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-sm">Actif</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="bg-secondary rounded-sm p-2.5">
+                      <p className="text-muted-foreground">Heures cette semaine</p>
+                      <p className="text-foreground font-semibold text-base mt-0.5">{weekHours.toFixed(1)}h</p>
+                    </div>
+                    <div className="bg-secondary rounded-sm p-2.5">
+                      <p className="text-muted-foreground">Total projet</p>
+                      <p className="text-foreground font-semibold text-base mt-0.5">{projectHours.toFixed(1)}h</p>
+                    </div>
+                  </div>
                 </div>
-                <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-sm">Actif</span>
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-xs mb-3">
-                <div className="bg-secondary rounded-sm p-2.5">
-                  <p className="text-muted-foreground">Heures cette semaine</p>
-                  <p className="text-foreground font-semibold text-base mt-0.5">{p.hoursThisWeek}h</p>
-                </div>
-                <div className="bg-secondary rounded-sm p-2.5">
-                  <p className="text-muted-foreground">Total projet</p>
-                  <p className="text-foreground font-semibold text-base mt-0.5">{p.totalHours}h</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-xs">
-                <span className="text-primary">●</span>
-                <span className="text-muted-foreground">Prochaine tâche :</span>
-                <span className="text-foreground">{p.nextTask}</span>
-              </div>
-            </div>
-          ))}
+              )
+            })
+          )}
         </div>
       )}
     </div>

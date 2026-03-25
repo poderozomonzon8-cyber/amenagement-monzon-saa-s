@@ -29,7 +29,7 @@ export async function getProjects() {
   const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('name', { ascending: true })
 
   if (error) throw new Error(error.message)
   return (projects || []) as Project[]

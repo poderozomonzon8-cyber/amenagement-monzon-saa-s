@@ -25,7 +25,7 @@ export interface Employee {
 
 export interface Project {
   id: string
-  client_id: string
+  client_id: string | null
   name: string
   status: string
   start_date: string | null
