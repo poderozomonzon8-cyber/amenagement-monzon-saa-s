@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-  // Simple middleware that allows all requests through
-  // Auth is handled at the page level in app/page.tsx
+export async function middleware(_request: NextRequest) {
+  // Pass-through middleware - auth handled at page level
   return NextResponse.next()
 }
 
