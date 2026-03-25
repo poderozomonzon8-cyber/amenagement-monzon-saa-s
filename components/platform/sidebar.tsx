@@ -26,12 +26,12 @@ const navSections = [
       { icon: LayoutDashboard, label: "Tableau de bord", href: "#dashboard", id: "dashboard" },
       { icon: FolderKanban, label: "Projets", href: "#projects", id: "projects" },
       { icon: FileText, label: "Facturation", href: "#billing", id: "billing" },
+      { icon: Users, label: "Employés", href: "#admin-employees", id: "admin-employees" },
     ],
   },
   {
     label: "Portails",
     items: [
-      { icon: Users, label: "Portail Client", href: "#client", id: "client" },
       { icon: HardHat, label: "App Employés", href: "#employee", id: "employee" },
       { icon: Globe, label: "Éditeur CMS", href: "#cms", id: "cms" },
     ],

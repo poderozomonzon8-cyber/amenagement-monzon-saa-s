@@ -10,6 +10,7 @@ import { BillingSystem } from '@/components/platform/billing-system'
 import { ClientPortal } from '@/components/platform/client-portal'
 import { EmployeeApp } from '@/components/platform/employee-app'
 import { CMSEditor } from '@/components/platform/cms-editor'
+import { AdminEmployees } from '@/components/platform/admin-employees'
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState('dashboard')
@@ -61,6 +62,8 @@ export default function Dashboard() {
         return <ProjectManagement />
       case 'billing':
         return <BillingSystem />
+      case 'admin-employees':
+        return <AdminEmployees />
       case 'client':
         return <ClientPortal />
       case 'employee':
@@ -75,7 +78,7 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen">
       <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} userRole={userRole} />
-      <main className="flex-1 overflow-auto bg-background">
+      <main className="flex-1 overflow-auto bg-background p-6">
         {renderSection()}
       </main>
     </div>

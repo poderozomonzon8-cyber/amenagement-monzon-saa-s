@@ -58,34 +58,47 @@ export async function createEmployee(data: {
 }
 
 export async function getOrCreateEmployee(profileId: string, email?: string): Promise<Employee> {
-  console.log('[v0] getOrCreateEmployee called with profileId:', profileId)
-  
   // First check if employee already exists
   const existing = await getEmployeeByProfileId(profileId)
-  console.log('[v0] Existing employee check:', existing ? 'found' : 'not found')
-  
   if (existing) return existing
   
   // If not, ensure profile exists
   const profileExists = await ensureProfileExists(profileId, email)
-  console.log('[v0] Profile exists or created:', profileExists)
-  
   if (!profileExists) {
     throw new Error('Profile could not be created or does not exist')
   }
   
   // Now create employee record
-  console.log('[v0] Creating employee for profile:', profileId)
   return await createEmployee({ profile_id: profileId })
 }
 
-export async function getEmployees(): Promise<Employee[]> {
+export async function getEmployees() {
   const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('employees')
-    .select('*')
+    .select(`
+      *,
+      profiles (
+        full_name,
+        phone,
+        role
+      )
+    `)
+    .order('position')
 
   if (error) throw new Error(error.message)
-  return (data || []) as Employee[]
+  return data || []
+}
+
+export async function deleteEmployee(id: string) {
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('employees')
+    .delete()
+    .eq('id', id)
+
+  if (error) throw new Error(error.message)
+  return true
 }
