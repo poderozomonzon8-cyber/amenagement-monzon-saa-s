@@ -58,8 +58,8 @@ export function EmployeeApp() {
         
         if (user) {
           setUserName(user.email?.split('@')[0] || 'Employé')
-          // Get or create employee record for this profile
-          const emp = await getOrCreateEmployee(user.id)
+          // Get or create employee record for this profile (also creates profile if missing)
+          const emp = await getOrCreateEmployee(user.id, user.email || undefined)
           setEmployee(emp)
         }
         
