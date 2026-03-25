@@ -19,16 +19,12 @@ export async function getEmployeeByProfileId(profileId: string): Promise<Employe
 export async function ensureProfileExists(profileId: string, email?: string): Promise<boolean> {
   const supabase = await createClient()
   
-  console.log('[v0] ensureProfileExists called with:', profileId, email)
-  
   // Check if profile exists
-  const { data: existing, error: checkError } = await supabase
+  const { data: existing } = await supabase
     .from('profiles')
     .select('id')
     .eq('id', profileId)
     .single()
-  
-  console.log('[v0] Profile check result:', existing, checkError?.message)
   
   if (existing) return true
   
@@ -40,8 +36,6 @@ export async function ensureProfileExists(profileId: string, email?: string): Pr
       role: 'employee',
       full_name: email?.split('@')[0] || 'Utilisateur',
     })
-  
-  console.log('[v0] Profile insert result:', error?.message || 'success')
   
   return !error
 }
@@ -64,14 +58,24 @@ export async function createEmployee(data: {
 }
 
 export async function getOrCreateEmployee(profileId: string, email?: string): Promise<Employee> {
-  // First ensure profile exists
-  await ensureProfileExists(profileId, email)
+  console.log('[v0] getOrCreateEmployee called with profileId:', profileId)
   
-  // Then check for existing employee
+  // First check if employee already exists
   const existing = await getEmployeeByProfileId(profileId)
+  console.log('[v0] Existing employee check:', existing ? 'found' : 'not found')
+  
   if (existing) return existing
   
-  // Create employee record
+  // If not, ensure profile exists
+  const profileExists = await ensureProfileExists(profileId, email)
+  console.log('[v0] Profile exists or created:', profileExists)
+  
+  if (!profileExists) {
+    throw new Error('Profile could not be created or does not exist')
+  }
+  
+  // Now create employee record
+  console.log('[v0] Creating employee for profile:', profileId)
   return await createEmployee({ profile_id: profileId })
 }
 
