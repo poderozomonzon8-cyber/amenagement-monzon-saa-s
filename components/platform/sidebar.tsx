@@ -17,6 +17,8 @@ import {
   LogOut,
   Menu,
   X,
+  UserCog,
+  Briefcase,
 } from "lucide-react"
 
 const navSections = [
@@ -27,6 +29,7 @@ const navSections = [
       { icon: FolderKanban, label: "Projets", href: "#projects", id: "projects" },
       { icon: FileText, label: "Facturation", href: "#billing", id: "billing" },
       { icon: Users, label: "Employés", href: "#admin-employees", id: "admin-employees" },
+      { icon: UserCog, label: "Utilisateurs", href: "#users", id: "users" },
     ],
   },
   {
@@ -39,6 +42,7 @@ const navSections = [
   {
     label: "Portails",
     items: [
+      { icon: Briefcase, label: "Portail Client", href: "#client", id: "client" },
       { icon: HardHat, label: "App Employés", href: "#employee", id: "employee" },
     ],
   },

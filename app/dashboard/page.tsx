@@ -12,6 +12,7 @@ import { EmployeeApp } from '@/components/platform/employee-app'
 import { CMSEditor } from '@/components/platform/cms-editor'
 import { AdminEmployees } from '@/components/platform/admin-employees'
 import { InvoiceDesignEditor } from '@/components/platform/invoice-design-editor'
+import { UserManagement } from '@/components/platform/user-management'
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState('dashboard')
@@ -65,6 +66,8 @@ export default function Dashboard() {
         return <BillingSystem onOpenDesignEditor={() => setActiveSection('invoice-design')} />
       case 'admin-employees':
         return <AdminEmployees />
+      case 'users':
+        return <UserManagement />
       case 'client':
         return <ClientPortal />
       case 'employee':

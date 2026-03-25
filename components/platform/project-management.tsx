@@ -4,7 +4,8 @@ import { useState, useEffect, useTransition } from 'react'
 import { getProjects, createProject, updateProject, deleteProject } from '@/app/actions/projects'
 import { Project } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { Plus, Search, X, Pencil, Trash2, Loader2 } from 'lucide-react'
+import { Plus, Search, X, Pencil, Trash2, Loader2, Eye } from 'lucide-react'
+import { ProjectDetail } from './project-detail'
 
 const statusColor: Record<string, string> = {
   in_progress: 'bg-primary/20 text-primary',
@@ -143,6 +144,7 @@ export function ProjectManagement() {
   const [editTarget, setEditTarget]           = useState<Project | undefined>(undefined)
   const [deletingId, setDeletingId]           = useState<string | null>(null)
   const [toast, setToast]                     = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
+  const [showDetail, setShowDetail]           = useState<Project | null>(null)
 
   const showToast = (msg: string, type: 'ok' | 'err' = 'ok') => {
     setToast({ msg, type })
@@ -203,6 +205,14 @@ export function ProjectManagement() {
           project={editTarget}
           onClose={() => setShowModal(false)}
           onSaved={handleSaved}
+        />
+      )}
+
+      {/* Project Detail */}
+      {showDetail && (
+        <ProjectDetail
+          project={showDetail}
+          onClose={() => setShowDetail(null)}
         />
       )}
 
@@ -294,6 +304,10 @@ export function ProjectManagement() {
           </div>
 
           <div className="flex gap-2">
+            <button onClick={() => setShowDetail(selectedProject)}
+              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-sm text-sm hover:bg-primary/90 transition-colors">
+              <Eye className="w-3.5 h-3.5" /> Voir détails
+            </button>
             <button onClick={() => openEdit(selectedProject)}
               className="flex items-center gap-2 bg-secondary text-foreground px-4 py-2 rounded-sm text-sm hover:bg-secondary/80 transition-colors">
               <Pencil className="w-3.5 h-3.5" /> Modifier
