@@ -57,32 +57,54 @@ export async function uploadLogo(file: File) {
   const supabase = await createClient()
   const fileName = `logo-${Date.now()}.${file.name.split('.').pop()}`
   
-  const { data, error } = await supabase.storage
-    .from('company_assets')
-    .upload(`logos/${fileName}`, file, { upsert: true })
+  console.log('[v0] Uploading logo:', fileName)
   
-  if (error) throw new Error(error.message)
-  
-  const { data: { publicUrl } } = supabase.storage
-    .from('company_assets')
-    .getPublicUrl(`logos/${fileName}`)
-  
-  return publicUrl
+  try {
+    const { data, error } = await supabase.storage
+      .from('company_assets')
+      .upload(`logos/${fileName}`, file, { upsert: true })
+    
+    if (error) {
+      console.log('[v0] Storage upload error:', error.message)
+      throw new Error(error.message)
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('company_assets')
+      .getPublicUrl(`logos/${fileName}`)
+    
+    console.log('[v0] Logo uploaded successfully:', publicUrl)
+    return publicUrl
+  } catch (err) {
+    console.log('[v0] Logo upload exception:', err instanceof Error ? err.message : String(err))
+    throw err
+  }
 }
 
 export async function uploadSignature(file: File) {
   const supabase = await createClient()
   const fileName = `signature-${Date.now()}.${file.name.split('.').pop()}`
   
-  const { data, error } = await supabase.storage
-    .from('company_assets')
-    .upload(`signatures/${fileName}`, file, { upsert: true })
+  console.log('[v0] Uploading signature:', fileName)
   
-  if (error) throw new Error(error.message)
-  
-  const { data: { publicUrl } } = supabase.storage
-    .from('company_assets')
-    .getPublicUrl(`signatures/${fileName}`)
-  
-  return publicUrl
+  try {
+    const { data, error } = await supabase.storage
+      .from('company_assets')
+      .upload(`signatures/${fileName}`, file, { upsert: true })
+    
+    if (error) {
+      console.log('[v0] Storage upload error:', error.message)
+      throw new Error(error.message)
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('company_assets')
+      .getPublicUrl(`signatures/${fileName}`)
+    
+    console.log('[v0] Signature uploaded successfully:', publicUrl)
+    return publicUrl
+  } catch (err) {
+    console.log('[v0] Signature upload exception:', err instanceof Error ? err.message : String(err))
+    throw err
+  }
 }
