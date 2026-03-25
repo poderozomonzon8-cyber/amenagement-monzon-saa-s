@@ -1,47 +1,38 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { Project } from '@/lib/types'
 
 export async function createProject(data: {
   name: string
-  description: string
   status: string
   client_id: string
-  start_date: string
-  end_date: string
-  budget: number
+  start_date: string | null
+  end_date: string | null
+  budget: number | null
 }) {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) throw new Error('Not authenticated')
-
   const { data: project, error } = await supabase
     .from('projects')
-    .insert({
-      ...data,
-      admin_id: user.id,
-    })
+    .insert(data)
     .select()
     .single()
 
   if (error) throw new Error(error.message)
-  return project
+  return project as Project
 }
 
-export async function getProjects(userId: string) {
+export async function getProjects() {
   const supabase = await createClient()
 
   const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
-    .eq('admin_id', userId)
+    .order('created_at', { ascending: false })
 
   if (error) throw new Error(error.message)
-  return projects
+  return (projects || []) as Project[]
 }
 
 export async function getProjectById(id: string) {
@@ -54,17 +45,10 @@ export async function getProjectById(id: string) {
     .single()
 
   if (error) throw new Error(error.message)
-  return project
+  return project as Project
 }
 
-export async function updateProject(id: string, data: Partial<{
-  name: string
-  description: string
-  status: string
-  budget: number
-  start_date: string
-  end_date: string
-}>) {
+export async function updateProject(id: string, data: Partial<Project>) {
   const supabase = await createClient()
 
   const { data: project, error } = await supabase
@@ -75,7 +59,7 @@ export async function updateProject(id: string, data: Partial<{
     .single()
 
   if (error) throw new Error(error.message)
-  return project
+  return project as Project
 }
 
 export async function deleteProject(id: string) {

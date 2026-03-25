@@ -1,50 +1,36 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { Invoice } from '@/lib/types'
 
 export async function createInvoice(data: {
   project_id: string
-  amount: number
-  due_date: string
-  description: string
   client_id: string
+  total: number
+  status: string
 }) {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) throw new Error('Not authenticated')
-
-  const invoiceNumber = `INV-${Date.now()}`
-
   const { data: invoice, error } = await supabase
     .from('invoices')
-    .insert({
-      ...data,
-      invoice_number: invoiceNumber,
-      admin_id: user.id,
-      status: 'draft',
-    })
+    .insert(data)
     .select()
     .single()
 
   if (error) throw new Error(error.message)
-  return invoice
+  return invoice as Invoice
 }
 
-export async function getInvoices(userId: string) {
+export async function getInvoices() {
   const supabase = await createClient()
 
   const { data: invoices, error } = await supabase
     .from('invoices')
     .select('*')
-    .eq('admin_id', userId)
     .order('created_at', { ascending: false })
 
   if (error) throw new Error(error.message)
-  return invoices
+  return (invoices || []) as Invoice[]
 }
 
 export async function getInvoiceById(id: string) {
@@ -57,15 +43,10 @@ export async function getInvoiceById(id: string) {
     .single()
 
   if (error) throw new Error(error.message)
-  return invoice
+  return invoice as Invoice
 }
 
-export async function updateInvoice(id: string, data: Partial<{
-  status: string
-  amount: number
-  due_date: string
-  description: string
-}>) {
+export async function updateInvoice(id: string, data: Partial<Invoice>) {
   const supabase = await createClient()
 
   const { data: invoice, error } = await supabase
@@ -76,7 +57,7 @@ export async function updateInvoice(id: string, data: Partial<{
     .single()
 
   if (error) throw new Error(error.message)
-  return invoice
+  return invoice as Invoice
 }
 
 export async function deleteInvoice(id: string) {

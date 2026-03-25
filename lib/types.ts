@@ -1,70 +1,78 @@
-// Database types for Aménagement Monzon platform
+// Database types matching your existing Supabase schema
 
 export type UserRole = 'admin' | 'employee' | 'client'
 
 export interface Profile {
   id: string
-  first_name: string
-  last_name: string
   role: UserRole
-  company: string
-  email: string
+  full_name: string
   phone: string | null
   created_at: string
 }
 
+export interface Client {
+  id: string
+  profile_id: string
+  address: string | null
+}
+
+export interface Employee {
+  id: string
+  profile_id: string
+  position: string | null
+  salary: number | null
+}
+
 export interface Project {
   id: string
-  admin_id: string
-  name: string
-  description: string
-  status: 'planning' | 'in_progress' | 'completed' | 'on_hold'
   client_id: string
-  start_date: string
-  end_date: string
-  budget: number
-  spent: number
+  name: string
+  status: string
+  start_date: string | null
+  end_date: string | null
+  budget: number | null
+}
+
+export interface TimeEntry {
+  id: string
+  employee_id: string
+  project_id: string
+  hours: number
+  description: string | null
+  date: string
+}
+
+export interface Expense {
+  id: string
+  project_id: string
+  amount: number
+  category: string | null
+  note: string | null
   created_at: string
 }
 
 export interface Invoice {
   id: string
-  admin_id: string
   project_id: string
   client_id: string
-  invoice_number: string
-  amount: number
-  status: 'draft' | 'sent' | 'paid' | 'overdue'
-  due_date: string
-  description: string
+  total: number
+  status: string
   created_at: string
 }
 
 export interface Payment {
   id: string
-  admin_id: string
   invoice_id: string
   amount: number
-  method: 'cash' | 'virement' | 'interac' | 'card'
-  status: 'pending' | 'completed' | 'failed'
-  date: string
+  method: string
+  status: string
   created_at: string
 }
 
-export interface TimeEntry {
+export interface Message {
   id: string
-  admin_id: string
-  project_id: string
-  employee_id: string
-  hours: number
-  date: string
-  description: string
-  created_at: string
-}
-
-export interface ProjectPhoto {
-  id: string
-  project_id: string
-  url: string
+  sender_id: string
+  receiver_id: string
+  content: string
   created_at: string
 }

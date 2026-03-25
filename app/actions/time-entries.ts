@@ -1,59 +1,37 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { TimeEntry } from '@/lib/types'
 
 export async function createTimeEntry(data: {
-  project_id: string
   employee_id: string
+  project_id: string
   hours: number
   date: string
-  description: string
+  description?: string
 }) {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) throw new Error('Not authenticated')
-
   const { data: entry, error } = await supabase
     .from('time_entries')
-    .insert({
-      ...data,
-      admin_id: user.id,
-    })
+    .insert(data)
     .select()
     .single()
 
   if (error) throw new Error(error.message)
-  return entry
+  return entry as TimeEntry
 }
 
-export async function getTimeEntries(userId: string, filters?: { projectId?: string; startDate?: string; endDate?: string }) {
+export async function getTimeEntries() {
   const supabase = await createClient()
 
-  let query = supabase
+  const { data: entries, error } = await supabase
     .from('time_entries')
     .select('*')
-    .eq('admin_id', userId)
-
-  if (filters?.projectId) {
-    query = query.eq('project_id', filters.projectId)
-  }
-
-  if (filters?.startDate) {
-    query = query.gte('date', filters.startDate)
-  }
-
-  if (filters?.endDate) {
-    query = query.lte('date', filters.endDate)
-  }
-
-  const { data: entries, error } = await query.order('date', { ascending: false })
+    .order('date', { ascending: false })
 
   if (error) throw new Error(error.message)
-  return entries
+  return (entries || []) as TimeEntry[]
 }
 
 export async function getTimeEntriesByEmployee(employeeId: string) {
@@ -66,7 +44,7 @@ export async function getTimeEntriesByEmployee(employeeId: string) {
     .order('date', { ascending: false })
 
   if (error) throw new Error(error.message)
-  return entries
+  return (entries || []) as TimeEntry[]
 }
 
 export async function getTimeEntriesByProject(projectId: string) {
@@ -79,14 +57,10 @@ export async function getTimeEntriesByProject(projectId: string) {
     .order('date', { ascending: false })
 
   if (error) throw new Error(error.message)
-  return entries
+  return (entries || []) as TimeEntry[]
 }
 
-export async function updateTimeEntry(id: string, data: Partial<{
-  hours: number
-  date: string
-  description: string
-}>) {
+export async function updateTimeEntry(id: string, data: Partial<TimeEntry>) {
   const supabase = await createClient()
 
   const { data: entry, error } = await supabase
@@ -97,7 +71,7 @@ export async function updateTimeEntry(id: string, data: Partial<{
     .single()
 
   if (error) throw new Error(error.message)
-  return entry
+  return entry as TimeEntry
 }
 
 export async function deleteTimeEntry(id: string) {

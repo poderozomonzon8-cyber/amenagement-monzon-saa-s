@@ -1,69 +1,36 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { Payment } from '@/lib/types'
 
 export async function createPayment(data: {
   invoice_id: string
   amount: number
-  method: 'cash' | 'virement' | 'interac' | 'card'
-  date: string
+  method: string
+  status: string
 }) {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) throw new Error('Not authenticated')
-
   const { data: payment, error } = await supabase
     .from('payments')
-    .insert({
-      ...data,
-      admin_id: user.id,
-      status: 'completed',
-    })
+    .insert(data)
     .select()
     .single()
 
   if (error) throw new Error(error.message)
-
-  // Update invoice status if fully paid
-  const invoice = await supabase
-    .from('invoices')
-    .select('amount')
-    .eq('id', data.invoice_id)
-    .single()
-
-  if (invoice.data) {
-    const totalPaid = await supabase
-      .from('payments')
-      .select('amount')
-      .eq('invoice_id', data.invoice_id)
-
-    const paid = totalPaid.data?.reduce((sum, p) => sum + p.amount, 0) || 0
-    if (paid >= invoice.data.amount) {
-      await supabase
-        .from('invoices')
-        .update({ status: 'paid' })
-        .eq('id', data.invoice_id)
-    }
-  }
-
-  return payment
+  return payment as Payment
 }
 
-export async function getPayments(userId: string) {
+export async function getPayments() {
   const supabase = await createClient()
 
   const { data: payments, error } = await supabase
     .from('payments')
     .select('*')
-    .eq('admin_id', userId)
-    .order('date', { ascending: false })
+    .order('created_at', { ascending: false })
 
   if (error) throw new Error(error.message)
-  return payments
+  return (payments || []) as Payment[]
 }
 
 export async function getPaymentsByInvoice(invoiceId: string) {
@@ -73,18 +40,13 @@ export async function getPaymentsByInvoice(invoiceId: string) {
     .from('payments')
     .select('*')
     .eq('invoice_id', invoiceId)
-    .order('date', { ascending: false })
+    .order('created_at', { ascending: false })
 
   if (error) throw new Error(error.message)
-  return payments
+  return (payments || []) as Payment[]
 }
 
-export async function updatePayment(id: string, data: Partial<{
-  amount: number
-  method: string
-  date: string
-  status: string
-}>) {
+export async function updatePayment(id: string, data: Partial<Payment>) {
   const supabase = await createClient()
 
   const { data: payment, error } = await supabase
@@ -95,7 +57,7 @@ export async function updatePayment(id: string, data: Partial<{
     .single()
 
   if (error) throw new Error(error.message)
-  return payment
+  return payment as Payment
 }
 
 export async function deletePayment(id: string) {
