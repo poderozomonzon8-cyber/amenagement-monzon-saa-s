@@ -1,30 +1,36 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { InvoiceTemplate, CompanySettings } from '@/lib/types'
+import { CompanySettings, InvoiceTemplate } from '@/lib/types'
 
-export async function getInvoiceTemplates() {
+export async function getTemplates() {
   const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('invoice_templates')
     .select('*')
     .order('name')
-  
+
   if (error) throw new Error(error.message)
-  return (data || []) as InvoiceTemplate[]
+  return data as InvoiceTemplate[]
 }
 
+// Get company settings with limit instead of single - returns defaults if not found
 export async function getCompanySettings() {
   const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('company_settings')
     .select('*')
     .limit(1)
   
-  if (error) throw new Error(error.message)
+  if (error) return getDefaultSettings()
   
-  // Return first record or empty object with defaults
-  return (data?.[0] || {
+  return (data?.[0] || getDefaultSettings()) as CompanySettings
+}
+
+function getDefaultSettings(): CompanySettings {
+  return {
     id: '',
     company_name: 'Aménagement Monzon',
     address: null,
@@ -34,7 +40,10 @@ export async function getCompanySettings() {
     signature_url: null,
     primary_color: '#C9A84C',
     secondary_color: '#0A0A0A',
-  }) as CompanySettings
+    tax_number_1: null,
+    tax_number_2: null,
+    template_id: null,
+  }
 }
 
 export async function updateCompanySettings(settings: Partial<CompanySettings>) {
@@ -65,7 +74,7 @@ export async function uploadLogo(file: File) {
       .upload(`logos/${fileName}`, file, { upsert: true })
     
     if (error) {
-      console.log('[v0] Storage upload error:', error.message)
+      console.log('[v0] Storage error:', error.message)
       throw new Error(error.message)
     }
 
@@ -73,10 +82,10 @@ export async function uploadLogo(file: File) {
       .from('company_assets')
       .getPublicUrl(`logos/${fileName}`)
     
-    console.log('[v0] Logo uploaded successfully:', publicUrl)
+    console.log('[v0] Logo URL:', publicUrl)
     return publicUrl
   } catch (err) {
-    console.log('[v0] Logo upload exception:', err instanceof Error ? err.message : String(err))
+    console.log('[v0] Upload error:', err instanceof Error ? err.message : String(err))
     throw err
   }
 }
@@ -93,7 +102,7 @@ export async function uploadSignature(file: File) {
       .upload(`signatures/${fileName}`, file, { upsert: true })
     
     if (error) {
-      console.log('[v0] Storage upload error:', error.message)
+      console.log('[v0] Storage error:', error.message)
       throw new Error(error.message)
     }
 
@@ -101,10 +110,10 @@ export async function uploadSignature(file: File) {
       .from('company_assets')
       .getPublicUrl(`signatures/${fileName}`)
     
-    console.log('[v0] Signature uploaded successfully:', publicUrl)
+    console.log('[v0] Signature URL:', publicUrl)
     return publicUrl
   } catch (err) {
-    console.log('[v0] Signature upload exception:', err instanceof Error ? err.message : String(err))
+    console.log('[v0] Upload error:', err instanceof Error ? err.message : String(err))
     throw err
   }
 }
