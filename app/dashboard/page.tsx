@@ -1,5 +1,5 @@
 'use client'
-
+// Force rebuild - invoice-design-editor uses getTemplates (not getInvoiceTemplates)
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
