@@ -1,33 +1,51 @@
 'use client'
 
 import { useState, useEffect, useTransition } from 'react'
-import { getCompanySettings, updateCompanySettings } from '@/app/actions/invoice-templates'
+import { getCompanySettings, updateCompanySettings, uploadLogo, uploadSignature } from '@/app/actions/invoice-templates'
 import { CompanySettings } from '@/lib/types'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Upload, Save, Loader2, Palette, Image, FileSignature, Eye, Building } from 'lucide-react'
-import { createBrowserClient } from '@supabase/ssr'
+import { cn } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/client'
+import { Upload, X, Eye, Save, Loader2 } from 'lucide-react'
+
+interface PreviewSettings {
+  logo_url?: string
+  signature_url?: string
+  primary_color: string
+  secondary_color: string
+  company_name: string
+  address?: string
+  phone?: string
+  email?: string
+}
 
 export function InvoiceDesignEditor() {
   const [settings, setSettings] = useState<CompanySettings | null>(null)
+  const [preview, setPreview] = useState<PreviewSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [isPending, startTransition] = useTransition()
+  const [activeTab, setActiveTab] = useState<'branding' | 'colors' | 'preview'>('branding')
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [signatureFile, setSignatureFile] = useState<File | null>(null)
   const [toast, setToast] = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
-
-  const showToast = (msg: string, type: 'ok' | 'err') => {
-    setToast({ msg, type })
-    setTimeout(() => setToast(null), 3000)
-  }
 
   useEffect(() => {
     const load = async () => {
       try {
         const s = await getCompanySettings()
         setSettings(s)
+        setPreview({
+          logo_url: s.logo_url,
+          signature_url: s.signature_url,
+          primary_color: s.primary_color || '#C9A84C',
+          secondary_color: s.secondary_color || '#0A0A0A',
+          company_name: s.company_name || 'Aménagement Monzon',
+          address: s.address,
+          phone: s.phone,
+          email: s.email,
+        })
       } catch (err) {
         console.error('Failed to load settings:', err)
+        showToast('Erreur lors du chargement des paramètres.', 'err')
       } finally {
         setLoading(false)
       }
@@ -35,16 +53,107 @@ export function InvoiceDesignEditor() {
     load()
   }, [])
 
-  const handleSave = () => {
-    if (!settings) return
+  const showToast = (msg: string, type: 'ok' | 'err') => {
+    setToast({ msg, type })
+    setTimeout(() => setToast(null), 3000)
+  }
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    if (!file.type.startsWith('image/')) {
+      showToast('Veuillez sélectionner une image.', 'err')
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('Le fichier dépasse 10 MB.', 'err')
+      return
+    }
+
     startTransition(async () => {
       try {
-        if (settings.logo_url?.startsWith('http') || settings.signature_url?.startsWith('http')) {
-          await updateCompanySettings(settings)
-          showToast('Paramètres sauvegardés.', 'ok')
-        } else {
-          showToast('Aucun changement à sauvegarder.', 'ok')
+        const supabase = createClient()
+        const fileName = `logo-${Date.now()}.${file.name.split('.').pop()}`
+        
+        const { error: uploadError } = await supabase.storage
+          .from('company_assets')
+          .upload(`logos/${fileName}`, file, { upsert: true })
+        
+        if (uploadError) throw new Error(uploadError.message)
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('company_assets')
+          .getPublicUrl(`logos/${fileName}`)
+        
+        setPreview(prev => prev ? { ...prev, logo_url: publicUrl } : null)
+        showToast('Logo chargé avec succès.', 'ok')
+        setLogoFile(null)
+      } catch (err) {
+        console.error('Logo upload error:', err)
+        showToast('Erreur lors du chargement du logo.', 'err')
+      }
+    })
+  }
+
+  const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    if (!file.type.startsWith('image/')) {
+      showToast('Veuillez sélectionner une image.', 'err')
+      return
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('Le fichier dépasse 10 MB.', 'err')
+      return
+    }
+
+    startTransition(async () => {
+      try {
+        const supabase = createClient()
+        const fileName = `signature-${Date.now()}.${file.name.split('.').pop()}`
+        
+        const { error: uploadError } = await supabase.storage
+          .from('company_assets')
+          .upload(`signatures/${fileName}`, file, { upsert: true })
+        
+        if (uploadError) throw new Error(uploadError.message)
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('company_assets')
+          .getPublicUrl(`signatures/${fileName}`)
+        
+        setPreview(prev => prev ? { ...prev, signature_url: publicUrl } : null)
+        showToast('Signature chargée avec succès.', 'ok')
+        setSignatureFile(null)
+      } catch (err) {
+        console.error('Signature upload error:', err)
+        showToast('Erreur lors du chargement de la signature.', 'err')
+      }
+    })
+  }
+
+  const handleSave = () => {
+    if (!settings || !preview) return
+    startTransition(async () => {
+      try {
+        const updatedSettings: Partial<CompanySettings> = {
+          id: settings.id,
+          company_name: preview.company_name,
+          address: preview.address,
+          phone: preview.phone,
+          email: preview.email,
+          logo_url: preview.logo_url,
+          signature_url: preview.signature_url,
+          primary_color: preview.primary_color,
+          secondary_color: preview.secondary_color,
         }
+        await updateCompanySettings(updatedSettings)
+        setSettings(prev => prev ? { ...prev, ...updatedSettings } : null)
+        showToast('Paramètres sauvegardés avec succès.', 'ok')
       } catch (err) {
         console.error('Save error:', err)
         showToast('Erreur lors de la sauvegarde.', 'err')
@@ -52,216 +161,313 @@ export function InvoiceDesignEditor() {
     })
   }
 
-  const handleFileUpload = async (file: File, type: 'logo' | 'signature') => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zlynkkolnenjylzyhwvj.supabase.co',
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpseW5ra29sbmVuanlsenlod3ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4NDk2NTcsImV4cCI6MjA1ODQyNTY1N30.aIqPPLiJBbGGBEFkMsmB00LYmKGB1ry-9hKjN5sXSKo'
-    )
-    
-    const folder = type === 'logo' ? 'logos' : 'signatures'
-    const fileName = `${type}-${Date.now()}.${file.name.split('.').pop()}`
-    
-    const { error } = await supabase.storage
-      .from('company_assets')
-      .upload(`${folder}/${fileName}`, file, { upsert: true })
-    
-    if (error) {
-      showToast(`Erreur: ${error.message}`, 'err')
-      return
-    }
-    
-    const { data: { publicUrl } } = supabase.storage
-      .from('company_assets')
-      .getPublicUrl(`${folder}/${fileName}`)
-    
-    if (type === 'logo') {
-      setSettings(prev => prev ? { ...prev, logo_url: publicUrl } : prev)
-    } else {
-      setSettings(prev => prev ? { ...prev, signature_url: publicUrl } : prev)
-    }
-    showToast(`${type === 'logo' ? 'Logo' : 'Signature'} téléchargé.`, 'ok')
-  }
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-full">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {toast && (
-        <div className={`fixed top-4 right-4 z-50 px-4 py-2 rounded-sm text-sm ${
-          toast.type === 'ok' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
-        }`}>
-          {toast.msg}
-        </div>
-      )}
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-serif text-foreground">Design des Factures</h1>
-          <p className="text-muted-foreground text-sm mt-1">Personnalisez l&apos;apparence de vos factures</p>
-        </div>
-        <Button onClick={handleSave} disabled={isPending} className="bg-primary text-primary-foreground">
-          {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Sauvegarder
-        </Button>
+    <div className="h-full bg-background flex flex-col">
+      {/* Header */}
+      <div className="border-b border-border px-6 py-4">
+        <h1 className="text-xl font-semibold text-foreground">Design des Factures</h1>
+        <p className="text-sm text-muted-foreground mt-1">Personnalisez le design de vos factures</p>
       </div>
 
-      <Tabs defaultValue="branding" className="space-y-6">
-        <TabsList className="bg-secondary">
-          <TabsTrigger value="branding" className="gap-2"><Building className="w-4 h-4" /> Entreprise</TabsTrigger>
-          <TabsTrigger value="colors" className="gap-2"><Palette className="w-4 h-4" /> Couleurs</TabsTrigger>
-          <TabsTrigger value="logo" className="gap-2"><Image className="w-4 h-4" /> Logo</TabsTrigger>
-          <TabsTrigger value="signature" className="gap-2"><FileSignature className="w-4 h-4" /> Signature</TabsTrigger>
-          <TabsTrigger value="preview" className="gap-2"><Eye className="w-4 h-4" /> Aperçu</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="branding" className="space-y-4">
-          <div className="bg-card border border-border rounded-sm p-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-foreground">Nom de l&apos;entreprise</Label>
-                <Input value={settings?.company_name || ''} onChange={e => setSettings(prev => prev ? { ...prev, company_name: e.target.value } : prev)} className="bg-input border-border" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-foreground">Email</Label>
-                <Input value={settings?.email || ''} onChange={e => setSettings(prev => prev ? { ...prev, email: e.target.value } : prev)} className="bg-input border-border" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-foreground">Téléphone</Label>
-                <Input value={settings?.phone || ''} onChange={e => setSettings(prev => prev ? { ...prev, phone: e.target.value } : prev)} className="bg-input border-border" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-foreground">Adresse</Label>
-                <Input value={settings?.address || ''} onChange={e => setSettings(prev => prev ? { ...prev, address: e.target.value } : prev)} className="bg-input border-border" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-foreground">Numéro TPS</Label>
-                <Input value={settings?.tax_number_1 || ''} onChange={e => setSettings(prev => prev ? { ...prev, tax_number_1: e.target.value } : prev)} className="bg-input border-border" placeholder="123456789RT0001" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-foreground">Numéro TVQ</Label>
-                <Input value={settings?.tax_number_2 || ''} onChange={e => setSettings(prev => prev ? { ...prev, tax_number_2: e.target.value } : prev)} className="bg-input border-border" placeholder="1234567890TQ0001" />
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="colors" className="space-y-4">
-          <div className="bg-card border border-border rounded-sm p-6 space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-foreground">Couleur Primaire</Label>
-                <div className="flex items-center gap-3">
-                  <input type="color" value={settings?.primary_color || '#C9A84C'} onChange={e => setSettings(prev => prev ? { ...prev, primary_color: e.target.value } : prev)} className="w-12 h-12 rounded-sm border border-border cursor-pointer" />
-                  <Input value={settings?.primary_color || '#C9A84C'} onChange={e => setSettings(prev => prev ? { ...prev, primary_color: e.target.value } : prev)} className="bg-input border-border flex-1" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-foreground">Couleur Secondaire</Label>
-                <div className="flex items-center gap-3">
-                  <input type="color" value={settings?.secondary_color || '#0A0A0A'} onChange={e => setSettings(prev => prev ? { ...prev, secondary_color: e.target.value } : prev)} className="w-12 h-12 rounded-sm border border-border cursor-pointer" />
-                  <Input value={settings?.secondary_color || '#0A0A0A'} onChange={e => setSettings(prev => prev ? { ...prev, secondary_color: e.target.value } : prev)} className="bg-input border-border flex-1" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="logo" className="space-y-4">
-          <div className="bg-card border border-border rounded-sm p-6 space-y-4">
-            <Label className="text-foreground">Logo de l&apos;entreprise</Label>
-            <p className="text-muted-foreground text-sm">Formats acceptés: PNG, JPG, WebP</p>
-            {settings?.logo_url && (
-              <div className="w-40 h-40 border border-border rounded-sm overflow-hidden bg-white p-2">
-                <img src={settings.logo_url} alt="Logo" className="w-full h-full object-contain" />
-              </div>
+      {/* Tabs */}
+      <div className="flex border-b border-border px-6 gap-0">
+        {(['branding', 'colors', 'preview'] as const).map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={cn(
+              'px-4 py-3 text-sm font-medium border-b-2 transition-colors',
+              activeTab === tab
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
             )}
-            <label className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-sm cursor-pointer hover:bg-secondary/80 transition-colors w-fit">
-              <Upload className="w-4 h-4" />
-              <span>Choisir un fichier</span>
-              <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'logo')} />
-            </label>
-          </div>
-        </TabsContent>
+          >
+            {tab === 'branding' && 'Marque'}
+            {tab === 'colors' && 'Couleurs'}
+            {tab === 'preview' && 'Aperçu'}
+          </button>
+        ))}
+      </div>
 
-        <TabsContent value="signature" className="space-y-4">
-          <div className="bg-card border border-border rounded-sm p-6 space-y-4">
-            <Label className="text-foreground">Signature</Label>
-            <p className="text-muted-foreground text-sm">Formats: PNG, JPG, WebP</p>
-            {settings?.signature_url && (
-              <div className="w-60 h-24 border border-border rounded-sm overflow-hidden bg-white p-2">
-                <img src={settings.signature_url} alt="Signature" className="w-full h-full object-contain" />
-              </div>
-            )}
-            <label className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-sm cursor-pointer hover:bg-secondary/80 transition-colors w-fit">
-              <Upload className="w-4 h-4" />
-              <span>Choisir un fichier</span>
-              <input type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'signature')} />
-            </label>
-          </div>
-        </TabsContent>
+      {/* Content */}
+      <div className="flex-1 overflow-auto p-6">
+        {/* Branding Tab */}
+        {activeTab === 'branding' && preview && (
+          <div className="max-w-2xl space-y-6">
+            {/* Company Name */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Nom de l'entreprise</label>
+              <input
+                type="text"
+                value={preview.company_name}
+                onChange={e => setPreview({ ...preview, company_name: e.target.value })}
+                className="w-full bg-input border border-border rounded-sm px-3 py-2 text-foreground"
+              />
+            </div>
 
-        <TabsContent value="preview" className="space-y-4">
-          <div className="bg-white rounded-sm p-8 text-black shadow-lg max-w-2xl">
-            <div className="flex justify-between items-start border-b pb-6 mb-6" style={{ borderColor: settings?.primary_color }}>
-              <div className="flex items-center gap-4">
-                {settings?.logo_url ? (
-                  <img src={settings.logo_url} alt="Logo" className="w-16 h-16 object-contain" />
-                ) : (
-                  <div className="w-16 h-16 flex items-center justify-center" style={{ backgroundColor: settings?.primary_color }}>
-                    <span className="text-white font-bold text-2xl">M</span>
+            {/* Address */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Adresse</label>
+              <textarea
+                value={preview.address || ''}
+                onChange={e => setPreview({ ...preview, address: e.target.value })}
+                className="w-full bg-input border border-border rounded-sm px-3 py-2 text-foreground"
+                rows={3}
+              />
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Téléphone</label>
+              <input
+                type="tel"
+                value={preview.phone || ''}
+                onChange={e => setPreview({ ...preview, phone: e.target.value })}
+                className="w-full bg-input border border-border rounded-sm px-3 py-2 text-foreground"
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Email</label>
+              <input
+                type="email"
+                value={preview.email || ''}
+                onChange={e => setPreview({ ...preview, email: e.target.value })}
+                className="w-full bg-input border border-border rounded-sm px-3 py-2 text-foreground"
+              />
+            </div>
+
+            {/* Logo Upload */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Logo</label>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="border-2 border-dashed border-border rounded-sm p-4 cursor-pointer hover:border-primary transition-colors block text-center">
+                    <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground">Cliquez pour charger le logo</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      disabled={isPending}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {preview.logo_url && (
+                  <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center">
+                    <img src={preview.logo_url} alt="Logo" className="max-h-20 max-w-full" />
                   </div>
                 )}
-                <div>
-                  <h2 className="font-bold text-xl" style={{ color: settings?.secondary_color }}>{settings?.company_name || 'Aménagement Monzon'}</h2>
-                  <p className="text-sm text-gray-600">{settings?.address}</p>
-                  <p className="text-sm text-gray-600">{settings?.phone} | {settings?.email}</p>
+              </div>
+            </div>
+
+            {/* Signature Upload */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Signature</label>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="border-2 border-dashed border-border rounded-sm p-4 cursor-pointer hover:border-primary transition-colors block text-center">
+                    <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground">Cliquez pour charger la signature</p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleSignatureUpload}
+                      disabled={isPending}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
+                {preview.signature_url && (
+                  <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center">
+                    <img src={preview.signature_url} alt="Signature" className="max-h-20 max-w-full" />
+                  </div>
+                )}
               </div>
-              <div className="text-right">
-                <h1 className="text-3xl font-bold" style={{ color: settings?.primary_color }}>FACTURE</h1>
-                <p className="text-gray-600">No. FAC-2024-001</p>
-                <p className="text-gray-600">Date: {new Date().toLocaleDateString('fr-CA')}</p>
-              </div>
-            </div>
-            <div className="mb-6">
-              <h3 className="font-semibold mb-2" style={{ color: settings?.secondary_color }}>Facturer à:</h3>
-              <p className="text-gray-700">Client Exemple</p>
-              <p className="text-gray-600 text-sm">123 Rue Exemple, Montréal QC</p>
-            </div>
-            <table className="w-full mb-6 text-sm">
-              <thead>
-                <tr style={{ backgroundColor: settings?.primary_color }}>
-                  <th className="text-left p-2 text-white">Description</th>
-                  <th className="text-right p-2 text-white">Qté</th>
-                  <th className="text-right p-2 text-white">Prix</th>
-                  <th className="text-right p-2 text-white">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b"><td className="p-2">Service exemple</td><td className="text-right p-2">1</td><td className="text-right p-2">500.00 $</td><td className="text-right p-2">500.00 $</td></tr>
-              </tbody>
-            </table>
-            <div className="flex justify-end">
-              <div className="w-64">
-                <div className="flex justify-between py-1"><span>Sous-total:</span><span>500.00 $</span></div>
-                <div className="flex justify-between py-1"><span>TPS (5%):</span><span>25.00 $</span></div>
-                <div className="flex justify-between py-1"><span>TVQ (9.975%):</span><span>49.88 $</span></div>
-                <div className="flex justify-between py-2 font-bold border-t" style={{ borderColor: settings?.primary_color }}><span>Total:</span><span style={{ color: settings?.primary_color }}>574.88 $</span></div>
-              </div>
-            </div>
-            <div className="mt-8 pt-6 border-t flex justify-between items-end">
-              <div className="text-xs text-gray-500"><p>TPS: {settings?.tax_number_1 || 'N/A'}</p><p>TVQ: {settings?.tax_number_2 || 'N/A'}</p></div>
-              {settings?.signature_url && (<div><img src={settings.signature_url} alt="Signature" className="h-12 object-contain" /><p className="text-xs text-gray-500 text-center mt-1">Signature autorisée</p></div>)}
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        )}
+
+        {/* Colors Tab */}
+        {activeTab === 'colors' && preview && (
+          <div className="max-w-2xl space-y-6">
+            {/* Primary Color */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Couleur primaire</label>
+              <div className="flex gap-4 items-center">
+                <input
+                  type="color"
+                  value={preview.primary_color}
+                  onChange={e => setPreview({ ...preview, primary_color: e.target.value })}
+                  className="w-16 h-10 rounded-sm cursor-pointer"
+                />
+                <input
+                  type="text"
+                  value={preview.primary_color}
+                  onChange={e => setPreview({ ...preview, primary_color: e.target.value })}
+                  className="flex-1 bg-input border border-border rounded-sm px-3 py-2 text-foreground text-sm font-mono"
+                />
+              </div>
+            </div>
+
+            {/* Secondary Color */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Couleur secondaire</label>
+              <div className="flex gap-4 items-center">
+                <input
+                  type="color"
+                  value={preview.secondary_color}
+                  onChange={e => setPreview({ ...preview, secondary_color: e.target.value })}
+                  className="w-16 h-10 rounded-sm cursor-pointer"
+                />
+                <input
+                  type="text"
+                  value={preview.secondary_color}
+                  onChange={e => setPreview({ ...preview, secondary_color: e.target.value })}
+                  className="flex-1 bg-input border border-border rounded-sm px-3 py-2 text-foreground text-sm font-mono"
+                />
+              </div>
+            </div>
+
+            {/* Color Preview */}
+            <div className="grid grid-cols-2 gap-4 pt-4">
+              <div className="bg-secondary rounded-sm p-6 text-center">
+                <div
+                  className="w-full h-16 rounded-sm mb-2"
+                  style={{ backgroundColor: preview.primary_color }}
+                />
+                <p className="text-xs text-muted-foreground">Couleur primaire</p>
+              </div>
+              <div className="bg-secondary rounded-sm p-6 text-center">
+                <div
+                  className="w-full h-16 rounded-sm mb-2"
+                  style={{ backgroundColor: preview.secondary_color }}
+                />
+                <p className="text-xs text-muted-foreground">Couleur secondaire</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Preview Tab */}
+        {activeTab === 'preview' && preview && (
+          <div className="max-w-4xl">
+            {/* Invoice Preview */}
+            <div
+              className="bg-white text-black rounded-sm shadow-lg p-8 space-y-6"
+              style={{ borderTop: `4px solid ${preview.primary_color}` }}
+            >
+              {/* Header */}
+              <div className="flex justify-between items-start pb-6 border-b border-gray-200">
+                <div>
+                  {preview.logo_url && (
+                    <img src={preview.logo_url} alt="Logo" className="h-12 mb-4" />
+                  )}
+                  <h1 className="text-2xl font-bold" style={{ color: preview.primary_color }}>
+                    {preview.company_name}
+                  </h1>
+                  {preview.address && <p className="text-sm text-gray-600 mt-2">{preview.address}</p>}
+                  {preview.phone && <p className="text-sm text-gray-600">{preview.phone}</p>}
+                  {preview.email && <p className="text-sm text-gray-600">{preview.email}</p>}
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-600 font-mono">FACTURE #2024-001</p>
+                  <p className="text-sm text-gray-500 mt-2">Date: 25 mars 2024</p>
+                </div>
+              </div>
+
+              {/* Invoice Content */}
+              <div className="grid grid-cols-2 gap-8 py-6">
+                <div>
+                  <p className="text-xs font-semibold text-gray-600 uppercase mb-2">De:</p>
+                  <p className="font-semibold">{preview.company_name}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-600 uppercase mb-2">À:</p>
+                  <p className="font-semibold">Client</p>
+                </div>
+              </div>
+
+              {/* Invoice Items */}
+              <table className="w-full text-sm">
+                <thead>
+                  <tr style={{ borderBottomColor: preview.primary_color }} className="border-b-2">
+                    <th className="text-left py-2 text-gray-700">Description</th>
+                    <th className="text-right py-2 text-gray-700">Quantité</th>
+                    <th className="text-right py-2 text-gray-700">Prix unitaire</th>
+                    <th className="text-right py-2 text-gray-700">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3">Service professionnel</td>
+                    <td className="text-right">1</td>
+                    <td className="text-right">$1,500.00</td>
+                    <td className="text-right">$1,500.00</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              {/* Totals */}
+              <div className="flex justify-end gap-32 py-6 border-t border-gray-200">
+                <div>
+                  <p className="text-sm text-gray-600">Sous-total</p>
+                  <p className="text-sm text-gray-600">TPS (5%)</p>
+                  <p className="text-sm text-gray-600">TVQ (9.975%)</p>
+                  <p className="text-lg font-bold mt-2" style={{ color: preview.primary_color }}>Total</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-gray-600">$1,500.00</p>
+                  <p className="text-sm text-gray-600">$75.00</p>
+                  <p className="text-sm text-gray-600">$149.63</p>
+                  <p className="text-lg font-bold mt-2" style={{ color: preview.primary_color }}>$1,724.63</p>
+                </div>
+              </div>
+
+              {/* Signature */}
+              {preview.signature_url && (
+                <div className="pt-6 border-t border-gray-200">
+                  <img src={preview.signature_url} alt="Signature" className="h-12" />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="border-t border-border px-6 py-4 flex justify-between items-center">
+        <div>
+          {toast && (
+            <div className={cn(
+              'text-sm px-3 py-1 rounded-sm',
+              toast.type === 'ok'
+                ? 'bg-green-500/20 text-green-300'
+                : 'bg-red-500/20 text-red-300'
+            )}>
+              {toast.msg}
+            </div>
+          )}
+        </div>
+        <button
+          onClick={handleSave}
+          disabled={isPending}
+          className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-sm text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+        >
+          {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Sauvegarder
+        </button>
+      </div>
     </div>
   )
 }
