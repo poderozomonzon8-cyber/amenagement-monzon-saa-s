@@ -1,7 +1,7 @@
-// Rebuild trigger - all files fixed
 import type { Metadata, Viewport } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { PWAInstaller } from '@/lib/pwa'
 import './globals.css'
 
 const inter = Inter({
@@ -31,6 +31,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   userScalable: false,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -41,6 +42,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable} ${playfair.variable}`}>
       <body className="font-sans antialiased bg-background text-foreground">
+        <PWAInstaller />
         {children}
         <Analytics />
       </body>

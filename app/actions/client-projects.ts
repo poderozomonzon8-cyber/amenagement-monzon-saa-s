@@ -14,14 +14,18 @@ export async function getAllClients() {
       profile_id,
       address,
       profiles (
+        id,
         full_name,
         email
       )
     `)
-    .order('profiles.full_name')
+    .order('id', { ascending: true })
   
   if (error) throw new Error(error.message)
-  return data || []
+  return (data || []).map(client => ({
+    ...client,
+    name: client.profiles?.full_name || 'Unknown'
+  }))
 }
 
 // Assign client to project
@@ -78,7 +82,9 @@ export async function getProjectWithClient(projectId: string) {
       clients (
         id,
         address,
+        profile_id,
         profiles (
+          id,
           full_name,
           email,
           phone

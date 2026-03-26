@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { Redirect } from 'next/navigation'
 
 export default function Home() {
   const [checking, setChecking] = useState(true)
@@ -16,7 +17,7 @@ export default function Home() {
       if (session) {
         router.replace('/dashboard')
       } else {
-        router.replace('/auth/login')
+        router.replace('/marketing')
       }
       setChecking(false)
     }
