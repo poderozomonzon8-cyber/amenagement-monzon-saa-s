@@ -21,6 +21,7 @@ export function ClientAssignment({ projectId, currentClientId, currentClientName
   useEffect(() => {
     getAllClients()
       .then(setClients)
+      .catch(() => setClients([]))
       .finally(() => setLoading(false))
   }, [])
 

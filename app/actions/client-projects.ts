@@ -2,47 +2,58 @@
 
 import { createClient } from '@/lib/supabase/server'
 
-// Get all clients for dropdown - NO ORDER CLAUSE, sort in JS
+// Safe getAllClients - returns empty array on any error
 export async function getAllClients() {
   try {
     const supabase = await createClient()
     
     const { data, error } = await supabase
       .from('clients')
-      .select(`
-        id,
-        profile_id,
-        address,
-        profiles (
-          id,
-          full_name,
-          email
-        )
-      `)
+      .select('id, profile_id, address, profiles(id, full_name, email)')
     
     if (error) {
       console.error('[v0] getAllClients error:', error.message)
       return []
     }
     
-    // Sort by name in JavaScript
-    const sorted = (data || []).sort((a, b) => {
+    // Sort in JS, not database
+    const sorted = (data || []).sort((a: any, b: any) => {
       const nameA = a.profiles?.full_name || ''
       const nameB = b.profiles?.full_name || ''
       return nameA.localeCompare(nameB)
     })
     
-    return sorted.map(client => ({
-      ...client,
-      name: client.profiles?.full_name || 'Unknown'
-    }))
+    return sorted.map((c: any) => ({ ...c, name: c.profiles?.full_name || 'Unknown' }))
   } catch (err) {
-    console.error('[v0] getAllClients catch:', err)
+    console.error('[v0] getAllClients caught:', err)
     return []
   }
 }
 
-// Assign client to project
+// Safe getProjectWithClient - returns null on any error
+export async function getProjectWithClient(projectId: string) {
+  try {
+    const supabase = await createClient()
+    
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*, clients(id, address, profile_id, profiles(id, full_name, email, phone))')
+      .eq('id', projectId)
+      .limit(1)
+    
+    if (error) {
+      console.error('[v0] getProjectWithClient error:', error.message)
+      return null
+    }
+    
+    return data?.[0] || null
+  } catch (err) {
+    console.error('[v0] getProjectWithClient caught:', err)
+    return null
+  }
+}
+
+// Safe assignClientToProject
 export async function assignClientToProject(projectId: string, clientId: string) {
   try {
     const supabase = await createClient()
@@ -59,54 +70,29 @@ export async function assignClientToProject(projectId: string, clientId: string)
     
     return { success: true }
   } catch (err) {
-    console.error('[v0] assignClientToProject catch:', err)
+    console.error('[v0] assignClientToProject caught:', err)
     throw err
   }
 }
 
-// Get project with client info - SIMPLIFIED QUERY
-export async function getProjectWithClient(projectId: string) {
+// Safe removeClientFromProject
+export async function removeClientFromProject(projectId: string) {
   try {
     const supabase = await createClient()
     
-    // First get the project
-    const { data: project, error: projectError } = await supabase
+    const { error } = await supabase
       .from('projects')
-      .select('*')
+      .update({ client_id: null })
       .eq('id', projectId)
-      .single()
     
-    if (projectError || !project) {
-      console.error('[v0] getProjectWithClient project error:', projectError?.message)
-      return null
+    if (error) {
+      console.error('[v0] removeClientFromProject error:', error.message)
+      throw new Error(error.message)
     }
     
-    // If project has a client_id, get client info separately
-    if (project.client_id) {
-      const { data: client, error: clientError } = await supabase
-        .from('clients')
-        .select(`
-          id,
-          address,
-          profile_id,
-          profiles (
-            id,
-            full_name,
-            email,
-            phone
-          )
-        `)
-        .eq('id', project.client_id)
-        .single()
-      
-      if (!clientError && client) {
-        return { ...project, clients: client }
-      }
-    }
-    
-    return project
+    return { success: true }
   } catch (err) {
-    console.error('[v0] getProjectWithClient catch:', err)
-    return null
+    console.error('[v0] removeClientFromProject caught:', err)
+    throw err
   }
 }

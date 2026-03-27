@@ -46,17 +46,19 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
 
   useEffect(() => {
     Promise.all([
-      getInvoices(),
-      getPayments(),
-      getClients(),
-      getTimeEntries(),
-      getProjectWithClient(project.id),
+      getInvoices().catch(() => []),
+      getPayments().catch(() => []),
+      getClients().catch(() => []),
+      getTimeEntries().catch(() => []),
+      getProjectWithClient(project.id).catch(() => null),
     ]).then(([inv, pay, cli, time, projData]) => {
-      setInvoices(inv.filter(i => i.project_id === project.id))
-      setPayments(pay)
-      setClients(cli)
-      setTimeEntries(time.filter(t => t.project_id === project.id))
+      setInvoices((inv || []).filter((i: any) => i.project_id === project.id))
+      setPayments(pay || [])
+      setClients(cli || [])
+      setTimeEntries((time || []).filter((t: any) => t.project_id === project.id))
       setProjectData(projData || project)
+    }).catch(() => {
+      setProjectData(project)
     }).finally(() => setLoading(false))
   }, [project.id, project])
 
