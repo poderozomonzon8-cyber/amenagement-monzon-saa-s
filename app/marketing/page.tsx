@@ -97,7 +97,7 @@ export default function MarketingHome() {
                   <span>Foundation crack repair</span>
                 </li>
               </ul>
-              <Link href="/marketing/contact">
+              <Link href="/marketing/services/construction">
                 <Button variant="ghost" className="text-yellow-600 hover:text-yellow-700 w-full justify-start pl-0">
                   Learn More <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
@@ -124,7 +124,7 @@ export default function MarketingHome() {
                   <span>Irrigation & Lawn</span>
                 </li>
               </ul>
-              <Link href="/marketing/contact">
+              <Link href="/marketing/services/hardscape">
                 <Button variant="ghost" className="text-yellow-600 hover:text-yellow-700 w-full justify-start pl-0">
                   Learn More <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
@@ -151,7 +151,7 @@ export default function MarketingHome() {
                   <span>Power washing</span>
                 </li>
               </ul>
-              <Link href="/marketing/contact">
+              <Link href="/marketing/services/maintenance">
                 <Button variant="ghost" className="text-yellow-600 hover:text-yellow-700 w-full justify-start pl-0">
                   Learn More <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
