@@ -64,6 +64,45 @@
   --surface-3: oklch(0.20 0 0);
 }
 
+/* Light mode theme variables */
+.light {
+  --background: oklch(0.98 0.001 100);   /* #FAFAF8 light off-white */
+  --foreground: oklch(0.15 0.01 85);     /* #242420 dark charcoal */
+  --card: oklch(1 0 0);                  /* #FFFFFF pure white */
+  --card-foreground: oklch(0.15 0.01 85);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.01 85);
+  --primary: oklch(0.55 0.12 85);        /* #A0845E darker gold */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.92 0 0);          /* #EBEBEB light gray */
+  --secondary-foreground: oklch(0.15 0.01 85);
+  --muted: oklch(0.88 0 0);              /* #E0E0E0 medium light gray */
+  --muted-foreground: oklch(0.45 0 0);   /* #787878 medium dark gray */
+  --accent: oklch(0.55 0.12 85);         /* darker gold for light mode */
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0 0);
+  --input: oklch(0.96 0 0);
+  --ring: oklch(0.55 0.12 85);
+  --chart-1: oklch(0.55 0.12 85);        /* darker gold */
+  --chart-2: oklch(0.70 0.08 85);        /* lighter gold */
+  --chart-3: oklch(0.90 0 0);            /* light gray */
+  --chart-4: oklch(0.72 0.14 75);        /* amber */
+  --chart-5: oklch(0.55 0.10 90);        /* muted gold */
+  --sidebar: oklch(0.96 0 0);
+  --sidebar-foreground: oklch(0.15 0.01 85);
+  --sidebar-primary: oklch(0.55 0.12 85);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.92 0 0);
+  --sidebar-accent-foreground: oklch(0.55 0.12 85);
+  --sidebar-border: oklch(0.92 0 0);
+  --sidebar-ring: oklch(0.55 0.12 85);
+  --surface: oklch(0.96 0 0);
+  --surface-2: oklch(0.92 0 0);
+  --surface-3: oklch(0.88 0 0);
+}
+
 @theme inline {
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
@@ -111,7 +150,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
   }
 }
 
