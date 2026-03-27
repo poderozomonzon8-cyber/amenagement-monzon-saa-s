@@ -10,7 +10,7 @@ export default async function MarketingLayout({
 }) {
   const settings = await getCompanySettings()
 
-  const fbUrl = settings.facebook_url || 'https://www.facebook.com/people/Am%C3%A9nagement-Monzon/100090795267611/'
+  const fbUrl = settings.facebook_url || 'https://www.facebook.com/AmenagementMonzon/'
   const igUrl = settings.instagram_url || 'https://www.instagram.com/amenagement_monzon'
   const ttUrl = settings.tiktok_url || 'https://www.tiktok.com/@amenagement_monzon'
 

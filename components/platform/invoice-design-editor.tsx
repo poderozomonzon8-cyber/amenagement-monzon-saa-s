@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect, useTransition } from 'react'
-import { getCompanySettings, updateCompanySettings, uploadLogo, uploadSignature } from '@/app/actions/invoice-templates'
+import { getCompanySettings, updateCompanySettings } from '@/app/actions/invoice-templates'
 import { CompanySettings } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { createClient } from '@/lib/supabase/client'
-import { Upload, X, Eye, Save, Loader2 } from 'lucide-react'
+import { X, Eye, Save, Loader2 } from 'lucide-react'
 
 interface PreviewSettings {
   logo_url?: string
@@ -56,84 +55,6 @@ export function InvoiceDesignEditor() {
   const showToast = (msg: string, type: 'ok' | 'err') => {
     setToast({ msg, type })
     setTimeout(() => setToast(null), 3000)
-  }
-
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    
-    if (!file.type.startsWith('image/')) {
-      showToast('Veuillez sélectionner une image.', 'err')
-      return
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      showToast('Le fichier dépasse 10 MB.', 'err')
-      return
-    }
-
-    startTransition(async () => {
-      try {
-        const supabase = createClient()
-        const fileName = `logo-${Date.now()}.${file.name.split('.').pop()}`
-        
-        const { error: uploadError } = await supabase.storage
-          .from('company_assets')
-          .upload(`logos/${fileName}`, file, { upsert: true })
-        
-        if (uploadError) throw new Error(uploadError.message)
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('company_assets')
-          .getPublicUrl(`logos/${fileName}`)
-        
-        setPreview(prev => prev ? { ...prev, logo_url: publicUrl } : null)
-        showToast('Logo chargé avec succès.', 'ok')
-        setLogoFile(null)
-      } catch (err) {
-        console.error('Logo upload error:', err)
-        showToast('Erreur lors du chargement du logo.', 'err')
-      }
-    })
-  }
-
-  const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    
-    if (!file.type.startsWith('image/')) {
-      showToast('Veuillez sélectionner une image.', 'err')
-      return
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      showToast('Le fichier dépasse 10 MB.', 'err')
-      return
-    }
-
-    startTransition(async () => {
-      try {
-        const supabase = createClient()
-        const fileName = `signature-${Date.now()}.${file.name.split('.').pop()}`
-        
-        const { error: uploadError } = await supabase.storage
-          .from('company_assets')
-          .upload(`signatures/${fileName}`, file, { upsert: true })
-        
-        if (uploadError) throw new Error(uploadError.message)
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('company_assets')
-          .getPublicUrl(`signatures/${fileName}`)
-        
-        setPreview(prev => prev ? { ...prev, signature_url: publicUrl } : null)
-        showToast('Signature chargée avec succès.', 'ok')
-        setSignatureFile(null)
-      } catch (err) {
-        console.error('Signature upload error:', err)
-        showToast('Erreur lors du chargement de la signature.', 'err')
-      }
-    })
   }
 
   const handleSave = () => {
@@ -250,7 +171,6 @@ export function InvoiceDesignEditor() {
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">Logo</label>
               <div className="space-y-3">
-                {/* URL input */}
                 <input
                   type="url"
                   value={preview.logo_url || ''}
@@ -258,33 +178,18 @@ export function InvoiceDesignEditor() {
                   placeholder="Coller l'URL de votre logo (ex: https://...)"
                   className="w-full bg-input border border-border rounded-sm px-3 py-2 text-foreground text-sm"
                 />
-                <p className="text-xs text-muted-foreground">ou charger depuis votre appareil:</p>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="border-2 border-dashed border-border rounded-sm p-4 cursor-pointer hover:border-primary transition-colors block text-center">
-                      <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-sm text-muted-foreground">Cliquez pour charger le logo</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleLogoUpload}
-                        disabled={isPending}
-                        className="hidden"
-                      />
-                    </label>
+                <p className="text-xs text-muted-foreground">Collez l&apos;URL publique de votre logo</p>
+                {preview.logo_url && (
+                  <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center relative">
+                    <img src={preview.logo_url} alt="Logo" className="max-h-20 max-w-full object-contain" />
+                    <button
+                      onClick={() => setPreview({ ...preview, logo_url: undefined })}
+                      className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
                   </div>
-                  {preview.logo_url && (
-                    <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center relative">
-                      <img src={preview.logo_url} alt="Logo" className="max-h-20 max-w-full object-contain" />
-                      <button
-                        onClick={() => setPreview({ ...preview, logo_url: undefined })}
-                        className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
             </div>
 
@@ -299,33 +204,18 @@ export function InvoiceDesignEditor() {
                   placeholder="Coller l'URL de votre signature (ex: https://...)"
                   className="w-full bg-input border border-border rounded-sm px-3 py-2 text-foreground text-sm"
                 />
-                <p className="text-xs text-muted-foreground">ou charger depuis votre appareil:</p>
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="border-2 border-dashed border-border rounded-sm p-4 cursor-pointer hover:border-primary transition-colors block text-center">
-                      <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-sm text-muted-foreground">Cliquez pour charger la signature</p>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleSignatureUpload}
-                        disabled={isPending}
-                        className="hidden"
-                      />
-                    </label>
+                <p className="text-xs text-muted-foreground">Collez l&apos;URL publique de votre signature</p>
+                {preview.signature_url && (
+                  <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center relative">
+                    <img src={preview.signature_url} alt="Signature" className="max-h-20 max-w-full object-contain" />
+                    <button
+                      onClick={() => setPreview({ ...preview, signature_url: undefined })}
+                      className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
                   </div>
-                  {preview.signature_url && (
-                    <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center relative">
-                      <img src={preview.signature_url} alt="Signature" className="max-h-20 max-w-full object-contain" />
-                      <button
-                        onClick={() => setPreview({ ...preview, signature_url: undefined })}
-                        className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           </div>

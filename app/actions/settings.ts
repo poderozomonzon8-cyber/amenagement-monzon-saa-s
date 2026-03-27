@@ -27,7 +27,7 @@ export async function getCompanySettings() {
       primary_color: '#C9A84C',
       secondary_color: '#0A0A0A',
       template_id: null,
-      facebook_url: 'https://www.facebook.com/people/Am%C3%A9nagement-Monzon/100090795267611/',
+      facebook_url: 'https://www.facebook.com/AmenagementMonzon/',
       instagram_url: 'https://www.instagram.com/amenagement_monzon',
       tiktok_url: 'https://www.tiktok.com/@amenagement_monzon',
     } as CompanySettings

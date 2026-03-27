@@ -24,7 +24,7 @@ const brandConfig = {
 
 export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const fbUrl  = socialLinks?.facebook  || 'https://www.facebook.com/people/Am%C3%A9nagement-Monzon/100090795267611/'
+  const fbUrl  = socialLinks?.facebook  || 'https://www.facebook.com/AmenagementMonzon/'
   const igUrl  = socialLinks?.instagram || 'https://www.instagram.com/amenagement_monzon'
   const ttUrl  = socialLinks?.tiktok    || 'https://www.tiktok.com/@amenagement_monzon'
   const [scrolled, setScrolled] = useState(false)
