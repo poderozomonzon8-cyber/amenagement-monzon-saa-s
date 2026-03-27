@@ -52,7 +52,7 @@ export function MarketingHomeClient({
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[92vh] flex flex-col justify-center bg-background px-4 sm:px-6 lg:px-16 overflow-hidden">
+      <section className="relative min-h-[92vh] flex flex-col justify-center bg-black px-4 sm:px-6 lg:px-16 overflow-hidden">
         {heroData.media_url && (
           <div className="absolute inset-0 z-0">
             <img 
@@ -60,7 +60,7 @@ export function MarketingHomeClient({
               alt="" 
               className="w-full h-full object-cover opacity-30"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-background/60 to-background/80" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/80" />
           </div>
         )}
         
@@ -68,11 +68,11 @@ export function MarketingHomeClient({
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl pointer-events-none z-10" style={{ backgroundColor: `${accentColor}05` }} />
 
         <div className="max-w-7xl mx-auto w-full relative z-20">
-          <p className="text-xs tracking-[0.25em] uppercase mb-4 sm:mb-8 font-sans text-primary" style={{ color: accentColor }}>
+          <p className="text-xs tracking-[0.25em] uppercase mb-4 sm:mb-8 font-sans text-yellow-600" style={{ color: accentColor }}>
             Aménagement Monzon — Montréal, Québec
           </p>
 
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl text-foreground leading-[1.05] max-w-5xl text-balance mb-4 sm:mb-8">
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl text-white leading-[1.05] max-w-5xl text-balance mb-4 sm:mb-8">
             {heroData.title.includes('.') ? (
               <>
                 {heroData.title.split('.')[0]}.<br />
@@ -86,14 +86,14 @@ export function MarketingHomeClient({
             )}
           </h1>
 
-          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed mb-6 sm:mb-12 text-pretty">
+          <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed mb-6 sm:mb-12 text-pretty">
             {heroData.subtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link
               href="/marketing/contact"
-              className="inline-flex items-center justify-center gap-2 hover:opacity-90 text-background font-semibold px-6 sm:px-8 py-3 sm:py-4 text-sm tracking-wide transition-colors"
+              className="inline-flex items-center justify-center gap-2 hover:opacity-90 text-black font-semibold px-6 sm:px-8 py-3 sm:py-4 text-sm tracking-wide transition-colors"
               style={{ backgroundColor: accentColor }}
             >
               {heroData.cta_text || t('buttons.get_quote')}
@@ -101,7 +101,7 @@ export function MarketingHomeClient({
             </Link>
             <Link
               href="/marketing/portfolio"
-              className="inline-flex items-center justify-center gap-2 border hover:border-foreground text-foreground px-6 sm:px-8 py-3 sm:py-4 text-sm tracking-wide transition-colors"
+              className="inline-flex items-center justify-center gap-2 border hover:border-white text-white px-6 sm:px-8 py-3 sm:py-4 text-sm tracking-wide transition-colors"
               style={{ borderColor: 'currentColor' }}
             >
               {t('hero.view_work')}
@@ -116,20 +116,20 @@ export function MarketingHomeClient({
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
-              <p className="font-serif text-2xl sm:text-3xl md:text-4xl text-background font-bold">{stat.value}</p>
-              <p className="text-background/70 text-xs sm:text-sm mt-1 tracking-wide">{stat.label}</p>
+              <p className="font-serif text-2xl sm:text-3xl md:text-4xl text-black font-bold">{stat.value}</p>
+              <p className="text-black/70 text-xs sm:text-sm mt-1 tracking-wide">{stat.label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Services */}
-      <section className="bg-background py-16 sm:py-20 md:py-28 px-4 sm:px-6 lg:px-16">
+      <section className="bg-black py-16 sm:py-20 md:py-28 px-4 sm:px-6 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 sm:gap-6 mb-10 sm:mb-16">
             <div>
-              <p className="text-xs tracking-[0.2em] uppercase mb-2 sm:mb-3 text-primary" style={{ color: accentColor }}>{t('services.section_label')}</p>
-              <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-foreground text-balance">{t('services.section_title_1')}<br />{t('services.section_title_2')}</h2>
+              <p className="text-xs tracking-[0.2em] uppercase mb-2 sm:mb-3 text-yellow-600" style={{ color: accentColor }}>{t('services.section_label')}</p>
+              <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white text-balance">{t('services.section_title_1')}<br />{t('services.section_title_2')}</h2>
             </div>
             <Link
               href="/marketing/contact"
@@ -140,12 +140,12 @@ export function MarketingHomeClient({
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-px bg-border">
+          <div className="grid md:grid-cols-3 gap-px bg-white/10">
             {servicesList.map((service) => (
               <Link
                 key={service.label}
                 href={service.href}
-                className="group bg-card hover:bg-card/80 p-6 sm:p-8 md:p-10 flex flex-col gap-4 sm:gap-6 transition-colors"
+                className="group bg-black hover:bg-black/80 p-6 sm:p-8 md:p-10 flex flex-col gap-4 sm:gap-6 transition-colors"
               >
                 <div
                   className="w-12 h-12 flex items-center justify-center border"

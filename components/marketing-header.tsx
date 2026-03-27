@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { LanguageSelector } from '@/components/language-selector'
 
 type BrandType = 'home' | 'construction' | 'hardscape' | 'maintenance'
@@ -124,11 +123,8 @@ export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) 
             {/* Language Selector */}
             <LanguageSelector />
             
-            {/* Theme Toggle */}
-            <ThemeToggle />
-            
             {/* Social Icons */}
-            <div className="flex items-center gap-3 border-r border-white/10 dark:border-white/10 border-gray-400/20 pr-4">
+            <div className="flex items-center gap-3 border-r border-white/10 pr-4">
               {fbUrl && (
                 <a href={fbUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">

@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { PWAInstaller } from '@/lib/pwa'
-import { ThemeProvider } from '@/components/theme-provider'
 import { LanguageProvider } from '@/lib/i18n-context'
 import './globals.css'
 
@@ -43,14 +42,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
-      <body className="font-sans antialiased bg-background text-foreground">
-        <ThemeProvider>
-          <LanguageProvider>
-            <PWAInstaller />
-            {children}
-            <Analytics />
-          </LanguageProvider>
-        </ThemeProvider>
+      <body className="font-sans antialiased bg-black text-white">
+        <LanguageProvider>
+          <PWAInstaller />
+          {children}
+          <Analytics />
+        </LanguageProvider>
       </body>
     </html>
   )
