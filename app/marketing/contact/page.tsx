@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { Phone, Mail, MapPin, ArrowRight, Check, AlertCircle } from 'lucide-react'
-import { submitLead, getQuoteForLead } from '@/app/actions/leads'
-import type { LeadData } from '@/app/actions/leads'
+import { createLead } from '@/app/actions/leads'
 
 const services = [
   { value: 'construction', label: 'Construction & Renovations' },
@@ -19,48 +18,62 @@ const budgets = [
 ]
 
 export default function ContactPage() {
-  const [step, setStep] = useState<'form' | 'quote'>('form')
-  const [formData, setFormData] = useState<LeadData>({
+  const [step, setStep] = useState<'form' | 'success'>('form')
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    service_type: 'construction',
-    budget_range: '',
-    project_description: '',
-    preferred_date: ''
+    serviceType: 'construction',
+    budget: '',
+    projectDescription: '',
+    preferredDate: ''
   })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [quoteData, setQuoteData] = useState<any>(null)
-  const [projectId, setProjectId] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    setError('')
+    setSubmitting(true)
+    setMessage(null)
 
     try {
-      const result = await submitLead(formData)
+      const result = await createLead({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service_type: formData.serviceType,
+        description: formData.projectDescription,
+        budget: formData.budget,
+        preferred_date: formData.preferredDate || null
+      })
 
-      if (result.success && result.projectId) {
-        setProjectId(result.projectId)
-        
-        // Fetch quote data
-        const quote = await getQuoteForLead(result.projectId)
-        setQuoteData(quote)
-        setStep('quote')
+      if (result.success) {
+        setStep('success')
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          serviceType: 'construction',
+          budget: '',
+          projectDescription: '',
+          preferredDate: ''
+        })
       } else {
-        setError(result.error || 'Failed to submit form')
+        setMessage({
+          type: 'error',
+          text: result.error || 'Failed to submit quote request. Please try again.'
+        })
       }
-    } catch (err) {
-      setError('An error occurred. Please try again.')
-      console.error(err)
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again.'
+      })
+      console.error('Submit error:', error)
     } finally {
-      setLoading(false)
+      setSubmitting(false)
     }
   }
-
-  const priceRange = quoteData?.estimatedRange
 
   return (
     <>
@@ -69,12 +82,12 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto">
           <p className="text-[#C9A84C] text-xs tracking-[0.25em] uppercase mb-4">Contact</p>
           <h1 className="font-serif text-5xl md:text-6xl text-white text-balance max-w-2xl">
-            {step === 'form' ? "Let's talk about your project." : 'Your estimated price range'}
+            {step === 'form' ? "Let's talk about your project." : 'Thank you for your inquiry'}
           </h1>
           <p className="text-gray-400 mt-5 text-base max-w-xl leading-relaxed">
             {step === 'form' 
               ? 'Request a free, no-obligation quote or simply ask us a question. Our team typically responds within one business day.'
-              : 'Based on your project details, here is your estimated budget range. Ready to move forward?'}
+              : 'Your quote request has been received. We will contact you soon.'}
           </p>
         </div>
       </section>
@@ -127,10 +140,14 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                   <p className="text-[#C9A84C] text-xs tracking-[0.2em] uppercase mb-2">Get Your Free Quote</p>
 
-                  {error && (
-                    <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/20 rounded p-4">
-                      <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
-                      <p className="text-red-400 text-sm">{error}</p>
+                  {message && (
+                    <div className={`flex items-start gap-3 rounded p-4 ${
+                      message.type === 'error' 
+                        ? 'bg-red-500/10 border border-red-500/20' 
+                        : 'bg-green-500/10 border border-green-500/20'
+                    }`}>
+                      <AlertCircle className={`w-5 h-5 mt-0.5 shrink-0 ${message.type === 'error' ? 'text-red-500' : 'text-green-500'}`} />
+                      <p className={`text-sm ${message.type === 'error' ? 'text-red-400' : 'text-green-400'}`}>{message.text}</p>
                     </div>
                   )}
 
@@ -172,8 +189,8 @@ export default function ContactPage() {
                       <label className="text-xs text-gray-400 uppercase tracking-wider">Service Type *</label>
                       <select
                         required
-                        value={formData.service_type}
-                        onChange={(e) => setFormData({ ...formData, service_type: e.target.value as any })}
+                        value={formData.serviceType}
+                        onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
                         className="bg-black border border-white/20 focus:border-[#C9A84C] outline-none px-4 py-3 text-white text-sm transition-colors"
                       >
                         {services.map((s) => (
@@ -187,8 +204,8 @@ export default function ContactPage() {
                     <label className="text-xs text-gray-400 uppercase tracking-wider">Budget Range *</label>
                     <select
                       required
-                      value={formData.budget_range}
-                      onChange={(e) => setFormData({ ...formData, budget_range: e.target.value })}
+                      value={formData.budget}
+                      onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                       className="bg-black border border-white/20 focus:border-[#C9A84C] outline-none px-4 py-3 text-white text-sm transition-colors"
                     >
                       <option value="">Select a budget...</option>
@@ -202,8 +219,8 @@ export default function ContactPage() {
                     <label className="text-xs text-gray-400 uppercase tracking-wider">Preferred Start Date</label>
                     <input
                       type="date"
-                      value={formData.preferred_date || ''}
-                      onChange={(e) => setFormData({ ...formData, preferred_date: e.target.value })}
+                      value={formData.preferredDate}
+                      onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
                       className="bg-black border border-white/20 focus:border-[#C9A84C] outline-none px-4 py-3 text-white text-sm transition-colors"
                     />
                   </div>
@@ -213,8 +230,8 @@ export default function ContactPage() {
                     <textarea
                       required
                       rows={5}
-                      value={formData.project_description}
-                      onChange={(e) => setFormData({ ...formData, project_description: e.target.value })}
+                      value={formData.projectDescription}
+                      onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
                       placeholder="Describe your project, timeline, and any specific requirements..."
                       className="bg-transparent border border-white/20 focus:border-[#C9A84C] outline-none px-4 py-3 text-white text-sm transition-colors resize-none"
                     />
@@ -222,10 +239,10 @@ export default function ContactPage() {
 
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={submitting}
                     className="inline-flex items-center gap-2 bg-[#C9A84C] hover:bg-[#b8963e] disabled:opacity-60 disabled:cursor-not-allowed text-black font-semibold px-8 py-4 text-sm tracking-wide transition-colors self-start"
                   >
-                    {loading ? 'Sending...' : 'Get Estimated Quote'}
+                    {submitting ? 'Sending...' : 'Submit Quote Request'}
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </form>
@@ -242,24 +259,7 @@ export default function ContactPage() {
                 </div>
 
                 <h2 className="font-serif text-3xl text-white mb-4">Thank You!</h2>
-                <p className="text-gray-400 mb-8">Your quote request has been received. Based on the information you provided, here's your estimated price range:</p>
-
-                {priceRange && (
-                  <div className="grid md:grid-cols-2 gap-8 mb-12 py-8 border-y border-white/10">
-                    <div>
-                      <p className="text-gray-400 text-sm mb-2">Estimated Range</p>
-                      <p className="text-4xl font-serif text-white">${priceRange.min.toLocaleString()} - ${priceRange.max.toLocaleString()}</p>
-                      <p className="text-sm text-gray-500 mt-2">*Final price depends on site assessment</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400 text-sm mb-2">Service Type</p>
-                      <p className="text-2xl font-serif text-[#C9A84C]">{quoteData.serviceType.charAt(0).toUpperCase() + quoteData.serviceType.slice(1)}</p>
-                      <p className="text-sm text-gray-400 mt-2">{quoteData.description.substring(0, 50)}...</p>
-                    </div>
-                  </div>
-                )}
-
-                <p className="text-gray-400 text-sm mb-8">Our team will contact you within 1 business day with a detailed quote and to answer any questions.</p>
+                <p className="text-gray-400 mb-8">Your quote request has been received. Our team will review your project details and contact you within one business day with a detailed estimate and next steps.</p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
@@ -269,10 +269,10 @@ export default function ContactPage() {
                         name: '',
                         email: '',
                         phone: '',
-                        service_type: 'construction',
-                        budget_range: '',
-                        project_description: '',
-                        preferred_date: ''
+                        serviceType: 'construction',
+                        budget: '',
+                        projectDescription: '',
+                        preferredDate: ''
                       })
                     }}
                     className="inline-flex items-center gap-2 border border-white/20 hover:border-white/50 text-white px-8 py-3 text-sm tracking-wide transition-colors"

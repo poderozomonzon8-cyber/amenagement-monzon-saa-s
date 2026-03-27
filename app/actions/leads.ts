@@ -1,140 +1,161 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { getOrCreateClient } from '@/app/actions/clients'
-import { createProject } from '@/app/actions/projects'
-import type { Profile } from '@/lib/types'
 
-export interface LeadData {
+export interface Lead {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  service_type: string
+  description: string
+  budget: string | null
+  preferred_date: string | null
+  status: 'new' | 'contacted' | 'converted' | 'closed'
+  created_at: string
+}
+
+export async function createLead(data: {
   name: string
   email: string
   phone: string
-  service_type: 'construction' | 'hardscape' | 'maintenance'
-  budget_range: string
-  project_description: string
-  preferred_date?: string
-}
-
-export async function submitLead(data: LeadData) {
+  service_type: string
+  description: string
+  budget: string
+  preferred_date: string | null
+}): Promise<{ success: boolean; leadId?: string; error?: string }> {
   try {
     const supabase = await createClient()
 
-    // 1. Get or create client
-    const client = await getOrCreateClient({
-      first_name: data.name.split(' ')[0],
-      last_name: data.name.split(' ').slice(1).join(' ') || '',
-      email: data.email,
-      phone: data.phone
-    })
-
-    if (!client?.id) {
-      throw new Error('Failed to create/get client')
-    }
-
-    // 2. Create project request from lead
-    const { data: project, error: projectError } = await supabase
-      .from('projects')
+    const { data: lead, error } = await supabase
+      .from('leads')
       .insert({
-        title: `${data.service_type.charAt(0).toUpperCase() + data.service_type.slice(1)} - ${data.name}`,
-        description: data.project_description,
-        client_id: client.id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
         service_type: data.service_type,
-        budget: data.budget_range,
-        status: 'quote_pending',
-        start_date: data.preferred_date || null,
+        description: data.description,
+        budget: data.budget || null,
+        preferred_date: data.preferred_date || null,
+        status: 'new',
         created_at: new Date().toISOString()
       })
       .select('id')
       .single()
 
-    if (projectError) {
-      console.error('Project creation error:', projectError)
-      throw projectError
-    }
+    if (error) throw error
 
-    // 3. Create notification for admin (optional, non-blocking)
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user?.id) {
-        await supabase
-          .from('notifications')
-          .insert({
-            user_id: user.id,
-            type: 'new_lead',
-            title: `New Lead: ${data.name}`,
-            message: `${data.name} (${data.email}) submitted a quote request for ${data.service_type}. Budget: ${data.budget_range}`,
-            read: false
-          })
-      }
-    } catch (notifError) {
-      console.error('Notification error (non-critical):', notifError)
-    }
-
-    return {
-      success: true,
-      projectId: project.id,
-      clientId: client.id,
-      message: 'Lead received successfully'
-    }
+    return { success: true, leadId: lead.id }
   } catch (error) {
-    console.error('Error submitting lead:', error)
+    console.error('Error creating lead:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to submit lead'
+      error: error instanceof Error ? error.message : 'Failed to create lead'
     }
   }
 }
 
-export async function getLeads() {
+export async function getLeads(): Promise<Lead[]> {
   try {
     const supabase = await createClient()
 
     const { data, error } = await supabase
-      .from('projects')
-      .select('*, clients(*)')
-      .eq('status', 'quote_pending')
+      .from('leads')
+      .select('*')
       .order('created_at', { ascending: false })
 
     if (error) throw error
 
-    return data
+    return (data || []) as Lead[]
   } catch (error) {
     console.error('Error fetching leads:', error)
     return []
   }
 }
 
-export async function getQuoteForLead(projectId: string) {
+export async function updateLeadStatus(
+  leadId: string,
+  status: 'new' | 'contacted' | 'converted' | 'closed'
+): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createClient()
 
-    const { data: project, error: projectError } = await supabase
-      .from('projects')
+    const { error } = await supabase
+      .from('leads')
+      .update({ status })
+      .eq('id', leadId)
+
+    if (error) throw error
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error updating lead status:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update lead'
+    }
+  }
+}
+
+export async function convertLeadToClient(leadId: string): Promise<{ success: boolean; clientId?: string; error?: string }> {
+  try {
+    const supabase = await createClient()
+
+    // Get the lead
+    const { data: lead, error: leadError } = await supabase
+      .from('leads')
       .select('*')
-      .eq('id', projectId)
+      .eq('id', leadId)
       .single()
 
-    if (projectError) throw projectError
+    if (leadError || !lead) throw new Error('Lead not found')
 
-    // Calculate estimated price range based on service type and budget
-    const estimates = {
-      construction: { min: 5000, max: 50000 },
-      hardscape: { min: 3000, max: 30000 },
-      maintenance: { min: 500, max: 5000 }
-    }
+    // Create client from lead
+    const { data: client, error: clientError } = await supabase
+      .from('clients')
+      .insert({
+        name: lead.name,
+        phone: lead.phone,
+        address: null
+      })
+      .select('id')
+      .single()
 
-    const serviceType = project.service_type as keyof typeof estimates
-    const range = estimates[serviceType] || { min: 1000, max: 10000 }
+    if (clientError) throw clientError
 
-    return {
-      projectId,
-      serviceType: project.service_type,
-      estimatedRange: range,
-      budget_range: project.budget,
-      description: project.description
-    }
+    // Update lead status
+    await supabase
+      .from('leads')
+      .update({ status: 'converted' })
+      .eq('id', leadId)
+
+    return { success: true, clientId: client.id }
   } catch (error) {
-    console.error('Error getting quote:', error)
-    return null
+    console.error('Error converting lead to client:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to convert lead'
+    }
+  }
+}
+
+export async function deleteLead(leadId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+      .from('leads')
+      .delete()
+      .eq('id', leadId)
+
+    if (error) throw error
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error deleting lead:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to delete lead'
+    }
   }
 }
