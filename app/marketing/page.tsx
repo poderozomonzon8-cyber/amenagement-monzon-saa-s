@@ -1,19 +1,19 @@
 'use client'
 
 import Link from 'next/link'
-import { DynamicHero } from '@/components/dynamic-hero'
+import { CMSDynamicHero } from '@/components/cms-dynamic-hero'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, ArrowRight, Hammer, Leaf, Wrench, Star } from 'lucide-react'
 
 export default function MarketingHome() {
   return (
     <>
-      {/* Dynamic Hero Section */}
-      <DynamicHero
-        title="Premium Outdoor & Construction Solutions"
-        subtitle="Hardscape, Landscape, Renovation & Maintenance — Done Right. From design to completion, trust Aménagement Monzon for quality craftsmanship."
-        cta={{ text: 'Get a Quote', href: '/marketing/contact' }}
-        accentColor="#C9A84C"
+      {/* CMS-Powered Hero Section */}
+      <CMSDynamicHero
+        pageKey="home"
+        fallbackTitle="Premium Outdoor & Construction Solutions"
+        fallbackSubtitle="Hardscape, Landscape, Renovation & Maintenance — Done Right. From design to completion, trust Aménagement Monzon for quality craftsmanship."
+        fallbackAccentColor="#C9A84C"
       />
 
       {/* Services: 3 Main Divisions */}
