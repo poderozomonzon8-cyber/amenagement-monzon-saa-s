@@ -37,12 +37,12 @@ const companyValues = [
 ]
 
 const milestones = [
-  { year: '2003', event: 'Company Founded', desc: 'Started as a small landscaping service in Montreal' },
-  { year: '2008', event: 'Expanded to Construction', desc: 'Added residential construction and renovation services' },
-  { year: '2012', event: 'Hardscape Division', desc: 'Launched specialized hardscape and outdoor living services' },
-  { year: '2018', event: '500+ Projects', desc: 'Reached milestone of 500 completed projects' },
-  { year: '2023', event: 'Digital Transformation', desc: 'Launched client portal and modern project management' },
-  { year: '2024', event: 'Regional Expansion', desc: 'Expanded services across Greater Montreal region' }
+  { year: '2014', event: 'Founded', desc: 'Started as a commercial cleaning service with a commitment to excellence and attention to detail' },
+  { year: '2016', event: 'Landscape Division', desc: 'Scaled successfully into landscape design and maintenance services' },
+  { year: '2018', event: 'Hardscape Services', desc: 'Expanded to include hardscape, patios, and outdoor living installations' },
+  { year: '2020', event: 'Construction Division', desc: 'Added full-service construction and renovation to our service offerings' },
+  { year: '2022', event: 'One-Stop Solution', desc: 'Achieved mission to become the complete property management partner' },
+  { year: '2024', event: 'Regional Leader', desc: 'Now the trusted partner for comprehensive property care across Greater Montreal' }
 ]
 
 const teamMembers = [
@@ -50,7 +50,7 @@ const teamMembers = [
     name: 'Carlos Monzon',
     role: 'Founder & CEO',
     image: '/team/carlos-monzon.jpg',
-    bio: 'With over 20 years of experience in construction and landscaping, Carlos founded Aménagement Monzon with a vision to bring premium craftsmanship to every home and property in Montreal.'
+    bio: 'Carlos started Aménagement Monzon in 2014 with a commercial cleaning service. Through dedication and quality work, he scaled the business into landscape and hardscape services, then added construction. Today, his vision is to be the one-stop partner owners call to manage every aspect of their property—from maintenance to complete renovations.'
   },
   {
     name: 'Marie Tremblay',
