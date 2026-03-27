@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { InvoiceForm } from './invoice-form'
 import { InvoicePreview } from './invoice-preview'
+import { QuoteBuilder } from './quote-builder'
 
 const statusIcon: Record<string, typeof CheckCircle> = {
   paid:      CheckCircle,
@@ -135,7 +136,7 @@ interface BillingSystemProps {
 }
 
 export function BillingSystem({ onOpenDesignEditor }: BillingSystemProps = {}) {
-  const [tab, setTab]                 = useState<'invoices' | 'payments'>('invoices')
+  const [tab, setTab]                 = useState<'invoices' | 'payments' | 'quotes'>('invoices')
   const [invoices, setInvoices]       = useState<Invoice[]>([])
   const [payments, setPayments]       = useState<Payment[]>([])
   const [loading, setLoading]         = useState(true)
@@ -258,12 +259,12 @@ export function BillingSystem({ onOpenDesignEditor }: BillingSystemProps = {}) {
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-border">
-        {(['invoices', 'payments'] as const).map((t) => (
+        {(['invoices', 'quotes', 'payments'] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={cn('px-4 py-2.5 text-sm border-b-2 -mb-px transition-colors',
               tab === t ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
             )}>
-            {t === 'invoices' ? 'Factures' : 'Paiements'}
+            {t === 'invoices' ? 'Factures' : t === 'quotes' ? 'Devis & Soumissions' : 'Paiements'}
           </button>
         ))}
       </div>
@@ -389,6 +390,10 @@ export function BillingSystem({ onOpenDesignEditor }: BillingSystemProps = {}) {
             </table>
           </div>
         </div>
+      )}
+
+      {tab === 'quotes' && (
+        <QuoteBuilder />
       )}
     </div>
   )

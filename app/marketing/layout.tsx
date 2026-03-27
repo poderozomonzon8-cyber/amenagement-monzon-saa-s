@@ -23,7 +23,7 @@ export default function MarketingLayout({
                 width={160}
                 height={54}
                 style={{ height: '56px', width: 'auto' }}
-                className="mb-4"
+                className="mb-4 h-auto"
               />
               <p className="text-gray-400 text-sm">Premium construction, hardscape, and landscaping solutions with 20+ years of expertise.</p>
             </div>

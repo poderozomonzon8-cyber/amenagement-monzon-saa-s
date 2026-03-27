@@ -82,6 +82,7 @@ export function Sidebar({ activeSection, setActiveSection, userRole = "admin" }:
             width={120}
             height={40}
             className="h-10 w-auto"
+            style={{ height: 'auto' }}
           />
         ) : (
           <div className="w-8 h-8 bg-primary shrink-0 flex items-center justify-center">

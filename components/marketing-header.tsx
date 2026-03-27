@@ -56,6 +56,7 @@ export function MarketingHeader() {
               width={180}
               height={60}
               style={{ height: '48px', width: 'auto' }}
+              className="w-auto h-auto"
               priority
             />
           </Link>
