@@ -99,7 +99,7 @@ export default function AboutPage() {
               <div className="aspect-[4/5] bg-zinc-900 rounded-sm overflow-hidden relative">
                 <Image
                   src="/team/founder.jpg"
-                  alt="Carlos Monzon - Founder"
+                  alt="Silvio L. Monzon - Founder"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -114,23 +114,23 @@ export default function AboutPage() {
                 {t('about.founder.label') || 'Meet the Founder'}
               </p>
               <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-white mb-6">
-                Carlos Monzon
+                Silvio L. Monzon
               </h2>
               <p className="text-gray-400 leading-relaxed mb-6">
-                {t('about.founder.bio_1') || 'What started as a passion for creating beautiful outdoor spaces has grown into one of Montreal\'s most trusted construction and landscaping companies. Carlos Monzon founded Aménagement Monzon in 2003 with a simple mission: deliver exceptional quality with honest, transparent service.'}
+                {t('about.founder.bio_1') || 'With Mexican roots and a humble hardworking background, Silvio L. Monzon founded Aménagement Monzon in 2014 with big dreams and unwavering determination. Starting with a commercial cleaning service, he built the company through grit and dedication, expanding into landscape, hardscape, and construction services. Today, his vision drives the company: to be the complete property partner owners trust for every step of their property journey.'}
               </p>
               <p className="text-gray-400 leading-relaxed mb-6">
-                {t('about.founder.bio_2') || '"Every project is personal to me. When I see a family enjoying their new patio or a business owner welcoming customers to their renovated space, that\'s what drives us forward. We don\'t just build structures—we help create memories."'}
+                {t('about.founder.bio_2') || '"I came from humble beginnings, and that shaped who I am. Every client deserves the same respect, quality, and attention I would give to my own family\'s property. My dream is to build something that lasts—for our team, our clients, and our community."'}
               </p>
-              <p className="text-gray-500 italic">— Carlos Monzon, Founder & CEO</p>
+              <p className="text-gray-500 italic">— Silvio L. Monzon, Founder & CEO</p>
               
               <div className="mt-10 grid grid-cols-3 gap-6 border-t border-white/10 pt-10">
                 <div>
-                  <p className="font-serif text-3xl text-yellow-600">20+</p>
+                  <p className="font-serif text-3xl text-yellow-600">10+</p>
                   <p className="text-gray-500 text-sm mt-1">Years Experience</p>
                 </div>
                 <div>
-                  <p className="font-serif text-3xl text-yellow-600">500+</p>
+                  <p className="font-serif text-3xl text-yellow-600">300+</p>
                   <p className="text-gray-500 text-sm mt-1">Projects Completed</p>
                 </div>
                 <div>

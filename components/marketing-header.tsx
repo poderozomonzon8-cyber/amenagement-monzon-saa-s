@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ChevronDown } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { LanguageSelector } from '@/components/language-selector'
@@ -25,6 +25,8 @@ const brandConfig = {
 
 export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false)
+  const moreMenuRef = useRef<HTMLDivElement>(null)
   const fbUrl  = socialLinks?.facebook  || 'https://www.facebook.com/AmenagementMonzon/'
   const igUrl  = socialLinks?.instagram || 'https://www.instagram.com/amenagement_monzon'
   const ttUrl  = socialLinks?.tiktok    || 'https://www.tiktok.com/@amenagements_monzon'
@@ -48,6 +50,16 @@ export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) 
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
+        setMoreMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   return (
@@ -108,22 +120,41 @@ export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) 
             >
               Maintenance
             </Link>
-            <Link
-              href="/marketing/portfolio"
-              className={`text-sm font-medium transition-colors duration-300 ${
-                pathname === '/marketing/portfolio' ? 'text-white' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Portfolio
-            </Link>
-            <Link
-              href="/marketing/about"
-              className={`text-sm font-medium transition-colors duration-300 ${
-                pathname === '/marketing/about' ? 'text-white' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              About
-            </Link>
+            {/* More Dropdown */}
+            <div ref={moreMenuRef} className="relative">
+              <button
+                onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                className={`flex items-center gap-1 text-sm font-medium transition-colors duration-300 ${
+                  pathname === '/marketing/portfolio' || pathname === '/marketing/about' ? 'text-white' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                More
+                <ChevronDown className={`w-4 h-4 transition-transform ${moreMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {moreMenuOpen && (
+                <div className="absolute top-full left-0 mt-2 w-40 bg-black border border-white/10 py-2 z-50">
+                  <Link
+                    href="/marketing/portfolio"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className={`block px-4 py-2 text-sm transition-colors ${
+                      pathname === '/marketing/portfolio' ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    Portfolio
+                  </Link>
+                  <Link
+                    href="/marketing/about"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className={`block px-4 py-2 text-sm transition-colors ${
+                      pathname === '/marketing/about' ? 'text-white bg-white/5' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    About
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* CTA Buttons */}
