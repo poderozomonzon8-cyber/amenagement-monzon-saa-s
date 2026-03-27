@@ -109,6 +109,50 @@
   "footer": {
     "back_to_website": "Back to Website"
   },
+  "about": {
+    "hero": {
+      "label": "Our Story",
+      "title": "Built on Trust, Driven by Excellence",
+      "subtitle": "For over two decades, Aménagement Monzon has been transforming properties across Montreal with premium construction, hardscape, and maintenance services."
+    },
+    "founder": {
+      "label": "Meet the Founder",
+      "bio_1": "What started as a passion for creating beautiful outdoor spaces has grown into one of Montreal's most trusted construction and landscaping companies. Carlos Monzon founded Aménagement Monzon in 2003 with a simple mission: deliver exceptional quality with honest, transparent service.",
+      "bio_2": "\"Every project is personal to me. When I see a family enjoying their new patio or a business owner welcoming customers to their renovated space, that's what drives us forward. We don't just build structures—we help create memories.\""
+    },
+    "values": {
+      "label": "What We Stand For",
+      "title": "Our Core Values",
+      "quality": {
+        "title": "Quality First",
+        "desc": "We never compromise on materials or craftsmanship. Every project receives our full attention to detail."
+      },
+      "integrity": {
+        "title": "Integrity",
+        "desc": "Honest pricing, transparent communication, and keeping our promises are at the core of how we work."
+      },
+      "family": {
+        "title": "Family Values",
+        "desc": "As a family business, we treat every client and team member like extended family."
+      },
+      "sustainability": {
+        "title": "Sustainability",
+        "desc": "We prioritize eco-friendly practices and materials to protect our environment for future generations."
+      }
+    },
+    "history": {
+      "label": "Our Journey",
+      "title": "Company History"
+    },
+    "services": {
+      "label": "What We Do",
+      "title": "Three Divisions, One Standard of Excellence"
+    },
+    "cta": {
+      "title": "Ready to Start Your Project?",
+      "subtitle": "Let's discuss how we can bring your vision to life with the quality and care that defines everything we do."
+    }
+  },
   "dashboard": {
     "administration": "Administration",
     "settings": "Settings",

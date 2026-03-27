@@ -109,6 +109,50 @@
   "footer": {
     "back_to_website": "Volver al Sitio"
   },
+  "about": {
+    "hero": {
+      "label": "Nuestra Historia",
+      "title": "Construido con Confianza, Impulsado por la Excelencia",
+      "subtitle": "Durante más de dos décadas, Aménagement Monzon ha transformado propiedades en todo Montreal con servicios premium de construcción, paisajismo y mantenimiento."
+    },
+    "founder": {
+      "label": "Conoce al Fundador",
+      "bio_1": "Lo que comenzó como una pasión por crear hermosos espacios al aire libre se ha convertido en una de las empresas de construcción y paisajismo más confiables de Montreal. Carlos Monzon fundó Aménagement Monzon en 2003 con una misión simple: ofrecer calidad excepcional con un servicio honesto y transparente.",
+      "bio_2": "«Cada proyecto es personal para mí. Cuando veo a una familia disfrutando de su nuevo patio o a un propietario de negocio dando la bienvenida a clientes en un espacio renovado, eso es lo que nos impulsa. No solo construimos estructuras — ayudamos a crear recuerdos.»"
+    },
+    "values": {
+      "label": "Nuestros Principios",
+      "title": "Nuestros Valores Fundamentales",
+      "quality": {
+        "title": "Calidad Primero",
+        "desc": "Nunca comprometemos los materiales o la artesanía. Cada proyecto recibe toda nuestra atención al detalle."
+      },
+      "integrity": {
+        "title": "Integridad",
+        "desc": "Precios honestos, comunicación transparente y cumplir nuestras promesas están en el centro de cómo trabajamos."
+      },
+      "family": {
+        "title": "Valores Familiares",
+        "desc": "Como empresa familiar, tratamos a cada cliente y miembro del equipo como familia extendida."
+      },
+      "sustainability": {
+        "title": "Sostenibilidad",
+        "desc": "Priorizamos prácticas y materiales ecológicos para proteger nuestro medio ambiente para las futuras generaciones."
+      }
+    },
+    "history": {
+      "label": "Nuestro Recorrido",
+      "title": "Historia de la Empresa"
+    },
+    "services": {
+      "label": "Lo Que Hacemos",
+      "title": "Tres Divisiones, Un Solo Estándar de Excelencia"
+    },
+    "cta": {
+      "title": "¿Listo para Iniciar Tu Proyecto?",
+      "subtitle": "Hablemos de cómo podemos dar vida a tu visión con la calidad y el cuidado que define todo lo que hacemos."
+    }
+  },
   "dashboard": {
     "administration": "Administración",
     "settings": "Configuración",

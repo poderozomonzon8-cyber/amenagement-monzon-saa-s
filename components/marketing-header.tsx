@@ -116,15 +116,20 @@ export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) 
             >
               Portfolio
             </Link>
+            <Link
+              href="/marketing/about"
+              className={`text-sm font-medium transition-colors duration-300 ${
+                pathname === '/marketing/about' ? 'text-white' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              About
+            </Link>
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex gap-4 items-center">
-            {/* Language Selector */}
-            <LanguageSelector />
-            
+          <div className="hidden md:flex items-center gap-6">
             {/* Social Icons */}
-            <div className="flex items-center gap-3 border-r border-white/10 pr-4">
+            <div className="flex items-center gap-3">
               {fbUrl && (
                 <a href={fbUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
@@ -147,6 +152,16 @@ export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) 
                 </a>
               )}
             </div>
+            
+            {/* Divider */}
+            <div className="h-5 w-px bg-white/20" />
+            
+            {/* Language Selector */}
+            <LanguageSelector />
+            
+            {/* Divider */}
+            <div className="h-5 w-px bg-white/20" />
+            
             <Link href="/auth/login">
               <Button
                 variant="ghost"
@@ -186,6 +201,9 @@ export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) 
             </Link>
             <Link href="/marketing/portfolio" className="block text-sm font-medium hover:text-white transition-colors">
               Portfolio
+            </Link>
+            <Link href="/marketing/about" className="block text-sm font-medium hover:text-white transition-colors">
+              About
             </Link>
             <div className="pt-4 space-y-3">
               <Link href="/auth/login" className="block">

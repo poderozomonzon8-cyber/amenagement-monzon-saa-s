@@ -109,6 +109,50 @@
   "footer": {
     "back_to_website": "Retour au Site"
   },
+  "about": {
+    "hero": {
+      "label": "Notre Histoire",
+      "title": "Bâti sur la Confiance, Guidé par l'Excellence",
+      "subtitle": "Depuis plus de deux décennies, Aménagement Monzon transforme des propriétés à travers Montréal avec des services premium de construction, d'aménagement et d'entretien."
+    },
+    "founder": {
+      "label": "Rencontrez le Fondateur",
+      "bio_1": "Ce qui a commencé comme une passion pour créer de beaux espaces extérieurs est devenu l'une des entreprises de construction et d'aménagement paysager les plus fiables de Montréal. Carlos Monzon a fondé Aménagement Monzon en 2003 avec une mission simple: offrir une qualité exceptionnelle avec un service honnête et transparent.",
+      "bio_2": "«Chaque projet est personnel pour moi. Quand je vois une famille profiter de son nouveau patio ou un propriétaire d'entreprise accueillir ses clients dans un espace rénové, c'est ce qui nous motive. Nous ne construisons pas seulement des structures — nous aidons à créer des souvenirs.»"
+    },
+    "values": {
+      "label": "Nos Principes",
+      "title": "Nos Valeurs Fondamentales",
+      "quality": {
+        "title": "Qualité Avant Tout",
+        "desc": "Nous ne faisons jamais de compromis sur les matériaux ou l'artisanat. Chaque projet reçoit toute notre attention aux détails."
+      },
+      "integrity": {
+        "title": "Intégrité",
+        "desc": "Des prix honnêtes, une communication transparente et le respect de nos promesses sont au cœur de notre façon de travailler."
+      },
+      "family": {
+        "title": "Valeurs Familiales",
+        "desc": "En tant qu'entreprise familiale, nous traitons chaque client et membre de l'équipe comme une famille élargie."
+      },
+      "sustainability": {
+        "title": "Durabilité",
+        "desc": "Nous privilégions les pratiques et matériaux écologiques pour protéger notre environnement pour les générations futures."
+      }
+    },
+    "history": {
+      "label": "Notre Parcours",
+      "title": "Histoire de l'Entreprise"
+    },
+    "services": {
+      "label": "Ce Que Nous Faisons",
+      "title": "Trois Divisions, Un Seul Standard d'Excellence"
+    },
+    "cta": {
+      "title": "Prêt à Démarrer Votre Projet?",
+      "subtitle": "Discutons de comment nous pouvons donner vie à votre vision avec la qualité et le soin qui définissent tout ce que nous faisons."
+    }
+  },
   "dashboard": {
     "administration": "Administration",
     "settings": "Paramètres",

@@ -1,9 +1,7 @@
-import Link from 'next/link'
-import { getHeroByPage, getFeaturedReviews, getAboutContent, type WebsiteHero, type Review, type WebsiteAbout } from '@/app/actions/cms'
+import { getHeroByPage, getFeaturedReviews, getAboutContent } from '@/app/actions/cms'
 import { MarketingHomeClient } from '@/components/marketing-home-client'
 
 export default async function MarketingHome() {
-  // Fetch CMS data
   const [hero, reviews, about] = await Promise.all([
     getHeroByPage('home'),
     getFeaturedReviews(),
@@ -48,14 +46,23 @@ export default async function MarketingHome() {
 
   const heroData = hero || defaultHero
   const testimonials = reviews.length > 0 ? reviews : defaultTestimonials
-  const stats = about ? [
-    { value: `${about.years_experience}+`, label: 'Years of Experience' },
-    { value: `${about.projects_completed}+`, label: 'Projects Delivered' },
-    { value: '98%', label: 'Client Satisfaction' },
-    { value: '$50M+', label: 'Value Constructed' },
-  ] : defaultStats
+  const stats = about
+    ? [
+        { value: `${about.years_experience}+`, label: 'Years of Experience' },
+        { value: `${about.projects_completed}+`, label: 'Projects Delivered' },
+        { value: '98%', label: 'Client Satisfaction' },
+        { value: '$50M+', label: 'Value Constructed' },
+      ]
+    : defaultStats
 
   const accentColor = heroData.accent_color || '#C9A84C'
 
-  return <MarketingHomeClient heroData={heroData} stats={stats} testimonials={testimonials} accentColor={accentColor} />
+  return (
+    <MarketingHomeClient
+      heroData={heroData}
+      stats={stats}
+      testimonials={testimonials}
+      accentColor={accentColor}
+    />
+  )
 }
