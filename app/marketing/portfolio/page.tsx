@@ -1,173 +1,112 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
-const PORTFOLIO_PROJECTS = [
-  {
-    id: 1,
-    title: 'Rénovation Villa Moderne',
-    category: 'Rénovation',
-    image: 'bg-gradient-to-br from-blue-500 to-blue-600',
-    description: 'Rénovation complète d\'une villa avec cuisine moderne et salle de bain spa.',
-    budget: '$125,000',
-    timeline: '6 mois',
-  },
-  {
-    id: 2,
-    title: 'Extension Résidentielle',
-    category: 'Construction',
-    image: 'bg-gradient-to-br from-green-500 to-green-600',
-    description: 'Ajout de 2 chambres et d\'une salle de famille spacieuse.',
-    budget: '$85,000',
-    timeline: '4 mois',
-  },
-  {
-    id: 3,
-    title: 'Aménagement Commercial',
-    category: 'Commercial',
-    image: 'bg-gradient-to-br from-purple-500 to-purple-600',
-    description: 'Design intérieur et construction d\'un espace commercial moderne.',
-    budget: '$250,000',
-    timeline: '8 mois',
-  },
-  {
-    id: 4,
-    title: 'Rénovation Cuisine',
-    category: 'Rénovation',
-    image: 'bg-gradient-to-br from-orange-500 to-orange-600',
-    description: 'Cuisine entièrement rénovée avec appareils haut de gamme.',
-    budget: '$45,000',
-    timeline: '2 mois',
-  },
-  {
-    id: 5,
-    title: 'Terrasse Extérieure',
-    category: 'Extérieur',
-    image: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
-    description: 'Terrasse en bois avec cuisine extérieure et foyer.',
-    budget: '$35,000',
-    timeline: '3 mois',
-  },
-  {
-    id: 6,
-    title: 'Salle de Bain Luxe',
-    category: 'Rénovation',
-    image: 'bg-gradient-to-br from-pink-500 to-pink-600',
-    description: 'Salle de bain spa avec baignoire îlot et douche à l\'italienne.',
-    budget: '$28,000',
-    timeline: '1.5 mois',
-  },
+const projects = [
+  { id: 1, title: 'Full Kitchen Renovation', category: 'Construction', location: 'Laval, QC', year: '2024', description: 'Complete gut-and-rebuild with custom cabinetry, quartz countertops, and integrated high-end appliances.' },
+  { id: 2, title: 'Paver Driveway & Patio', category: 'Hardscape', location: 'Montreal, QC', year: '2024', description: 'Full driveway and rear patio replacement using Techno-Bloc pavers with decorative border detailing.' },
+  { id: 3, title: 'Residential Snow Contract', category: 'Maintenance', location: 'Longueuil, QC', year: '2023–2024', description: 'Full-season snow removal and ice management for a large residential property.' },
+  { id: 4, title: 'Foundation Crack Repair', category: 'Construction', location: 'Laval, QC', year: '2024', description: 'Structural crack repair and full interior waterproofing system for a 1970s home.' },
+  { id: 5, title: 'Backyard Landscape Design', category: 'Hardscape', location: 'Brossard, QC', year: '2024', description: 'Retaining walls, sod, perennial plantings, and full irrigation system for an outdoor living space.' },
+  { id: 6, title: 'Basement Suite Addition', category: 'Construction', location: 'Montreal, QC', year: '2023', description: 'Full basement development with legal bedroom, bathroom, kitchenette, and egress window.' },
+  { id: 7, title: 'Commercial Hardscape', category: 'Hardscape', location: 'Laval, QC', year: '2023', description: 'Professional hardscape and landscape design for a multi-unit commercial development.' },
+  { id: 8, title: 'Annual Maintenance Plan', category: 'Maintenance', location: 'Repentigny, QC', year: 'Ongoing', description: 'Year-round grass cutting, fall cleanup, and snow removal for a large residential estate.' },
+  { id: 9, title: 'Power Washing & Spring Cleanup', category: 'Maintenance', location: 'Laval, QC', year: '2024', description: 'Full-property spring cleanup including power washing, debris removal, and bed preparation.' },
 ]
+
+const categories = ['All', 'Construction', 'Hardscape', 'Maintenance']
+
+const categoryColors: Record<string, string> = {
+  Construction: '#C9A84C',
+  Hardscape: '#2E7D32',
+  Maintenance: '#1E88E5',
+}
 
 export default function PortfolioPage() {
   const [filter, setFilter] = useState('All')
 
-  const categories = ['All', ...new Set(PORTFOLIO_PROJECTS.map((p) => p.category))]
-  const filtered =
-    filter === 'All'
-      ? PORTFOLIO_PROJECTS
-      : PORTFOLIO_PROJECTS.filter((p) => p.category === filter)
+  const filtered = filter === 'All' ? projects : projects.filter((p) => p.category === filter)
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-4">Notre Portfolio</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Découvrez quelques-uns de nos projets réalisés pour nos clients.
+    <>
+      {/* Hero */}
+      <section className="bg-black px-6 lg:px-16 pt-24 pb-16 border-b border-white/10">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-[#C9A84C] text-xs tracking-[0.25em] uppercase mb-4">Portfolio</p>
+          <h1 className="font-serif text-5xl md:text-6xl text-white text-balance max-w-2xl">
+            Work we&apos;re proud of.
+          </h1>
+          <p className="text-gray-400 mt-5 text-base max-w-xl leading-relaxed">
+            A selection of residential and commercial projects delivered across Montreal and the surrounding region.
           </p>
         </div>
+      </section>
 
-        {/* Filters */}
-        <div className="flex flex-wrap gap-4 justify-center mb-12">
-          {categories.map((cat) => (
-            <Button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              variant={filter === cat ? 'default' : 'outline'}
-              className={
-                filter === cat
-                  ? 'bg-yellow-600 hover:bg-yellow-700 text-black'
-                  : 'border-white/20 hover:bg-white/10'
-              }
-            >
-              {cat}
-            </Button>
-          ))}
-        </div>
+      {/* Filter + Grid */}
+      <section className="bg-black py-20 px-6 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          {/* Filter tabs */}
+          <div className="flex gap-0 border border-white/20 w-fit mb-14">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className="px-6 py-3 text-sm tracking-wide transition-colors"
+                style={
+                  filter === cat
+                    ? { backgroundColor: '#C9A84C', color: '#000', fontWeight: 600 }
+                    : { color: '#9ca3af' }
+                }
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
 
-        {/* Projects Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filtered.map((project) => (
-            <div
-              key={project.id}
-              className="group bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-yellow-600/50 transition"
-            >
-              <div className={`h-48 ${project.image}`} />
-              <div className="p-6">
-                <div className="text-sm text-yellow-600 mb-2 font-medium">{project.category}</div>
-                <h3 className="font-bold text-lg mb-2">{project.title}</h3>
-                <p className="text-gray-400 text-sm mb-4">{project.description}</p>
-                <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-                  <div>
-                    <div className="text-gray-400">Budget</div>
-                    <div className="font-bold text-yellow-600">{project.budget}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400">Durée</div>
-                    <div className="font-bold text-yellow-600">{project.timeline}</div>
-                  </div>
+          {/* Projects grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
+            {filtered.map((project) => (
+              <div key={project.id} className="bg-black p-8 flex flex-col gap-4 group">
+                {/* Placeholder image area */}
+                <div
+                  className="h-44 border border-white/10 mb-2"
+                  style={{ backgroundColor: `${categoryColors[project.category]}08` }}
+                />
+                <div className="flex items-center gap-3">
+                  <span
+                    className="text-xs tracking-widest uppercase font-medium"
+                    style={{ color: categoryColors[project.category] }}
+                  >
+                    {project.category}
+                  </span>
+                  <span className="text-gray-600 text-xs">{project.year}</span>
                 </div>
-                <Button className="w-full bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-400 border border-yellow-600/50">
-                  Voir détails
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Testimonials */}
-        <div className="mt-24">
-          <h2 className="text-3xl font-bold text-center mb-12">Ce que disent nos clients</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'Jean Dupont',
-                role: 'Propriétaire',
-                text: 'Service excellent et projet réalisé dans les délais. Très professionnel!',
-                rating: 5,
-              },
-              {
-                name: 'Marie Leblanc',
-                role: 'Gestionnaire Projet',
-                text: 'L\'équipe était attentive aux détails et à notre budget. Recommandé!',
-                rating: 5,
-              },
-              {
-                name: 'Pierre Martin',
-                role: 'Propriétaire',
-                text: 'Communication constante et qualité de travail impeccable.',
-                rating: 5,
-              },
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-8">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <span key={i} className="text-yellow-600">★</span>
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-4 italic">"{testimonial.text}"</p>
-                <div>
-                  <div className="font-bold">{testimonial.name}</div>
-                  <div className="text-sm text-gray-400">{testimonial.role}</div>
-                </div>
+                <h3 className="font-serif text-xl text-white">{project.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{project.description}</p>
+                <p className="text-gray-600 text-xs mt-auto">{project.location}</p>
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-[#C9A84C] py-20 px-6">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+          <div>
+            <h2 className="font-serif text-4xl text-black text-balance">Your project could be next.</h2>
+            <p className="text-black/70 mt-2">Contact us today for a free consultation.</p>
+          </div>
+          <Link
+            href="/marketing/contact"
+            className="inline-flex items-center gap-2 bg-black hover:bg-black/80 text-white font-semibold px-8 py-4 text-sm tracking-wide transition-colors shrink-0"
+          >
+            Get a Free Quote <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
+    </>
   )
 }

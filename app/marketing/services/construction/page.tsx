@@ -1,84 +1,49 @@
-'use client'
-
+import { Hammer } from 'lucide-react'
 import { ServicePageTemplate } from '@/components/service-page-template'
 
-export default function ConstructionService() {
+export const metadata = {
+  title: 'Construction & Renovations — Aménagement Monzon',
+  description: 'Interior renovations, French drains, foundation crack repair, basement waterproofing, and structural construction across Montreal.',
+}
+
+export default function ConstructionPage() {
   return (
     <ServicePageTemplate
+      accentColor="#C9A84C"
       title="Construction & Renovations"
-      subtitle="Expert interior renovations, foundation repair, and structural solutions with 20+ years of proven experience."
-      icon="🏗️"
+      subtitle="Expert interior renovations, foundation repair, drainage systems, and structural solutions — backed by 20+ years of proven craftsmanship."
+      Icon={Hammer}
       whatWeDo={[
-        'Interior Renovations: Complete home renovations with attention to detail and quality finishes',
-        'French Drains: Professional drainage solutions to protect your foundation and prevent water damage',
-        'Foundation Crack Repair: Expert structural repair using proven techniques and premium materials',
-        'Basement Waterproofing: Comprehensive waterproofing solutions for permanent protection',
-        'Structural Assessment: Professional evaluation and recommendations for your property',
-        'Custom Construction: Build additions and expansions tailored to your vision',
+        'Interior renovations with premium finishes and custom cabinetry',
+        'French drains and exterior drainage system installation',
+        'Foundation crack repair using industry-certified techniques',
+        'Basement waterproofing — interior and exterior systems',
+        'Structural assessments and professional engineering recommendations',
+        'Bathroom and kitchen additions and full-room construction',
       ]}
       process={[
-        {
-          step: 1,
-          title: 'Consultation',
-          description: 'On-site evaluation of your project needs and goals. We assess the scope and provide professional recommendations.',
-        },
-        {
-          step: 2,
-          title: 'Planning',
-          description: 'Detailed project planning with timeline and materials specification. You receive a comprehensive quote.',
-        },
-        {
-          step: 3,
-          title: 'Execution',
-          description: 'Professional installation using premium materials and proven techniques. Regular updates kept throughout.',
-        },
-        {
-          step: 4,
-          title: 'Completion',
-          description: 'Final inspection and walkthrough. Your project delivered on-time and exceeding expectations.',
-        },
+        { step: 1, title: 'Consultation', description: 'Free on-site visit to evaluate your needs, assess the scope, and understand your vision.' },
+        { step: 2, title: 'Planning', description: 'Detailed project plan, timeline, materials specification, and itemized cost estimate.' },
+        { step: 3, title: 'Execution', description: 'Professional installation with progress updates and strict quality control at every step.' },
+        { step: 4, title: 'Completion', description: 'Final walkthrough, clean-up, and full project sign-off. Guaranteed on-time delivery.' },
       ]}
       whyChooseUs={[
-        'Proven Experience: 20+ years specializing in construction and structural repairs',
-        'Quality Materials: Only premium materials used to ensure durability and longevity',
-        'Professional Team: Licensed, insured, and certified experts',
-        'Transparent Process: Clear communication from start to finish',
-        'Warranty Coverage: All work backed by comprehensive warranty',
-        'References Available: 500+ satisfied residential and commercial clients',
+        'Proven Experience: 20+ years specializing in residential and commercial construction across Quebec.',
+        'Premium Materials: We use only certified, high-durability materials sourced from trusted suppliers.',
+        'Licensed & Insured: Fully certified team with comprehensive liability coverage on all projects.',
+        'Transparent Pricing: Clear, itemized quotes — no hidden fees, no surprises at the end.',
+        'Warranty Coverage: All work is backed by a comprehensive warranty for your peace of mind.',
+        'Proven Track Record: 500+ satisfied clients across Montreal and surrounding regions.',
       ]}
       projects={[
-        {
-          title: 'Modern Kitchen Renovation',
-          description: 'Complete kitchen renovation with custom cabinetry and premium finishes.',
-          year: '2024',
-        },
-        {
-          title: 'Foundation Crack Repair',
-          description: 'Structural repair and waterproofing of historical home foundation.',
-          year: '2023',
-        },
-        {
-          title: 'Bathroom Addition',
-          description: 'Full bathroom construction with tile work and plumbing integration.',
-          year: '2023',
-        },
+        { title: 'Full Kitchen Renovation', description: 'Complete gut-and-rebuild with custom cabinetry, quartz countertops, and high-end appliance integration.', year: '2024' },
+        { title: 'Foundation Crack Repair', description: 'Structural crack repair and full waterproofing system installation for a 1970s residential home.', year: '2024' },
+        { title: 'Basement Suite Addition', description: 'Full basement development with bathroom, bedroom, kitchenette, and legal egress window.', year: '2023' },
       ]}
       testimonials={[
-        {
-          name: 'David Martinez',
-          role: 'Homeowner',
-          text: 'Aménagement Monzon transformed our home with a professional basement renovation. The quality of work and attention to detail was exceptional.',
-        },
-        {
-          name: 'Emily Chen',
-          role: 'Property Manager',
-          text: 'Reliable and professional. They handled our foundation repairs with expertise. Highly recommend for any structural work.',
-        },
-        {
-          name: 'James Wilson',
-          role: 'Real Estate Developer',
-          text: 'Perfect partner for renovation projects. Their team is skilled, punctual, and delivers premium quality work consistently.',
-        },
+        { name: 'David Martinez', role: 'Homeowner, Laval', text: 'The team at Aménagement Monzon transformed our basement completely. Quality of work and attention to detail were exceptional throughout the project.' },
+        { name: 'Emily Chen', role: 'Property Manager', text: 'They handled our foundation repairs with true expertise. Reliable, professional, and the result has been flawless for over a year now.' },
+        { name: 'James Wilson', role: 'Real Estate Developer', text: 'Our go-to partner for renovation projects. Skilled, punctual, and consistently delivers premium quality work on schedule.' },
       ]}
     />
   )

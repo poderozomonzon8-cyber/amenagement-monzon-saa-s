@@ -55,7 +55,7 @@ export function MarketingHeader() {
               alt="Aménagement Monzon"
               width={180}
               height={60}
-              className="h-12 w-auto"
+              style={{ height: '48px', width: 'auto' }}
               priority
             />
           </Link>

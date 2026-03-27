@@ -1,84 +1,49 @@
-'use client'
-
+import { Wrench } from 'lucide-react'
 import { ServicePageTemplate } from '@/components/service-page-template'
 
-export default function MaintenanceService() {
+export const metadata = {
+  title: 'Property Maintenance — Aménagement Monzon',
+  description: 'Seasonal grass cutting plans, snow removal, power washing, and year-round property maintenance across Montreal.',
+}
+
+export default function MaintenancePage() {
   return (
     <ServicePageTemplate
-      title="Professional Maintenance Services"
-      subtitle="Reliable seasonal and recurring maintenance to keep your property pristine year-round."
-      icon="🔧"
+      accentColor="#1E88E5"
+      title="Property Maintenance"
+      subtitle="Reliable, recurring property care throughout every season — from summer grass cutting plans to winter snow removal contracts."
+      Icon={Wrench}
       whatWeDo={[
-        'Grass Cutting Plans: Customized seasonal cutting plans with weekly or bi-weekly service',
-        'Snow Removal: Fast, reliable snow plowing and removal service for winter months',
-        'Power Washing: Professional pressure washing for driveways, patios, and exterior surfaces',
-        'Leaf Cleanup: Thorough fall cleanup and removal of leaves and debris',
-        'Spring Cleanup: Comprehensive spring property maintenance and preparation',
-        'Building Maintenance: General property maintenance and seasonal inspections',
+        'Customized grass cutting plans — weekly or bi-weekly scheduling',
+        'Residential and commercial snow removal and ice management',
+        'Power washing for driveways, patios, decks, and building exteriors',
+        'Spring and fall property cleanup including leaf removal and debris haul',
+        'Hedge trimming, edging, and seasonal lawn treatments',
+        'General property inspections and minor exterior maintenance',
       ]}
       process={[
-        {
-          step: 1,
-          title: 'Assessment',
-          description: 'Evaluate your property and discuss your maintenance needs and preferences.',
-        },
-        {
-          step: 2,
-          title: 'Plan Creation',
-          description: 'Develop a customized maintenance plan that fits your schedule and budget.',
-        },
-        {
-          step: 3,
-          title: 'Regular Service',
-          description: 'Consistent professional maintenance delivered on your preferred schedule.',
-        },
-        {
-          step: 4,
-          title: 'Property Monitoring',
-          description: 'Ongoing communication and monitoring to ensure your property stays pristine.',
-        },
+        { step: 1, title: 'Property Assessment', description: 'We walk your property to understand your needs and recommend the right maintenance plan.' },
+        { step: 2, title: 'Plan Creation', description: 'A customized maintenance schedule is built around your preferences and seasonal requirements.' },
+        { step: 3, title: 'Regular Service', description: 'Our team arrives on schedule, every time, delivering consistent and thorough care.' },
+        { step: 4, title: 'Ongoing Communication', description: 'Regular updates, seasonal reminders, and direct access to your service coordinator.' },
       ]}
       whyChooseUs={[
-        'Reliability: Consistent service you can count on week after week',
-        'Flexible Plans: Customized maintenance plans to fit your needs and budget',
-        'Professional Equipment: Modern equipment and proven techniques',
-        'Seasonal Expertise: Expert knowledge of seasonal property care requirements',
-        'Emergency Service: Available for urgent maintenance and seasonal emergencies',
-        'Competitive Rates: Transparent pricing with no hidden fees',
+        'Reliability: You can count on us to show up, on schedule, every single time — no excuses.',
+        'Flexible Plans: Maintenance packages tailored to your property size, needs, and budget.',
+        'Professional Equipment: Modern, well-maintained equipment for efficient and clean results.',
+        'Seasonal Expertise: Deep knowledge of Quebec climate and seasonal property requirements.',
+        'Emergency Response: Available for urgent snow removal and weather-related maintenance needs.',
+        'Transparent Pricing: Clear, flat-rate contracts with no hidden charges or seasonal surprises.',
       ]}
       projects={[
-        {
-          title: 'Residential Maintenance Plan',
-          description: 'Year-round maintenance service for residential property including grass cutting, snow removal, and seasonal cleanup.',
-          year: 'Ongoing',
-        },
-        {
-          title: 'Commercial Property Maintenance',
-          description: 'Professional maintenance service for commercial parking lot and landscaping.',
-          year: 'Ongoing',
-        },
-        {
-          title: 'Seasonal Snow Management',
-          description: 'Reliable snow removal and winter maintenance service throughout the season.',
-          year: '2023-2024',
-        },
+        { title: 'Residential Annual Contract', description: 'Year-round grass cutting, fall cleanup, and snow removal contract for a family home in Laval.', year: 'Ongoing' },
+        { title: 'Commercial Snow Management', description: 'Full-season snow removal and salting contract for a 12-unit commercial property in Montreal.', year: '2023–2024' },
+        { title: 'Spring & Fall Cleanup', description: 'Comprehensive seasonal cleanup for a large residential estate — leaves, debris, and bed preparation.', year: '2024' },
       ]}
       testimonials={[
-        {
-          name: 'Patricia Anderson',
-          role: 'Homeowner',
-          text: 'We have used Aménagement Monzon for maintenance for 3 years. They are reliable, professional, and provide excellent service. Highly recommend.',
-        },
-        {
-          name: 'Thomas Brown',
-          role: 'Commercial Property Manager',
-          text: 'Dependable maintenance service for our commercial property. They handle everything from grass cutting to snow removal. Great value.',
-        },
-        {
-          name: 'Susan Harris',
-          role: 'Homeowner',
-          text: 'Best decision we made was to hire them for maintenance. One less thing to worry about. Professional and reliable every time.',
-        },
+        { name: 'Patricia Anderson', role: 'Homeowner, Laval', text: 'Three years with Aménagement Monzon for our maintenance and they have never missed a single visit. Absolutely dependable and professional.' },
+        { name: 'Thomas Brown', role: 'Commercial Property Manager', text: 'They handle our snow removal and summer cutting contracts. Responsive, reliable, and great value for the quality of service provided.' },
+        { name: 'Susan Harris', role: 'Homeowner', text: 'Best decision we made was hiring them for maintenance. We never think about the lawn or snow anymore — it is just handled.' },
       ]}
     />
   )

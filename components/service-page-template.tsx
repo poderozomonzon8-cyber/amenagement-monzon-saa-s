@@ -1,24 +1,42 @@
-'use client'
-
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { CheckCircle, ArrowRight, Star, Phone } from 'lucide-react'
+import { ArrowRight, CheckCircle, Phone } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+
+interface ProcessStep {
+  step: number
+  title: string
+  description: string
+}
+
+interface Project {
+  title: string
+  description: string
+  year: string
+}
+
+interface Testimonial {
+  name: string
+  role: string
+  text: string
+}
 
 interface ServicePageProps {
+  accentColor: string
   title: string
   subtitle: string
-  icon: React.ReactNode
+  Icon: LucideIcon
   whatWeDo: string[]
-  process: Array<{ step: number; title: string; description: string }>
+  process: ProcessStep[]
   whyChooseUs: string[]
-  projects: Array<{ title: string; description: string; year: string }>
-  testimonials: Array<{ name: string; role: string; text: string }>
+  projects: Project[]
+  testimonials: Testimonial[]
 }
 
 export function ServicePageTemplate({
+  accentColor,
   title,
   subtitle,
-  icon,
+  Icon,
   whatWeDo,
   process,
   whyChooseUs,
@@ -27,80 +45,71 @@ export function ServicePageTemplate({
 }: ServicePageProps) {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center bg-gradient-to-br from-black via-black to-slate-900 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-600/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-600/5 rounded-full blur-3xl" />
-        </div>
+      {/* Hero */}
+      <section className="relative min-h-[70vh] flex flex-col justify-center bg-black px-6 lg:px-16 overflow-hidden">
+        <div className="absolute top-0 left-0 h-full w-px" style={{ backgroundColor: `${accentColor}30` }} />
+        <div
+          className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none"
+          style={{ backgroundColor: `${accentColor}08` }}
+        />
 
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
-          <div className="space-y-8">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 bg-yellow-600/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                <div className="text-4xl">{icon}</div>
-              </div>
-              <div>
-                <h1 className="text-5xl md:text-6xl font-bold mb-4 leading-tight text-balance">
-                  {title}
-                </h1>
-                <p className="text-xl text-gray-300 text-pretty">{subtitle}</p>
-              </div>
-            </div>
-
-            <Link href="/marketing/contact">
-              <Button size="lg" className="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold w-full sm:w-auto">
-                Request a Quote <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
+        <div className="max-w-7xl mx-auto w-full">
+          <div
+            className="w-12 h-12 flex items-center justify-center border mb-8"
+            style={{ borderColor: `${accentColor}40`, backgroundColor: `${accentColor}12` }}
+          >
+            <Icon className="w-5 h-5" style={{ color: accentColor }} />
           </div>
 
-          <div className="relative hidden md:block">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/20 to-yellow-600/5 blur-3xl rounded-2xl" />
-            <div className="relative bg-gradient-to-br from-white/10 to-white/0 border border-yellow-600/30 rounded-2xl p-12 backdrop-blur-xl h-80 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-6xl mb-4">{icon}</div>
-                <p className="text-gray-300">Professional Service Excellence</p>
-              </div>
-            </div>
-          </div>
+          <h1 className="font-serif text-5xl md:text-7xl text-white leading-[1.05] max-w-4xl text-balance mb-6">
+            {title}
+          </h1>
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed mb-10 text-pretty">
+            {subtitle}
+          </p>
+          <Link
+            href="/marketing/contact"
+            className="inline-flex items-center gap-2 font-semibold px-8 py-4 text-sm tracking-wide transition-colors text-black"
+            style={{ backgroundColor: accentColor }}
+          >
+            Request a Free Quote
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
       {/* What We Do */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold mb-12">What We Do</h2>
-          <div className="prose prose-invert max-w-none">
-            <div className="grid md:grid-cols-2 gap-8">
-              {whatWeDo.map((item, index) => (
-                <div key={index} className="flex items-start gap-4">
-                  <CheckCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
-                  <p className="text-gray-300 text-lg">{item}</p>
-                </div>
-              ))}
-            </div>
+      <section className="bg-[#0a0a0a] border-y border-white/10 py-24 px-6 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs tracking-[0.2em] uppercase mb-3" style={{ color: accentColor }}>Our Services</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-white mb-12">What we do</h2>
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-5">
+            {whatWeDo.map((item) => (
+              <div key={item} className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 mt-0.5 shrink-0" style={{ color: accentColor }} />
+                <p className="text-gray-300 text-sm leading-relaxed">{item}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Our Process */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-950">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold mb-12">Our Process</h2>
-          <div className="grid md:grid-cols-4 gap-8">
-            {process.map((item, index) => (
-              <div key={index} className="relative">
-                <div className="bg-gradient-to-br from-white/5 to-white/0 border border-yellow-600/30 rounded-xl p-8">
-                  <div className="w-12 h-12 bg-yellow-600 rounded-full flex items-center justify-center text-black font-bold mb-4">
-                    {item.step}
-                  </div>
-                  <h3 className="font-bold text-xl mb-3">{item.title}</h3>
-                  <p className="text-gray-400">{item.description}</p>
+      {/* Process */}
+      <section className="bg-black py-24 px-6 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs tracking-[0.2em] uppercase mb-3" style={{ color: accentColor }}>How It Works</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-white mb-12">Our process</h2>
+          <div className="grid md:grid-cols-4 gap-px bg-white/10">
+            {process.map((item, i) => (
+              <div key={item.step} className="bg-black p-8 flex flex-col gap-4">
+                <div
+                  className="w-10 h-10 flex items-center justify-center text-sm font-bold text-black shrink-0"
+                  style={{ backgroundColor: accentColor }}
+                >
+                  {String(item.step).padStart(2, '0')}
                 </div>
-                {index < process.length - 1 && (
-                  <div className="hidden md:block absolute top-12 -right-4 w-8 h-1 bg-yellow-600" />
-                )}
+                <h3 className="font-serif text-lg text-white">{item.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
@@ -108,90 +117,61 @@ export function ServicePageTemplate({
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold mb-4">Why Choose Aménagement Monzon</h2>
-          <p className="text-gray-400 text-lg mb-12 max-w-3xl">
-            With 20+ years of industry experience, we deliver premium quality work backed by professional expertise and attention to detail.
-          </p>
-          <div className="grid md:grid-cols-2 gap-8">
-            {whyChooseUs.map((item, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <Star className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-bold text-lg mb-2">{item.split(':')[0]}</h3>
-                  <p className="text-gray-400">{item.split(':')[1]}</p>
+      <section className="bg-[#0a0a0a] border-y border-white/10 py-24 px-6 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs tracking-[0.2em] uppercase mb-3" style={{ color: accentColor }}>Why Choose Us</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-white mb-12">Our commitment to you</h2>
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+            {whyChooseUs.map((item) => {
+              const [heading, ...rest] = item.split(':')
+              return (
+                <div key={item}>
+                  <h3 className="font-serif text-lg text-white mb-2">{heading}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{rest.join(':').trim()}</p>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* Project Examples */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-950">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold mb-12">Recent Projects</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {projects.map((project, index) => (
-              <div key={index} className="group bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl overflow-hidden hover:border-yellow-600/50 transition">
-                <div className="h-64 bg-gradient-to-br from-yellow-600/20 to-yellow-600/5 flex items-center justify-center">
-                  <div className="text-6xl opacity-50">🏗️</div>
-                </div>
-                <div className="p-6">
-                  <div className="text-sm text-yellow-600 mb-2">{project.year}</div>
-                  <h3 className="font-bold text-xl mb-3">{project.title}</h3>
-                  <p className="text-gray-400 mb-4">{project.description}</p>
-                  <a href="#" className="text-yellow-600 hover:text-yellow-700 font-semibold inline-flex items-center">
-                    View Project <ArrowRight className="ml-2 w-4 h-4" />
-                  </a>
-                </div>
+      {/* Recent Projects */}
+      <section className="bg-black py-24 px-6 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs tracking-[0.2em] uppercase mb-3" style={{ color: accentColor }}>Portfolio</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-white mb-12">Recent projects</h2>
+          <div className="grid md:grid-cols-3 gap-px bg-white/10">
+            {projects.map((project) => (
+              <div key={project.title} className="bg-black p-8 flex flex-col gap-4">
+                <div className="h-40 border border-white/10" style={{ backgroundColor: `${accentColor}08` }} />
+                <p className="text-xs tracking-widest" style={{ color: accentColor }}>{project.year}</p>
+                <h3 className="font-serif text-xl text-white">{project.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{project.description}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Approach */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-black border-y border-white/10">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Transparent Pricing</h2>
-          <p className="text-gray-300 text-lg mb-8">
-            We believe in clear, upfront pricing with no hidden costs. Every project is unique, and we provide detailed quotes based on your specific needs, materials, and scope of work. Our pricing reflects premium quality and professional expertise.
-          </p>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white/5 border border-white/10 rounded-lg p-6">
-              <div className="font-bold text-yellow-600 text-2xl mb-2">Assessment</div>
-              <p className="text-gray-400">Free on-site evaluation</p>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-lg p-6">
-              <div className="font-bold text-yellow-600 text-2xl mb-2">Quote</div>
-              <p className="text-gray-400">Detailed, itemized estimate</p>
-            </div>
-            <div className="bg-white/5 border border-white/10 rounded-lg p-6">
-              <div className="font-bold text-yellow-600 text-2xl mb-2">Execution</div>
-              <p className="text-gray-400">Quality work, on schedule</p>
-            </div>
           </div>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-950">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold mb-12">What Our Clients Say</h2>
+      <section className="bg-[#0a0a0a] border-y border-white/10 py-24 px-6 lg:px-16">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-xs tracking-[0.2em] uppercase mb-3" style={{ color: accentColor }}>Client Reviews</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-white mb-12">What clients say</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-8">
-                <div className="flex gap-1 mb-4">
-                  {Array(5).fill(0).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-yellow-600 text-yellow-600" />
+            {testimonials.map((t) => (
+              <div key={t.name} className="border border-white/10 p-8 flex flex-col gap-5">
+                <div className="flex gap-0.5">
+                  {[1,2,3,4,5].map((i) => (
+                    <svg key={i} className="w-3.5 h-3.5" style={{ fill: accentColor }} viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
                   ))}
                 </div>
-                <p className="text-gray-300 mb-6 italic">{testimonial.text}</p>
-                <div>
-                  <p className="font-semibold">{testimonial.name}</p>
-                  <p className="text-gray-400 text-sm">{testimonial.role}</p>
+                <p className="text-gray-300 text-sm leading-relaxed flex-1">&ldquo;{t.text}&rdquo;</p>
+                <div className="border-t border-white/10 pt-4">
+                  <p className="text-white text-sm font-medium">{t.name}</p>
+                  <p className="text-gray-500 text-xs mt-0.5">{t.role}</p>
                 </div>
               </div>
             ))}
@@ -199,23 +179,25 @@ export function ServicePageTemplate({
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-600/10 via-black to-yellow-600/5">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-gray-300 mb-8 text-lg">
-            Contact Aménagement Monzon today for a free consultation and quote.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/marketing/contact">
-              <Button size="lg" className="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold">
-                Request a Quote <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
+      {/* CTA */}
+      <section className="py-24 px-6" style={{ backgroundColor: accentColor }}>
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+          <div>
+            <h2 className="font-serif text-4xl text-black text-balance">Ready to get started?</h2>
+            <p className="text-black/70 mt-2 text-base">Free on-site consultation, no obligations.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+            <Link
+              href="/marketing/contact"
+              className="inline-flex items-center gap-2 bg-black hover:bg-black/80 text-white font-semibold px-8 py-4 text-sm transition-colors"
+            >
+              Get a Quote <ArrowRight className="w-4 h-4" />
             </Link>
-            <a href="tel:5551234567">
-              <Button size="lg" variant="outline" className="border-yellow-600/50 hover:bg-yellow-600/10 text-yellow-600 w-full sm:w-auto">
-                <Phone className="mr-2 w-4 h-4" /> Call Us
-              </Button>
+            <a
+              href="tel:4381234567"
+              className="inline-flex items-center gap-2 border border-black/30 hover:border-black text-black px-8 py-4 text-sm transition-colors"
+            >
+              <Phone className="w-4 h-4" /> Call Us
             </a>
           </div>
         </div>
