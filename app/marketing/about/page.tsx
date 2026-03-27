@@ -47,10 +47,10 @@ const milestones = [
 
 const teamMembers = [
   {
-    name: 'Carlos Monzon',
+    name: 'Silvio L. Monzon',
     role: 'Founder & CEO',
-    image: '/team/carlos-monzon.jpg',
-    bio: 'Carlos started Aménagement Monzon in 2014 with a commercial cleaning service. Through dedication and quality work, he scaled the business into landscape and hardscape services, then added construction. Today, his vision is to be the one-stop partner owners call to manage every aspect of their property—from maintenance to complete renovations.'
+    image: '/team/silvio-monzon.jpg',
+    bio: 'With Mexican roots and a humble hardworking background, Silvio L. Monzon founded Aménagement Monzon in 2014 with big dreams and unwavering determination. Starting with a commercial cleaning service, he built the company through grit and dedication, expanding into landscape, hardscape, and construction. Today, his vision drives the company: to be the complete property partner owners trust for every step of their property journey—from maintenance to transformations.'
   },
   {
     name: 'Marie Tremblay',
