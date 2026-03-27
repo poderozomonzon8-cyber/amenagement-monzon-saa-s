@@ -3,6 +3,38 @@
 import { createClient } from '@/lib/supabase/server'
 import { Client } from '@/lib/types'
 
+// Get or create client by email - for lead submissions
+export async function getOrCreateClient(data: { first_name: string; last_name: string; email: string; phone?: string }): Promise<Client> {
+  const supabase = await createClient()
+  
+  // Check if client already exists by email
+  const { data: existing } = await supabase
+    .from('clients')
+    .select('*')
+    .eq('email', data.email)
+    .single()
+
+  if (existing) return existing as Client
+
+  // Create new client without requiring profile_id
+  const { data: newClient, error } = await supabase
+    .from('clients')
+    .insert({
+      email: data.email,
+      phone: data.phone || null,
+      name: `${data.first_name}${data.last_name ? ' ' + data.last_name : ''}`.trim(),
+      address: null
+    })
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error creating client:', error)
+    throw new Error(error.message)
+  }
+  return newClient as Client
+}
+
 export async function getClients() {
   const supabase = await createClient()
   

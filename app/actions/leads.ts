@@ -20,15 +20,14 @@ export async function submitLead(data: LeadData) {
     const supabase = await createClient()
 
     // 1. Get or create client
-    const { id: clientId, error: clientError } = await getOrCreateClient({
+    const client = await getOrCreateClient({
       first_name: data.name.split(' ')[0],
       last_name: data.name.split(' ').slice(1).join(' ') || '',
       email: data.email,
-      phone: data.phone,
-      status: 'lead'
+      phone: data.phone
     })
 
-    if (clientError || !clientId) {
+    if (!client?.id) {
       throw new Error('Failed to create/get client')
     }
 
@@ -38,7 +37,7 @@ export async function submitLead(data: LeadData) {
       .insert({
         title: `${data.service_type.charAt(0).toUpperCase() + data.service_type.slice(1)} - ${data.name}`,
         description: data.project_description,
-        client_id: clientId,
+        client_id: client.id,
         service_type: data.service_type,
         budget: data.budget_range,
         status: 'quote_pending',
@@ -53,25 +52,28 @@ export async function submitLead(data: LeadData) {
       throw projectError
     }
 
-    // 3. Create notification for admin
-    const { error: notifError } = await supabase
-      .from('notifications')
-      .insert({
-        user_id: (await supabase.auth.getUser()).data.user?.id,
-        type: 'new_lead',
-        title: `New Lead: ${data.name}`,
-        message: `${data.name} (${data.email}) submitted a quote request for ${data.service_type}. Budget: ${data.budget_range}`,
-        read: false
-      })
-
-    if (notifError) {
+    // 3. Create notification for admin (optional, non-blocking)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.id) {
+        await supabase
+          .from('notifications')
+          .insert({
+            user_id: user.id,
+            type: 'new_lead',
+            title: `New Lead: ${data.name}`,
+            message: `${data.name} (${data.email}) submitted a quote request for ${data.service_type}. Budget: ${data.budget_range}`,
+            read: false
+          })
+      }
+    } catch (notifError) {
       console.error('Notification error (non-critical):', notifError)
     }
 
     return {
       success: true,
       projectId: project.id,
-      clientId,
+      clientId: client.id,
       message: 'Lead received successfully'
     }
   } catch (error) {
