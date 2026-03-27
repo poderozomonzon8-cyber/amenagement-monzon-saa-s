@@ -22,6 +22,7 @@ import {
   Briefcase,
   BarChart3,
   ExternalLink,
+  Inbox,
 } from "lucide-react"
 
 const navSections = [
@@ -29,6 +30,7 @@ const navSections = [
     label: "Administration",
     items: [
       { icon: LayoutDashboard, label: "Tableau de bord", href: "#dashboard", id: "dashboard" },
+      { icon: Inbox, label: "Leads", href: "#leads", id: "leads" },
       { icon: FolderKanban, label: "Projets", href: "#projects", id: "projects" },
       { icon: FileText, label: "Facturation", href: "#billing", id: "billing" },
       { icon: Users, label: "Employés", href: "#admin-employees", id: "admin-employees" },

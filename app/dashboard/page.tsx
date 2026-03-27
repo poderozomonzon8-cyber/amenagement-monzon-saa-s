@@ -14,6 +14,7 @@ import { AdminEmployees } from '@/components/platform/admin-employees'
 import { InvoiceDesignEditor } from '@/components/platform/invoice-design-editor'
 import { UserManagement } from '@/components/platform/user-management'
 import { Reporting } from '@/components/platform/reporting'
+import { LeadsManager } from '@/components/platform/leads-manager'
 
 export default function Dashboard() {
   const [activeSection, setActiveSection] = useState('dashboard')
@@ -63,6 +64,8 @@ export default function Dashboard() {
         return <AdminDashboard />
       case 'projects':
         return <ProjectManagement />
+      case 'leads':
+        return <LeadsManager />
       case 'billing':
         return <BillingSystem onOpenDesignEditor={() => setActiveSection('invoice-design')} />
       case 'admin-employees':
