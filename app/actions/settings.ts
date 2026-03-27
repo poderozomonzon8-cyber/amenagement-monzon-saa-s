@@ -23,8 +23,13 @@ export async function getCompanySettings() {
       tax_number_1: '',
       tax_number_2: '',
       logo_url: null,
+      signature_url: null,
       primary_color: '#C9A84C',
       secondary_color: '#0A0A0A',
+      template_id: null,
+      facebook_url: 'https://www.facebook.com/people/Am%C3%A9nagement-Monzon/100090795267611/',
+      instagram_url: 'https://www.instagram.com/amenagement_monzon',
+      tiktok_url: 'https://www.tiktok.com/@amenagement_monzon',
     } as CompanySettings
   }
 

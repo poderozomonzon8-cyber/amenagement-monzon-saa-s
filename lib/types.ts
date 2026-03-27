@@ -116,6 +116,9 @@ export interface CompanySettings {
   primary_color: string
   secondary_color: string
   template_id: string | null
+  facebook_url: string | null
+  instagram_url: string | null
+  tiktok_url: string | null
   created_at?: string
   updated_at?: string
 }

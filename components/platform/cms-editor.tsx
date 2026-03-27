@@ -7,7 +7,8 @@ import { CMSHeroManager } from "./cms-hero-manager"
 import { CMSPortfolioManager } from "./cms-portfolio-manager"
 import { CMSAboutManager } from "./cms-about-manager"
 import { CMSReviewsManager } from "./cms-reviews-manager"
-import { Layout, Image, User, Star } from "lucide-react"
+import { CMSSocialManager } from "./cms-social-manager"
+import { Layout, Image, User, Star, Share2 } from "lucide-react"
 
 export function CMSEditor() {
   const [activeTab, setActiveTab] = useState("heroes")
@@ -65,6 +66,16 @@ export function CMSEditor() {
             <Star className="h-4 w-4" />
             Reviews
           </TabsTrigger>
+          <TabsTrigger 
+            value="social"
+            className={cn(
+              "flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary",
+              "data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3"
+            )}
+          >
+            <Share2 className="h-4 w-4" />
+            Social Media
+          </TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
@@ -79,6 +90,9 @@ export function CMSEditor() {
           </TabsContent>
           <TabsContent value="reviews" className="mt-0">
             <CMSReviewsManager />
+          </TabsContent>
+          <TabsContent value="social" className="mt-0">
+            <CMSSocialManager />
           </TabsContent>
         </div>
       </Tabs>

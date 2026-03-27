@@ -9,8 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { getHeroes, updateHero, type WebsiteHero } from '@/app/actions/cms'
-import { createClient } from '@/lib/supabase/client'
-import { Save, Upload, Image as ImageIcon, Video, Loader2, Check, Home, Hammer, Leaf, Wrench } from 'lucide-react'
+import { Save, Image as ImageIcon, Video, Loader2, Check, Home, Hammer, Leaf, Wrench } from 'lucide-react'
 
 const PAGE_CONFIG = {
   home: { label: 'Homepage', icon: Home, color: '#C9A84C' },
@@ -24,7 +23,6 @@ export function CMSHeroManager() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState<string | null>(null)
   const [saved, setSaved] = useState<string | null>(null)
-  const [uploading, setUploading] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<string>('home')
 
   useEffect(() => {
@@ -63,36 +61,6 @@ export function CMSHeroManager() {
       console.error('Error saving hero:', error)
     } finally {
       setSaving(null)
-    }
-  }
-
-  const handleMediaUpload = async (hero: WebsiteHero, file: File) => {
-    setUploading(hero.id)
-    try {
-      const supabase = createClient()
-      const fileExt = file.name.split('.').pop()
-      const fileName = `heroes/${hero.page_key}-${Date.now()}.${fileExt}`
-      
-      try {
-        const { data, error } = await supabase.storage
-          .from('cms-media')
-          .upload(fileName, file, { cacheControl: '3600', upsert: true })
-        
-        if (error) throw error
-        
-        const { data: urlData } = supabase.storage
-          .from('cms-media')
-          .getPublicUrl(data.path)
-        
-        handleUpdate(hero, 'media_url', urlData.publicUrl)
-      } catch (storageError) {
-        console.error('Storage error - try verifying bucket exists and is public:', storageError)
-        alert('Storage upload failed. Please verify the cms-media bucket exists in Supabase Storage and is set to Public. Alternatively, you can paste an image URL directly.')
-      }
-    } catch (error) {
-      console.error('Error uploading media:', error)
-    } finally {
-      setUploading(null)
     }
   }
 
