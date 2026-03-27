@@ -7,15 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { getAboutContent, updateAboutContent, type WebsiteAbout } from '@/app/actions/cms'
-import { createClient } from '@/lib/supabase/client'
-import { Save, Upload, Loader2, Check, User, Target, Award, Briefcase } from 'lucide-react'
+import { Save, Loader2, Check, User, Target, Award, Briefcase } from 'lucide-react'
 
 export function CMSAboutManager() {
   const [content, setContent] = useState<WebsiteAbout | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     loadContent()
@@ -34,29 +32,7 @@ export function CMSAboutManager() {
   }
 
   const handleImageUpload = async (file: File) => {
-    if (!content) return
-    setUploading(true)
-    try {
-      const supabase = createClient()
-      const fileExt = file.name.split('.').pop()
-      const fileName = `about/founder-${Date.now()}.${fileExt}`
-      
-      const { data, error } = await supabase.storage
-        .from('cms-media')
-        .upload(fileName, file, { cacheControl: '3600', upsert: true })
-      
-      if (error) throw error
-      
-      const { data: urlData } = supabase.storage
-        .from('cms-media')
-        .getPublicUrl(data.path)
-      
-      handleUpdate('founder_image_url', urlData.publicUrl)
-    } catch (error) {
-      console.error('Error uploading image:', error)
-    } finally {
-      setUploading(false)
-    }
+    // Just use URL input instead - no storage bucket upload
   }
 
   const handleSave = async () => {
@@ -125,7 +101,7 @@ export function CMSAboutManager() {
             </div>
             
             <div className="space-y-2">
-              <Label>Founder Photo</Label>
+              <Label>Founder Photo URL</Label>
               <div className="flex items-start gap-4">
                 <div className="relative w-24 h-24 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
                   {content.founder_image_url ? (
@@ -138,36 +114,13 @@ export function CMSAboutManager() {
                     <User className="h-12 w-12 text-muted-foreground" />
                   )}
                 </div>
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id="founder-image-upload"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) handleImageUpload(file)
-                    }}
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => document.getElementById('founder-image-upload')?.click()}
-                    disabled={uploading}
-                  >
-                    {uploading ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Upload className="h-4 w-4 mr-2" />
-                    )}
-                    Upload Photo
-                  </Button>
+                <div className="flex flex-col gap-2 flex-1">
                   <Input
                     value={content.founder_image_url || ''}
                     onChange={(e) => handleUpdate('founder_image_url', e.target.value)}
-                    placeholder="Or paste URL..."
-                    className="text-xs"
+                    placeholder="Paste photo URL (https://...)"
                   />
+                  <p className="text-xs text-muted-foreground">Paste any public image URL</p>
                 </div>
               </div>
             </div>

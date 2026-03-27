@@ -211,6 +211,29 @@ export default async function MarketingHome() {
         </div>
       </section>
 
+      {/* Mid-page CTA */}
+      <section className="py-20 px-6 lg:px-16" style={{ backgroundColor: accentColor }}>
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="font-serif text-4xl md:text-5xl text-black mb-4 text-balance">Start your project today.</h2>
+          <p className="text-black/70 text-lg mb-8">Get your free, no-obligation quote within 24 hours. Our team is ready to help.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/marketing/contact"
+              className="inline-flex items-center justify-center gap-2 bg-black hover:bg-black/80 text-white font-semibold px-8 py-4 text-sm tracking-wide transition-colors"
+            >
+              Get Your Free Quote
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/marketing/portfolio"
+              className="inline-flex items-center justify-center gap-2 border border-black/30 hover:border-black text-black px-8 py-4 text-sm tracking-wide transition-colors"
+            >
+              See Our Portfolio
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Why choose us */}
       <section className="bg-[#0a0a0a] border-y border-white/10 py-28 px-6 lg:px-16">
         <div className="max-w-7xl mx-auto">

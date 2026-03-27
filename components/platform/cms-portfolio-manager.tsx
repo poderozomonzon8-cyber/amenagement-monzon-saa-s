@@ -10,8 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { getPortfolioItems, createPortfolioItem, updatePortfolioItem, deletePortfolioItem, type PortfolioItem } from '@/app/actions/cms'
-import { createClient } from '@/lib/supabase/client'
-import { Plus, Upload, Loader2, Pencil, Trash2, GripVertical, Star, Image as ImageIcon } from 'lucide-react'
+import { Plus, Loader2, Pencil, Trash2, Star, Image as ImageIcon } from 'lucide-react'
 
 const CATEGORIES = [
   { value: 'construction', label: 'Construction', color: '#C9A84C' },
@@ -25,7 +24,6 @@ export function CMSPortfolioManager() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null)
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>('all')
   
   const [form, setForm] = useState({
@@ -74,28 +72,7 @@ export function CMSPortfolioManager() {
   }
 
   const handleImageUpload = async (file: File) => {
-    setUploading(true)
-    try {
-      const supabase = createClient()
-      const fileExt = file.name.split('.').pop()
-      const fileName = `portfolio/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-      
-      const { data, error } = await supabase.storage
-        .from('cms-media')
-        .upload(fileName, file, { cacheControl: '3600', upsert: false })
-      
-      if (error) throw error
-      
-      const { data: urlData } = supabase.storage
-        .from('cms-media')
-        .getPublicUrl(data.path)
-      
-      setForm(prev => ({ ...prev, image_url: urlData.publicUrl }))
-    } catch (error) {
-      console.error('Error uploading image:', error)
-    } finally {
-      setUploading(false)
-    }
+    // Just use URL input instead - no storage bucket upload
   }
 
   const handleSave = async () => {
@@ -164,42 +141,18 @@ export function CMSPortfolioManager() {
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div className="space-y-2">
-                <Label>Project Image *</Label>
-                <div className="flex flex-col gap-3">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id="portfolio-image-upload"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) handleImageUpload(file)
-                    }}
-                  />
-                  <Button
-                    variant="outline"
-                    onClick={() => document.getElementById('portfolio-image-upload')?.click()}
-                    disabled={uploading}
-                    className="w-full"
-                  >
-                    {uploading ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Upload className="h-4 w-4 mr-2" />
-                    )}
-                    Upload Image
-                  </Button>
-                  <Input
-                    value={form.image_url}
-                    onChange={(e) => setForm(prev => ({ ...prev, image_url: e.target.value }))}
-                    placeholder="Or paste image URL..."
-                  />
-                  {form.image_url && (
-                    <div className="relative aspect-video rounded-lg overflow-hidden border">
-                      <img src={form.image_url} alt="Preview" className="object-cover w-full h-full" />
-                    </div>
-                  )}
-                </div>
+                <Label>Project Image URL *</Label>
+                <Input
+                  value={form.image_url}
+                  onChange={(e) => setForm(prev => ({ ...prev, image_url: e.target.value }))}
+                  placeholder="Paste image URL (https://...)"
+                />
+                <p className="text-xs text-muted-foreground">Paste any public image URL for your project</p>
+                {form.image_url && (
+                  <div className="relative aspect-video rounded-lg overflow-hidden border">
+                    <img src={form.image_url} alt="Preview" className="object-cover w-full h-full" />
+                  </div>
+                )}
               </div>
               
               <div className="space-y-2">
