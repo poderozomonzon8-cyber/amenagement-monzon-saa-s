@@ -143,12 +143,20 @@ export function InvoicePreview({ invoiceId, onClose, onStatusChange }: InvoicePr
             {/* Header */}
             <div className="flex justify-between items-start mb-8">
               <div>
-                {settings?.logo_url && (
-                  <img src={settings.logo_url} alt="Logo" className="h-16 mb-2" />
+                {settings?.logo_url ? (
+                  <img
+                    src={settings.logo_url}
+                    alt={settings?.company_name || 'Aménagement Monzon'}
+                    style={{ height: '64px', width: 'auto', marginBottom: '8px', display: 'block' }}
+                  />
+                ) : (
+                  <h1 className="text-2xl font-bold mb-2" style={{ color: settings?.primary_color || '#C9A84C' }}>
+                    {settings?.company_name || 'Aménagement Monzon'}
+                  </h1>
                 )}
-                <h1 className="text-2xl font-bold" style={{ color: settings?.primary_color || '#C9A84C' }}>
-                  {settings?.company_name || 'Aménagement Monzon'}
-                </h1>
+                {settings?.logo_url && (
+                  <p className="text-sm font-semibold text-gray-700 mb-1">{settings?.company_name || 'Aménagement Monzon'}</p>
+                )}
                 <p className="text-sm text-gray-600">{settings?.address}</p>
                 <p className="text-sm text-gray-600">{settings?.phone}</p>
                 <p className="text-sm text-gray-600">{settings?.email}</p>

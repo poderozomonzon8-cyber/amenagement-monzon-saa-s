@@ -246,53 +246,86 @@ export function InvoiceDesignEditor() {
               />
             </div>
 
-            {/* Logo Upload */}
+            {/* Logo */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">Logo</label>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="border-2 border-dashed border-border rounded-sm p-4 cursor-pointer hover:border-primary transition-colors block text-center">
-                    <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">Cliquez pour charger le logo</p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      disabled={isPending}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-                {preview.logo_url && (
-                  <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center">
-                    <img src={preview.logo_url} alt="Logo" className="max-h-20 max-w-full" />
+              <div className="space-y-3">
+                {/* URL input */}
+                <input
+                  type="url"
+                  value={preview.logo_url || ''}
+                  onChange={e => setPreview({ ...preview, logo_url: e.target.value })}
+                  placeholder="Coller l'URL de votre logo (ex: https://...)"
+                  className="w-full bg-input border border-border rounded-sm px-3 py-2 text-foreground text-sm"
+                />
+                <p className="text-xs text-muted-foreground">ou charger depuis votre appareil:</p>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="border-2 border-dashed border-border rounded-sm p-4 cursor-pointer hover:border-primary transition-colors block text-center">
+                      <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Cliquez pour charger le logo</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        disabled={isPending}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
-                )}
+                  {preview.logo_url && (
+                    <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center relative">
+                      <img src={preview.logo_url} alt="Logo" className="max-h-20 max-w-full object-contain" />
+                      <button
+                        onClick={() => setPreview({ ...preview, logo_url: undefined })}
+                        className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Signature Upload */}
+            {/* Signature */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">Signature</label>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="border-2 border-dashed border-border rounded-sm p-4 cursor-pointer hover:border-primary transition-colors block text-center">
-                    <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">Cliquez pour charger la signature</p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleSignatureUpload}
-                      disabled={isPending}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-                {preview.signature_url && (
-                  <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center">
-                    <img src={preview.signature_url} alt="Signature" className="max-h-20 max-w-full" />
+              <div className="space-y-3">
+                <input
+                  type="url"
+                  value={preview.signature_url || ''}
+                  onChange={e => setPreview({ ...preview, signature_url: e.target.value })}
+                  placeholder="Coller l'URL de votre signature (ex: https://...)"
+                  className="w-full bg-input border border-border rounded-sm px-3 py-2 text-foreground text-sm"
+                />
+                <p className="text-xs text-muted-foreground">ou charger depuis votre appareil:</p>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="border-2 border-dashed border-border rounded-sm p-4 cursor-pointer hover:border-primary transition-colors block text-center">
+                      <Upload className="w-6 h-6 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Cliquez pour charger la signature</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleSignatureUpload}
+                        disabled={isPending}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
-                )}
+                  {preview.signature_url && (
+                    <div className="flex-1 bg-secondary rounded-sm p-4 flex items-center justify-center relative">
+                      <img src={preview.signature_url} alt="Signature" className="max-h-20 max-w-full object-contain" />
+                      <button
+                        onClick={() => setPreview({ ...preview, signature_url: undefined })}
+                        className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

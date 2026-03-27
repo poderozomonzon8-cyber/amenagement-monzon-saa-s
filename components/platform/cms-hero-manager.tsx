@@ -215,37 +215,16 @@ export function CMSHeroManager() {
 
                   {/* Media Upload / URL */}
                   {hero.media_type === 'image' ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          id={`image-upload-${hero.id}`}
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0]
-                            if (file) handleMediaUpload(hero, file)
-                          }}
-                        />
-                        <Button
-                          variant="outline"
-                          onClick={() => document.getElementById(`image-upload-${hero.id}`)?.click()}
-                          disabled={uploading === hero.id}
-                        >
-                          {uploading === hero.id ? (
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          ) : (
-                            <Upload className="h-4 w-4 mr-2" />
-                          )}
-                          Upload Image
-                        </Button>
-                        <span className="text-sm text-muted-foreground">or paste URL below</span>
-                      </div>
+                    <div className="space-y-3">
+                      <Label>Image URL</Label>
                       <Input
                         value={hero.media_url || ''}
                         onChange={(e) => handleUpdate(hero, 'media_url', e.target.value)}
-                        placeholder="https://example.com/image.jpg"
+                        placeholder="Paste image URL here (https://...)"
                       />
+                      <p className="text-xs text-muted-foreground">
+                        Paste any public image URL. You can use images from your Supabase storage, Unsplash, or any public URL.
+                      </p>
                       {hero.media_url && (
                         <div className="relative aspect-video w-full max-w-md rounded-lg overflow-hidden border">
                           <img src={hero.media_url} alt="Preview" className="object-cover w-full h-full" />
