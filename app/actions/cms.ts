@@ -18,6 +18,7 @@ export type WebsiteHero = {
   media_url: string | null
   video_url: string | null
   overlay_color: string
+  overlay_intensity?: number
   accent_color: string
   is_active: boolean
   updated_at: string

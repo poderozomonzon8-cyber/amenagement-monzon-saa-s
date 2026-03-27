@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { Slider } from '@/components/ui/slider'
 import { getHeroes, updateHero, type WebsiteHero } from '@/app/actions/cms'
 import { Save, Image as ImageIcon, Video, Loader2, Check, Home, Hammer, Leaf, Wrench } from 'lucide-react'
 
@@ -52,6 +53,7 @@ export function CMSHeroManager() {
         media_url: hero.media_url,
         video_url: hero.video_url,
         overlay_color: hero.overlay_color,
+        overlay_intensity: hero.overlay_intensity || 0.5,
         accent_color: hero.accent_color,
         is_active: hero.is_active,
       })
@@ -213,7 +215,7 @@ export function CMSHeroManager() {
                     </div>
                   )}
 
-                  {/* Colors */}
+                  {/* Colors & Overlay */}
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor={`overlay-${hero.id}`}>Overlay Color</Label>
@@ -243,6 +245,24 @@ export function CMSHeroManager() {
                         />
                       </div>
                     </div>
+                  </div>
+
+                  {/* Shadow Intensity Slider */}
+                  <div className="space-y-3 p-4 bg-muted rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`shadow-intensity-${hero.id}`}>Overlay Shadow Intensity</Label>
+                      <span className="text-sm font-semibold text-primary">{Math.round((hero.overlay_intensity || 0.5) * 100)}%</span>
+                    </div>
+                    <Slider
+                      id={`shadow-intensity-${hero.id}`}
+                      value={[(hero.overlay_intensity || 0.5) * 100]}
+                      onValueChange={(value) => handleUpdate(hero, 'overlay_intensity', value[0] / 100)}
+                      min={0}
+                      max={100}
+                      step={5}
+                      className="w-full"
+                    />
+                    <p className="text-xs text-muted-foreground">Adjust the darkness of the overlay to make the hero image more or less visible. 0% = fully transparent, 100% = fully opaque.</p>
                   </div>
 
                   {/* Save Button */}

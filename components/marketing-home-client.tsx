@@ -19,6 +19,11 @@ export function MarketingHomeClient({
 }: MarketingHomeClientProps) {
   const { t } = useTranslation()
 
+  // Calculate overlay opacity (0-100 scale to 0-1 scale)
+  const overlayIntensity = (heroData.overlay_intensity ?? 0.5)
+  const overlayOpacityFrom = Math.min(overlayIntensity + 0.1, 1)
+  const overlayOpacityTo = Math.min(overlayIntensity + 0.3, 1)
+
   const servicesList = [
     {
       icon: Hammer,
@@ -60,7 +65,12 @@ export function MarketingHomeClient({
               alt="" 
               className="w-full h-full object-cover opacity-30"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/80" />
+            <div 
+              className="absolute inset-0 bg-gradient-to-b"
+              style={{ 
+                backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,${overlayOpacityFrom}), rgba(0,0,0,${overlayOpacityTo}))`
+              }} 
+            />
           </div>
         )}
         

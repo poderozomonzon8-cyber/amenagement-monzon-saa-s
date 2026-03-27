@@ -11,10 +11,12 @@ interface LanguageSelectorProps {
 }
 
 export function LanguageSelector({ variant = 'header' }: LanguageSelectorProps) {
-  const { language, setLanguage } = useLanguage()
-  const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  
+  // Get language context only after mount to avoid SSR issues
+  const context = useLanguage()
 
   useEffect(() => {
     setMounted(true)
@@ -30,6 +32,7 @@ export function LanguageSelector({ variant = 'header' }: LanguageSelectorProps) 
 
   if (!mounted) return <div className="w-20 h-9" />
 
+  const { language, setLanguage } = context
   const current = languages.find((l) => l.code === language) ?? languages[0]
 
   // Mobile variant: simple inline pill buttons

@@ -14,6 +14,7 @@ interface DynamicHeroProps {
   }
   accentColor?: string
   backgroundImage?: string
+  overlayIntensity?: number
   children?: ReactNode
 }
 
@@ -23,6 +24,7 @@ export function DynamicHero({
   cta,
   accentColor = '#C9A84C',
   backgroundImage,
+  overlayIntensity = 0.7,
 }: DynamicHeroProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden page-transition">
@@ -38,8 +40,9 @@ export function DynamicHero({
 
       {/* Overlay Gradient */}
       <div
-        className="absolute inset-0 opacity-70"
+        className="absolute inset-0"
         style={{
+          opacity: overlayIntensity,
           background: `linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.7) 50%, rgba(10, 10, 10, 0.85) 100%)`,
         }}
       />

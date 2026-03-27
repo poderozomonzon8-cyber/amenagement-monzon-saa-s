@@ -13,22 +13,20 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-const defaultT = (key: string) => getTranslation(key, 'fr')
-
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('fr')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     try {
       const saved = localStorage.getItem('am-language') as Language | null
       if (saved && ['en', 'fr', 'es'].includes(saved)) {
         setLanguageState(saved)
       }
     } catch {
-      // ignore
+      // localStorage not available
     }
-    setMounted(true)
   }, [])
 
   const setLanguage = (lang: Language) => {
@@ -36,21 +34,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.setItem('am-language', lang)
     } catch {
-      // ignore
+      // localStorage not available
     }
   }
 
   const t = useCallback((key: string): string => {
     return getTranslation(key, language)
   }, [language])
-
-  if (!mounted) {
-    return (
-      <LanguageContext.Provider value={{ language: 'fr', setLanguage, t: defaultT }}>
-        {children}
-      </LanguageContext.Provider>
-    )
-  }
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
@@ -62,7 +52,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage() {
   const context = useContext(LanguageContext)
   if (!context) {
-    throw new Error('useLanguage must be used within LanguageProvider')
+    return { language: 'fr' as Language, setLanguage: () => {}, t: (key: string) => key }
   }
   return context
 }
