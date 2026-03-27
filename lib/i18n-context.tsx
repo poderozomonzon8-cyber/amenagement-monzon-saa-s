@@ -49,10 +49,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function useLanguage() {
+export function useLanguage(): LanguageContextType {
   const context = useContext(LanguageContext)
+  // Return fallback when context not available (SSR or outside provider)
   if (!context) {
-    return { language: 'fr' as Language, setLanguage: () => {}, t: (key: string) => key }
+    return { 
+      language: 'fr' as Language, 
+      setLanguage: () => {}, 
+      t: (key: string) => getTranslation(key, 'fr') 
+    }
   }
   return context
 }
