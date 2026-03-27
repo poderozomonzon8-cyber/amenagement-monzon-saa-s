@@ -83,7 +83,7 @@ export function MarketingHeader() {
               }`}
               style={pathname.includes('/hardscape') ? { color: accentColor } : {}}
             >
-              Hardscape & Landscape
+              Hardscape
             </Link>
             <Link
               href="/marketing/services/maintenance"
@@ -138,7 +138,7 @@ export function MarketingHeader() {
               Construction
             </Link>
             <Link href="/marketing/services/hardscape" className="block text-sm font-medium hover:text-white transition-colors">
-              Hardscape & Landscape
+              Hardscape
             </Link>
             <Link href="/marketing/services/maintenance" className="block text-sm font-medium hover:text-white transition-colors">
               Maintenance
