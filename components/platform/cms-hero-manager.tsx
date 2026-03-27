@@ -73,17 +73,22 @@ export function CMSHeroManager() {
       const fileExt = file.name.split('.').pop()
       const fileName = `heroes/${hero.page_key}-${Date.now()}.${fileExt}`
       
-      const { data, error } = await supabase.storage
-        .from('cms-media')
-        .upload(fileName, file, { cacheControl: '3600', upsert: true })
-      
-      if (error) throw error
-      
-      const { data: urlData } = supabase.storage
-        .from('cms-media')
-        .getPublicUrl(data.path)
-      
-      handleUpdate(hero, 'media_url', urlData.publicUrl)
+      try {
+        const { data, error } = await supabase.storage
+          .from('cms-media')
+          .upload(fileName, file, { cacheControl: '3600', upsert: true })
+        
+        if (error) throw error
+        
+        const { data: urlData } = supabase.storage
+          .from('cms-media')
+          .getPublicUrl(data.path)
+        
+        handleUpdate(hero, 'media_url', urlData.publicUrl)
+      } catch (storageError) {
+        console.error('Storage error - try verifying bucket exists and is public:', storageError)
+        alert('Storage upload failed. Please verify the cms-media bucket exists in Supabase Storage and is set to Public. Alternatively, you can paste an image URL directly.')
+      }
     } catch (error) {
       console.error('Error uploading media:', error)
     } finally {
