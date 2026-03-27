@@ -20,6 +20,14 @@ interface Testimonial {
   text: string
 }
 
+interface CMSHero {
+  title?: string
+  subtitle?: string
+  cta_text?: string
+  media_url?: string | null
+  accent_color?: string
+}
+
 interface ServicePageProps {
   accentColor: string
   title: string
@@ -30,6 +38,7 @@ interface ServicePageProps {
   whyChooseUs: string[]
   projects: Project[]
   testimonials: Testimonial[]
+  cmsHero?: CMSHero | null
 }
 
 export function ServicePageTemplate({
@@ -42,37 +51,57 @@ export function ServicePageTemplate({
   whyChooseUs,
   projects,
   testimonials,
+  cmsHero,
 }: ServicePageProps) {
+  // Use CMS data if available, otherwise fall back to props
+  const heroTitle = cmsHero?.title || title
+  const heroSubtitle = cmsHero?.subtitle || subtitle
+  const heroCtaText = cmsHero?.cta_text || 'Request a Free Quote'
+  const heroAccentColor = cmsHero?.accent_color || accentColor
+  const heroMedia = cmsHero?.media_url
+
   return (
     <>
       {/* Hero */}
       <section className="relative min-h-[70vh] flex flex-col justify-center bg-black px-6 lg:px-16 overflow-hidden">
-        <div className="absolute top-0 left-0 h-full w-px" style={{ backgroundColor: `${accentColor}30` }} />
+        {/* Background media */}
+        {heroMedia && (
+          <div className="absolute inset-0 z-0">
+            <img 
+              src={heroMedia} 
+              alt="" 
+              className="w-full h-full object-cover opacity-30"
+            />
+            <div className="absolute inset-0 bg-black/60" />
+          </div>
+        )}
+        
+        <div className="absolute top-0 left-0 h-full w-px z-10" style={{ backgroundColor: `${heroAccentColor}30` }} />
         <div
-          className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none"
-          style={{ backgroundColor: `${accentColor}08` }}
+          className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none z-10"
+          style={{ backgroundColor: `${heroAccentColor}08` }}
         />
 
-        <div className="max-w-7xl mx-auto w-full">
+        <div className="max-w-7xl mx-auto w-full relative z-20">
           <div
             className="w-12 h-12 flex items-center justify-center border mb-8"
-            style={{ borderColor: `${accentColor}40`, backgroundColor: `${accentColor}12` }}
+            style={{ borderColor: `${heroAccentColor}40`, backgroundColor: `${heroAccentColor}12` }}
           >
-            <Icon className="w-5 h-5" style={{ color: accentColor }} />
+            <Icon className="w-5 h-5" style={{ color: heroAccentColor }} />
           </div>
 
           <h1 className="font-serif text-5xl md:text-7xl text-white leading-[1.05] max-w-4xl text-balance mb-6">
-            {title}
+            {heroTitle}
           </h1>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed mb-10 text-pretty">
-            {subtitle}
+            {heroSubtitle}
           </p>
           <Link
             href="/marketing/contact"
             className="inline-flex items-center gap-2 font-semibold px-8 py-4 text-sm tracking-wide transition-colors text-black"
-            style={{ backgroundColor: accentColor }}
+            style={{ backgroundColor: heroAccentColor }}
           >
-            Request a Free Quote
+            {heroCtaText}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

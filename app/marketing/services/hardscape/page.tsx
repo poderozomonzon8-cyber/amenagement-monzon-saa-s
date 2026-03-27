@@ -1,18 +1,22 @@
 import { Leaf } from 'lucide-react'
 import { ServicePageTemplate } from '@/components/service-page-template'
+import { getHeroByPage } from '@/app/actions/cms'
 
 export const metadata = {
   title: 'Hardscape & Landscape — Aménagement Monzon',
   description: 'Techno-Bloc pavers, retaining walls, irrigation systems, and full landscape design across Montreal and surrounding areas.',
 }
 
-export default function HardscapePage() {
+export default async function HardscapePage() {
+  const cmsHero = await getHeroByPage('hardscape')
+
   return (
     <ServicePageTemplate
       accentColor="#2E7D32"
       title="Hardscape & Landscape"
       subtitle="Outdoor living spaces built to last — from Techno-Bloc paver driveways and retaining walls to full landscape and irrigation design."
       Icon={Leaf}
+      cmsHero={cmsHero}
       whatWeDo={[
         'Techno-Bloc paver installation for driveways, patios, and walkways',
         'Structural and decorative retaining wall construction',

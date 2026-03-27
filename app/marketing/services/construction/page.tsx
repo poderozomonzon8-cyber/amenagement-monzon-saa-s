@@ -1,18 +1,22 @@
 import { Hammer } from 'lucide-react'
 import { ServicePageTemplate } from '@/components/service-page-template'
+import { getHeroByPage } from '@/app/actions/cms'
 
 export const metadata = {
   title: 'Construction & Renovations — Aménagement Monzon',
   description: 'Interior renovations, French drains, foundation crack repair, basement waterproofing, and structural construction across Montreal.',
 }
 
-export default function ConstructionPage() {
+export default async function ConstructionPage() {
+  const cmsHero = await getHeroByPage('construction')
+
   return (
     <ServicePageTemplate
       accentColor="#C9A84C"
       title="Construction & Renovations"
       subtitle="Expert interior renovations, foundation repair, drainage systems, and structural solutions — backed by 20+ years of proven craftsmanship."
       Icon={Hammer}
+      cmsHero={cmsHero}
       whatWeDo={[
         'Interior renovations with premium finishes and custom cabinetry',
         'French drains and exterior drainage system installation',

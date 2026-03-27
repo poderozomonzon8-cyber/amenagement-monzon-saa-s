@@ -21,6 +21,7 @@ import {
   UserCog,
   Briefcase,
   BarChart3,
+  ExternalLink,
 } from "lucide-react"
 
 const navSections = [
@@ -118,6 +119,21 @@ export function Sidebar({ activeSection, setActiveSection, userRole = "admin" }:
           </div>
         ))}
       </nav>
+
+      {/* Back to Website */}
+      <div className={cn("px-2 mb-2", collapsed && "px-1")}>
+        <Link
+          href="/"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-colors w-full text-left",
+            "text-muted-foreground hover:text-foreground hover:bg-secondary",
+            collapsed && "justify-center px-0"
+          )}
+        >
+          <ExternalLink className="w-4 h-4 shrink-0" />
+          {!collapsed && <span>Back to Website</span>}
+        </Link>
+      </div>
 
       {/* User Profile */}
       {!collapsed && <UserProfile />}

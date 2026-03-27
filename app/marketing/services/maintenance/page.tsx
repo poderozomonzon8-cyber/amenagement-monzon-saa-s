@@ -1,18 +1,22 @@
 import { Wrench } from 'lucide-react'
 import { ServicePageTemplate } from '@/components/service-page-template'
+import { getHeroByPage } from '@/app/actions/cms'
 
 export const metadata = {
   title: 'Property Maintenance — Aménagement Monzon',
   description: 'Seasonal grass cutting plans, snow removal, power washing, and year-round property maintenance across Montreal.',
 }
 
-export default function MaintenancePage() {
+export default async function MaintenancePage() {
+  const cmsHero = await getHeroByPage('maintenance')
+
   return (
     <ServicePageTemplate
       accentColor="#1E88E5"
       title="Property Maintenance"
       subtitle="Reliable, recurring property care throughout every season — from summer grass cutting plans to winter snow removal contracts."
       Icon={Wrench}
+      cmsHero={cmsHero}
       whatWeDo={[
         'Customized grass cutting plans — weekly or bi-weekly scheduling',
         'Residential and commercial snow removal and ice management',

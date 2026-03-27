@@ -1,33 +1,26 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { getPortfolioItems, type PortfolioItem } from '@/app/actions/cms'
+import { PortfolioGrid } from './portfolio-grid'
 
-const projects = [
-  { id: 1, title: 'Full Kitchen Renovation', category: 'Construction', location: 'Laval, QC', year: '2024', description: 'Complete gut-and-rebuild with custom cabinetry, quartz countertops, and integrated high-end appliances.' },
-  { id: 2, title: 'Paver Driveway & Patio', category: 'Hardscape', location: 'Montreal, QC', year: '2024', description: 'Full driveway and rear patio replacement using Techno-Bloc pavers with decorative border detailing.' },
-  { id: 3, title: 'Residential Snow Contract', category: 'Maintenance', location: 'Longueuil, QC', year: '2023–2024', description: 'Full-season snow removal and ice management for a large residential property.' },
-  { id: 4, title: 'Foundation Crack Repair', category: 'Construction', location: 'Laval, QC', year: '2024', description: 'Structural crack repair and full interior waterproofing system for a 1970s home.' },
-  { id: 5, title: 'Backyard Landscape Design', category: 'Hardscape', location: 'Brossard, QC', year: '2024', description: 'Retaining walls, sod, perennial plantings, and full irrigation system for an outdoor living space.' },
-  { id: 6, title: 'Basement Suite Addition', category: 'Construction', location: 'Montreal, QC', year: '2023', description: 'Full basement development with legal bedroom, bathroom, kitchenette, and egress window.' },
-  { id: 7, title: 'Commercial Hardscape', category: 'Hardscape', location: 'Laval, QC', year: '2023', description: 'Professional hardscape and landscape design for a multi-unit commercial development.' },
-  { id: 8, title: 'Annual Maintenance Plan', category: 'Maintenance', location: 'Repentigny, QC', year: 'Ongoing', description: 'Year-round grass cutting, fall cleanup, and snow removal for a large residential estate.' },
-  { id: 9, title: 'Power Washing & Spring Cleanup', category: 'Maintenance', location: 'Laval, QC', year: '2024', description: 'Full-property spring cleanup including power washing, debris removal, and bed preparation.' },
+// Default fallback projects
+const defaultProjects = [
+  { id: '1', title: 'Full Kitchen Renovation', category: 'construction' as const, description: 'Complete gut-and-rebuild with custom cabinetry, quartz countertops, and integrated high-end appliances.', image_url: '', is_featured: false, display_order: 0, created_at: '', updated_at: '' },
+  { id: '2', title: 'Paver Driveway & Patio', category: 'hardscape' as const, description: 'Full driveway and rear patio replacement using Techno-Bloc pavers with decorative border detailing.', image_url: '', is_featured: false, display_order: 1, created_at: '', updated_at: '' },
+  { id: '3', title: 'Residential Snow Contract', category: 'maintenance' as const, description: 'Full-season snow removal and ice management for a large residential property.', image_url: '', is_featured: false, display_order: 2, created_at: '', updated_at: '' },
+  { id: '4', title: 'Foundation Crack Repair', category: 'construction' as const, description: 'Structural crack repair and full interior waterproofing system for a 1970s home.', image_url: '', is_featured: false, display_order: 3, created_at: '', updated_at: '' },
+  { id: '5', title: 'Backyard Landscape Design', category: 'hardscape' as const, description: 'Retaining walls, sod, perennial plantings, and full irrigation system for an outdoor living space.', image_url: '', is_featured: false, display_order: 4, created_at: '', updated_at: '' },
+  { id: '6', title: 'Basement Suite Addition', category: 'construction' as const, description: 'Full basement development with legal bedroom, bathroom, kitchenette, and egress window.', image_url: '', is_featured: false, display_order: 5, created_at: '', updated_at: '' },
 ]
 
-const categories = ['All', 'Construction', 'Hardscape', 'Maintenance']
-
-const categoryColors: Record<string, string> = {
-  Construction: '#C9A84C',
-  Hardscape: '#2E7D32',
-  Maintenance: '#1E88E5',
+export const metadata = {
+  title: 'Portfolio — Aménagement Monzon',
+  description: 'View our portfolio of construction, hardscape, and maintenance projects across Montreal and surrounding regions.',
 }
 
-export default function PortfolioPage() {
-  const [filter, setFilter] = useState('All')
-
-  const filtered = filter === 'All' ? projects : projects.filter((p) => p.category === filter)
+export default async function PortfolioPage() {
+  const portfolioItems = await getPortfolioItems()
+  const projects = portfolioItems.length > 0 ? portfolioItems : defaultProjects
 
   return (
     <>
@@ -47,48 +40,7 @@ export default function PortfolioPage() {
       {/* Filter + Grid */}
       <section className="bg-black py-20 px-6 lg:px-16">
         <div className="max-w-7xl mx-auto">
-          {/* Filter tabs */}
-          <div className="flex gap-0 border border-white/20 w-fit mb-14">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className="px-6 py-3 text-sm tracking-wide transition-colors"
-                style={
-                  filter === cat
-                    ? { backgroundColor: '#C9A84C', color: '#000', fontWeight: 600 }
-                    : { color: '#9ca3af' }
-                }
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Projects grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
-            {filtered.map((project) => (
-              <div key={project.id} className="bg-black p-8 flex flex-col gap-4 group">
-                {/* Placeholder image area */}
-                <div
-                  className="h-44 border border-white/10 mb-2"
-                  style={{ backgroundColor: `${categoryColors[project.category]}08` }}
-                />
-                <div className="flex items-center gap-3">
-                  <span
-                    className="text-xs tracking-widest uppercase font-medium"
-                    style={{ color: categoryColors[project.category] }}
-                  >
-                    {project.category}
-                  </span>
-                  <span className="text-gray-600 text-xs">{project.year}</span>
-                </div>
-                <h3 className="font-serif text-xl text-white">{project.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{project.description}</p>
-                <p className="text-gray-600 text-xs mt-auto">{project.location}</p>
-              </div>
-            ))}
-          </div>
+          <PortfolioGrid projects={projects} />
         </div>
       </section>
 

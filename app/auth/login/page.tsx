@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
 
 export default function Page() {
   const [email, setEmail] = useState('')
@@ -46,6 +47,13 @@ export default function Page() {
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
         <div className="flex flex-col gap-6">
+          <Link 
+            href="/" 
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Website
+          </Link>
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">Login</CardTitle>
