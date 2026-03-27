@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { PWAInstaller } from '@/lib/pwa'
-import { LanguageProvider } from '@/lib/i18n-context'
+import { LanguageProviderWrapper } from '@/components/language-provider-wrapper'
 import './globals.css'
 
 const inter = Inter({
@@ -43,11 +43,11 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-black text-white">
-        <LanguageProvider>
+        <LanguageProviderWrapper>
           <PWAInstaller />
           {children}
           <Analytics />
-        </LanguageProvider>
+        </LanguageProviderWrapper>
       </body>
     </html>
   )

@@ -210,12 +210,12 @@ export async function getAboutContent() {
     // Return fallback data if table doesn't exist or is empty
     return {
       id: 'fallback',
-      founder_name: 'Carlos Monzon',
+      founder_name: 'Silvio L. Monzon',
       founder_image_url: null,
-      founder_story: 'With over 20 years of experience in construction and landscaping, Carlos founded Amenagement Monzon with a vision to deliver premium quality outdoor solutions to Montreal and surrounding areas.',
-      mission_statement: 'Our mission is to transform outdoor spaces into beautiful, functional environments that exceed our clients expectations through quality craftsmanship and dedicated service.',
-      years_experience: 20,
-      projects_completed: 500,
+      founder_story: 'With Mexican roots and a humble hardworking background, Silvio L. Monzon founded Aménagement Monzon in 2014 with big dreams and determination. Starting with commercial cleaning, he scaled the business through landscape, hardscape, and construction to become the complete property partner owners trust.',
+      mission_statement: 'To be the one trusted partner owners call to manage every aspect of their property—from routine maintenance to complete transformations—built on quality, integrity, and family values.',
+      years_experience: 10,
+      projects_completed: 300,
       updated_at: new Date().toISOString()
     } as WebsiteAbout
   }
