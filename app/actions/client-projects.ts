@@ -1,16 +1,12 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { Project } from '@/lib/types'
 
-/**
- * Get all clients for dropdown selection
- * Returns clients with their profile information
- */
+// Get all clients for dropdown - NO ORDER CLAUSE, sort in JS
 export async function getAllClients() {
-  const supabase = await createClient()
-  
   try {
+    const supabase = await createClient()
+    
     const { data, error } = await supabase
       .from('clients')
       .select(`
@@ -29,10 +25,10 @@ export async function getAllClients() {
       return []
     }
     
-    // Sort clients by name in JavaScript (avoids Supabase nested field ordering issues)
+    // Sort by name in JavaScript
     const sorted = (data || []).sort((a, b) => {
-      const nameA = a.profiles?.full_name || 'Unknown'
-      const nameB = b.profiles?.full_name || 'Unknown'
+      const nameA = a.profiles?.full_name || ''
+      const nameB = b.profiles?.full_name || ''
       return nameA.localeCompare(nameB)
     })
     
@@ -41,70 +37,55 @@ export async function getAllClients() {
       name: client.profiles?.full_name || 'Unknown'
     }))
   } catch (err) {
-    console.error('[v0] getAllClients exception:', err)
+    console.error('[v0] getAllClients catch:', err)
     return []
   }
 }
 
-/**
- * Assign a client to a project
- */
+// Assign client to project
 export async function assignClientToProject(projectId: string, clientId: string) {
-  const supabase = await createClient()
-  
-  // Check if this client is already assigned
-  const { data: existing } = await supabase
-    .from('projects')
-    .select('id')
-    .eq('id', projectId)
-    .eq('client_id', clientId)
-    .limit(1)
-  
-  if (existing?.length) {
-    throw new Error('This client is already assigned to this project')
-  }
-  
-  // Update project with new client
-  const { data, error } = await supabase
-    .from('projects')
-    .update({ client_id: clientId, updated_at: new Date().toISOString() })
-    .eq('id', projectId)
-    .select()
-    .limit(1)
-  
-  if (error) throw new Error(error.message)
-  return (data?.[0] || {}) as Project
-}
-
-/**
- * Remove client from a project
- */
-export async function removeClientFromProject(projectId: string) {
-  const supabase = await createClient()
-  
-  const { data, error } = await supabase
-    .from('projects')
-    .update({ client_id: null, updated_at: new Date().toISOString() })
-    .eq('id', projectId)
-    .select()
-    .limit(1)
-  
-  if (error) throw new Error(error.message)
-  return (data?.[0] || {}) as Project
-}
-
-/**
- * Get a single project with full client info
- */
-export async function getProjectWithClient(projectId: string) {
-  const supabase = await createClient()
-  
   try {
-    const { data, error } = await supabase
+    const supabase = await createClient()
+    
+    const { error } = await supabase
       .from('projects')
-      .select(`
-        *,
-        clients (
+      .update({ client_id: clientId })
+      .eq('id', projectId)
+    
+    if (error) {
+      console.error('[v0] assignClientToProject error:', error.message)
+      throw new Error(error.message)
+    }
+    
+    return { success: true }
+  } catch (err) {
+    console.error('[v0] assignClientToProject catch:', err)
+    throw err
+  }
+}
+
+// Get project with client info - SIMPLIFIED QUERY
+export async function getProjectWithClient(projectId: string) {
+  try {
+    const supabase = await createClient()
+    
+    // First get the project
+    const { data: project, error: projectError } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('id', projectId)
+      .single()
+    
+    if (projectError || !project) {
+      console.error('[v0] getProjectWithClient project error:', projectError?.message)
+      return null
+    }
+    
+    // If project has a client_id, get client info separately
+    if (project.client_id) {
+      const { data: client, error: clientError } = await supabase
+        .from('clients')
+        .select(`
           id,
           address,
           profile_id,
@@ -114,19 +95,18 @@ export async function getProjectWithClient(projectId: string) {
             email,
             phone
           )
-        )
-      `)
-      .eq('id', projectId)
-      .limit(1)
-    
-    if (error) {
-      console.error('[v0] getProjectWithClient error:', error.message)
-      return null
+        `)
+        .eq('id', project.client_id)
+        .single()
+      
+      if (!clientError && client) {
+        return { ...project, clients: client }
+      }
     }
     
-    return (data?.[0] || null) as any
+    return project
   } catch (err) {
-    console.error('[v0] getProjectWithClient exception:', err)
+    console.error('[v0] getProjectWithClient catch:', err)
     return null
   }
 }
