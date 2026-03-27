@@ -2,6 +2,7 @@
 
 import { MarketingHeader } from '@/components/marketing-header'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function MarketingLayout({
   children,
@@ -20,7 +21,13 @@ export default function MarketingLayout({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
-              <h3 className="font-bold mb-4 text-yellow-600">Aménagement Monzon</h3>
+              <Image
+                src="/logo-am.png"
+                alt="Aménagement Monzon"
+                width="160"
+                height="54"
+                className="h-14 w-auto mb-4"
+              />
               <p className="text-gray-400 text-sm">Premium construction, hardscape, and landscaping solutions with 20+ years of expertise.</p>
             </div>
             <div>

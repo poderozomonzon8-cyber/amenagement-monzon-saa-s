@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 
 type BrandType = 'home' | 'construction' | 'hardscape' | 'maintenance'
@@ -48,13 +49,15 @@ export function MarketingHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="/marketing" className="flex items-center gap-2 group">
-            <div className="text-2xl font-bold">
-              <span style={{ color: accentColor }} className="transition-colors duration-300">
-                Aménagement
-              </span>
-              <span className="text-white ml-2">Monzon</span>
-            </div>
+          <Link href="/marketing" className="flex items-center">
+            <Image
+              src="/logo-am.png"
+              alt="Aménagement Monzon"
+              width={180}
+              height={60}
+              className="h-12 w-auto"
+              priority
+            />
           </Link>
 
           {/* Desktop Menu */}

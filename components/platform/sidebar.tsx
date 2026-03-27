@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { UserProfile } from "./auth-ui"
 import {
@@ -73,14 +74,18 @@ export function Sidebar({ activeSection, setActiveSection, userRole = "admin" }:
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className={cn("flex items-center border-b border-border h-16 px-4 shrink-0", collapsed ? "justify-center" : "gap-3")}>
-        <div className="w-8 h-8 bg-primary shrink-0 flex items-center justify-center">
-          <span className="text-primary-foreground font-serif font-bold text-sm">M</span>
-        </div>
-        {!collapsed && (
-          <div>
-            <p className="font-serif text-foreground font-semibold text-sm leading-tight">Aménagement</p>
-            <p className="text-primary text-xs tracking-widest uppercase">Monzon</p>
+      <div className={cn("flex items-center border-b border-border h-16 px-4 shrink-0", collapsed ? "justify-center" : "gap-2")}>
+        {!collapsed ? (
+          <Image
+            src="/logo-am.png"
+            alt="Aménagement Monzon"
+            width={120}
+            height={40}
+            className="h-10 w-auto"
+          />
+        ) : (
+          <div className="w-8 h-8 bg-primary shrink-0 flex items-center justify-center">
+            <span className="text-primary-foreground font-serif font-bold text-sm">M</span>
           </div>
         )}
       </div>
