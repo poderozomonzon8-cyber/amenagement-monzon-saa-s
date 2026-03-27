@@ -3,32 +3,52 @@
 import { createClient } from '@/lib/supabase/server'
 import { Project } from '@/lib/types'
 
-// Get all clients for dropdown
+/**
+ * Get all clients for dropdown selection
+ * Returns clients with their profile information
+ */
 export async function getAllClients() {
   const supabase = await createClient()
   
-  const { data, error } = await supabase
-    .from('clients')
-    .select(`
-      id,
-      profile_id,
-      address,
-      profiles (
+  try {
+    const { data, error } = await supabase
+      .from('clients')
+      .select(`
         id,
-        full_name,
-        email
-      )
-    `)
-    .order('id', { ascending: true })
-  
-  if (error) throw new Error(error.message)
-  return (data || []).map(client => ({
-    ...client,
-    name: client.profiles?.full_name || 'Unknown'
-  }))
+        profile_id,
+        address,
+        profiles (
+          id,
+          full_name,
+          email
+        )
+      `)
+    
+    if (error) {
+      console.error('[v0] getAllClients error:', error.message)
+      return []
+    }
+    
+    // Sort clients by name in JavaScript (avoids Supabase nested field ordering issues)
+    const sorted = (data || []).sort((a, b) => {
+      const nameA = a.profiles?.full_name || 'Unknown'
+      const nameB = b.profiles?.full_name || 'Unknown'
+      return nameA.localeCompare(nameB)
+    })
+    
+    return sorted.map(client => ({
+      ...client,
+      name: client.profiles?.full_name || 'Unknown'
+    }))
+  } catch (err) {
+    console.error('[v0] getAllClients exception:', err)
+    return []
+  }
 }
 
-// Assign client to project
+/**
+ * Assign a client to a project
+ */
 export async function assignClientToProject(projectId: string, clientId: string) {
   const supabase = await createClient()
   
@@ -56,7 +76,9 @@ export async function assignClientToProject(projectId: string, clientId: string)
   return (data?.[0] || {}) as Project
 }
 
-// Remove client from project
+/**
+ * Remove client from a project
+ */
 export async function removeClientFromProject(projectId: string) {
   const supabase = await createClient()
   
@@ -71,29 +93,40 @@ export async function removeClientFromProject(projectId: string) {
   return (data?.[0] || {}) as Project
 }
 
-// Get project with client info
+/**
+ * Get a single project with full client info
+ */
 export async function getProjectWithClient(projectId: string) {
   const supabase = await createClient()
   
-  const { data, error } = await supabase
-    .from('projects')
-    .select(`
-      *,
-      clients (
-        id,
-        address,
-        profile_id,
-        profiles (
+  try {
+    const { data, error } = await supabase
+      .from('projects')
+      .select(`
+        *,
+        clients (
           id,
-          full_name,
-          email,
-          phone
+          address,
+          profile_id,
+          profiles (
+            id,
+            full_name,
+            email,
+            phone
+          )
         )
-      )
-    `)
-    .eq('id', projectId)
-    .limit(1)
-  
-  if (error) throw new Error(error.message)
-  return (data?.[0] || null) as any
+      `)
+      .eq('id', projectId)
+      .limit(1)
+    
+    if (error) {
+      console.error('[v0] getProjectWithClient error:', error.message)
+      return null
+    }
+    
+    return (data?.[0] || null) as any
+  } catch (err) {
+    console.error('[v0] getProjectWithClient exception:', err)
+    return null
+  }
 }
