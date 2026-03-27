@@ -1,0 +1,129 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "construction": "Construction",
+    "hardscape": "Aménagement",
+    "maintenance": "Entretien",
+    "portfolio": "Portfolio",
+    "client_portal": "Portail Client",
+    "get_quote": "Obtenir un Devis"
+  },
+  "hero": {
+    "eyebrow": "Aménagement Monzon — Montréal, Québec",
+    "fallback_subtitle": "Fini avec fierté.",
+    "view_work": "Voir Nos Réalisations"
+  },
+  "stats": {
+    "years_experience": "Ans d'Expérience",
+    "projects_delivered": "Projets Livrés",
+    "client_satisfaction": "Satisfaction Client",
+    "value_constructed": "Valeur Construite"
+  },
+  "services": {
+    "section_label": "Ce Que Nous Faisons",
+    "section_title_1": "Trois divisions.",
+    "section_title_2": "Un seul standard d'excellence.",
+    "get_quote": "Obtenir un Devis",
+    "learn_more": "En Savoir Plus",
+    "construction_label": "Construction",
+    "construction_desc": "Rénovations intérieures, drains français, réparation de fissures de fondation, imperméabilisation de sous-sol et travaux structuraux.",
+    "hardscape_label": "Aménagement & Paysagement",
+    "hardscape_desc": "Pavés, murs de soutènement, systèmes d'irrigation, entretien des pelouses et conception d'espaces extérieurs.",
+    "maintenance_label": "Entretien",
+    "maintenance_desc": "Plans saisonniers de tonte, déneigement, lavage à pression et entretien continu des propriétés."
+  },
+  "cta_mid": {
+    "title": "Démarrez votre projet aujourd'hui.",
+    "subtitle": "Obtenez votre devis gratuit sans engagement en 24 heures. Notre équipe est prête à vous aider.",
+    "get_quote": "Obtenir Votre Devis Gratuit",
+    "see_portfolio": "Voir Notre Portfolio"
+  },
+  "why": {
+    "label": "Pourquoi Monzon",
+    "title": "L'engagement derrière chaque projet.",
+    "licensed_label": "Certifié & Assuré",
+    "licensed_desc": "Entièrement certifié avec une couverture de responsabilité complète sur tous les projets.",
+    "ontime_label": "Livraison dans les délais",
+    "ontime_desc": "Nous respectons votre calendrier — tous les projets sont complétés dans les délais convenus.",
+    "premium_label": "Matériaux Premium",
+    "premium_desc": "Nous utilisons uniquement des matériaux de première qualité, incluant les pavés certifiés Techno-Bloc."
+  },
+  "testimonials": {
+    "label": "Témoignages Clients",
+    "title": "Ce que disent nos clients."
+  },
+  "cta_bottom": {
+    "title": "Prêt à démarrer votre projet?",
+    "subtitle": "Obtenez un devis gratuit et sans engagement de notre équipe aujourd'hui.",
+    "get_quote": "Obtenir un Devis Gratuit",
+    "client_portal": "Portail Client"
+  },
+  "contact": {
+    "breadcrumb": "Contact",
+    "title_form": "Parlons de votre projet.",
+    "title_success": "Merci pour votre demande",
+    "subtitle_form": "Demandez un devis gratuit et sans engagement ou posez-nous simplement une question. Notre équipe répond généralement en un jour ouvrable.",
+    "subtitle_success": "Votre demande de devis a bien été reçue. Nous vous contacterons bientôt.",
+    "get_in_touch": "Nous Contacter",
+    "phone_label": "Téléphone",
+    "email_label": "Courriel",
+    "area_label": "Zone de Service",
+    "area_value": "Montréal, Laval, Longueuil et les régions environnantes",
+    "hours_title": "Heures d'Ouverture",
+    "hours_weekday": "Lundi – Vendredi",
+    "hours_weekday_time": "7h00 – 18h00",
+    "hours_saturday": "Samedi",
+    "hours_saturday_time": "8h00 – 16h00",
+    "hours_sunday": "Dimanche",
+    "hours_sunday_time": "Fermé",
+    "form_label": "Obtenir Votre Devis Gratuit",
+    "name_label": "Nom Complet",
+    "name_placeholder": "Jean Tremblay",
+    "email_label_form": "Adresse Courriel",
+    "email_placeholder": "jean@exemple.com",
+    "phone_label_form": "Numéro de Téléphone",
+    "phone_placeholder": "(514) 000-0000",
+    "service_label": "Type de Service",
+    "service_construction": "Construction & Rénovations",
+    "service_hardscape": "Aménagement & Paysagement",
+    "service_maintenance": "Entretien de Propriété",
+    "budget_label": "Budget",
+    "budget_placeholder": "Sélectionner un budget...",
+    "budget_1": "Moins de 5 000 $",
+    "budget_2": "5 000 $ – 15 000 $",
+    "budget_3": "15 000 $ – 50 000 $",
+    "budget_4": "50 000 $ et plus",
+    "date_label": "Date de Début Souhaitée",
+    "description_label": "Description du Projet",
+    "description_placeholder": "Décrivez votre projet, les délais et toute exigence particulière...",
+    "submit": "Soumettre la Demande de Devis",
+    "submitting": "Envoi en cours...",
+    "required": "*",
+    "success_title": "Merci!",
+    "success_body": "Votre demande de devis a bien été reçue. Notre équipe examinera les détails de votre projet et vous contactera dans un jour ouvrable avec une estimation détaillée.",
+    "submit_another": "Soumettre une Autre Demande",
+    "back_home": "Retour à l'Accueil",
+    "error_generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "error_submit": "Échec de l'envoi. Veuillez réessayer."
+  },
+  "footer": {
+    "back_to_website": "Retour au Site"
+  },
+  "dashboard": {
+    "administration": "Administration",
+    "settings": "Paramètres",
+    "portals": "Portails",
+    "dashboard": "Tableau de bord",
+    "leads": "Leads",
+    "projects": "Projets",
+    "billing": "Facturation",
+    "employees": "Employés",
+    "users": "Utilisateurs",
+    "reports": "Rapports",
+    "invoice_design": "Design Factures",
+    "cms_editor": "Éditeur CMS",
+    "client_portal": "Portail Client",
+    "employee_app": "App Employés",
+    "back_to_website": "Retour au Site"
+  }
+}

@@ -7,6 +7,7 @@ import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LanguageSelector } from '@/components/language-selector'
 
 type BrandType = 'home' | 'construction' | 'hardscape' | 'maintenance'
 
@@ -120,6 +121,9 @@ export function MarketingHeader({ socialLinks }: { socialLinks?: SocialLinks }) 
 
           {/* CTA Buttons */}
           <div className="hidden md:flex gap-4 items-center">
+            {/* Language Selector */}
+            <LanguageSelector />
+            
             {/* Theme Toggle */}
             <ThemeToggle />
             

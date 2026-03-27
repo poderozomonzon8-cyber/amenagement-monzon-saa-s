@@ -1,0 +1,129 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "construction": "Construcción",
+    "hardscape": "Paisajismo",
+    "maintenance": "Mantenimiento",
+    "portfolio": "Portafolio",
+    "client_portal": "Portal del Cliente",
+    "get_quote": "Obtener Cotización"
+  },
+  "hero": {
+    "eyebrow": "Aménagement Monzon — Montréal, Québec",
+    "fallback_subtitle": "Terminado con orgullo.",
+    "view_work": "Ver Nuestro Trabajo"
+  },
+  "stats": {
+    "years_experience": "Años de Experiencia",
+    "projects_delivered": "Proyectos Entregados",
+    "client_satisfaction": "Satisfacción del Cliente",
+    "value_constructed": "Valor Construido"
+  },
+  "services": {
+    "section_label": "Lo Que Hacemos",
+    "section_title_1": "Tres divisiones.",
+    "section_title_2": "Un solo estándar de excelencia.",
+    "get_quote": "Obtener Cotización",
+    "learn_more": "Saber Más",
+    "construction_label": "Construcción",
+    "construction_desc": "Renovaciones interiores, drenajes franceses, reparación de grietas en cimientos, impermeabilización de sótanos y trabajos estructurales.",
+    "hardscape_label": "Paisajismo & Jardines",
+    "hardscape_desc": "Adoquines, muros de contención, sistemas de riego, cuidado del césped y diseño completo de espacios al aire libre.",
+    "maintenance_label": "Mantenimiento",
+    "maintenance_desc": "Planes estacionales de corte de césped, remoción de nieve, lavado a presión y mantenimiento continuo de propiedades."
+  },
+  "cta_mid": {
+    "title": "Inicia tu proyecto hoy.",
+    "subtitle": "Obtén tu cotización gratuita sin compromiso en 24 horas. Nuestro equipo está listo para ayudarte.",
+    "get_quote": "Obtener Cotización Gratuita",
+    "see_portfolio": "Ver Nuestro Portafolio"
+  },
+  "why": {
+    "label": "Por Qué Monzon",
+    "title": "El compromiso detrás de cada proyecto.",
+    "licensed_label": "Certificado y Asegurado",
+    "licensed_desc": "Completamente certificado con cobertura integral de responsabilidad en todos los proyectos.",
+    "ontime_label": "Entrega Puntual",
+    "ontime_desc": "Respetamos tu agenda — todos los proyectos se completan dentro de los plazos acordados.",
+    "premium_label": "Materiales Premium",
+    "premium_desc": "Solo usamos materiales de primera calidad, incluyendo adoquines certificados Techno-Bloc."
+  },
+  "testimonials": {
+    "label": "Testimonios de Clientes",
+    "title": "Lo que dicen nuestros clientes."
+  },
+  "cta_bottom": {
+    "title": "¿Listo para iniciar tu proyecto?",
+    "subtitle": "Obtén una cotización gratuita y sin compromiso de nuestro equipo hoy.",
+    "get_quote": "Obtener Cotización Gratuita",
+    "client_portal": "Portal del Cliente"
+  },
+  "contact": {
+    "breadcrumb": "Contacto",
+    "title_form": "Hablemos de tu proyecto.",
+    "title_success": "Gracias por tu consulta",
+    "subtitle_form": "Solicita una cotización gratuita sin compromiso o simplemente haznos una pregunta. Nuestro equipo normalmente responde en un día hábil.",
+    "subtitle_success": "Tu solicitud de cotización ha sido recibida. Nos comunicaremos contigo pronto.",
+    "get_in_touch": "Contáctanos",
+    "phone_label": "Teléfono",
+    "email_label": "Correo",
+    "area_label": "Área de Servicio",
+    "area_value": "Montreal, Laval, Longueuil y regiones circundantes",
+    "hours_title": "Horario de Atención",
+    "hours_weekday": "Lunes – Viernes",
+    "hours_weekday_time": "7:00am – 6:00pm",
+    "hours_saturday": "Sábado",
+    "hours_saturday_time": "8:00am – 4:00pm",
+    "hours_sunday": "Domingo",
+    "hours_sunday_time": "Cerrado",
+    "form_label": "Obtén Tu Cotización Gratuita",
+    "name_label": "Nombre Completo",
+    "name_placeholder": "Juan Tremblay",
+    "email_label_form": "Correo Electrónico",
+    "email_placeholder": "juan@ejemplo.com",
+    "phone_label_form": "Número de Teléfono",
+    "phone_placeholder": "(514) 000-0000",
+    "service_label": "Tipo de Servicio",
+    "service_construction": "Construcción & Renovaciones",
+    "service_hardscape": "Paisajismo & Jardines",
+    "service_maintenance": "Mantenimiento de Propiedades",
+    "budget_label": "Rango de Presupuesto",
+    "budget_placeholder": "Seleccionar presupuesto...",
+    "budget_1": "Menos de $5,000",
+    "budget_2": "$5,000 - $15,000",
+    "budget_3": "$15,000 - $50,000",
+    "budget_4": "$50,000+",
+    "date_label": "Fecha de Inicio Preferida",
+    "description_label": "Descripción del Proyecto",
+    "description_placeholder": "Describe tu proyecto, plazos y cualquier requisito específico...",
+    "submit": "Enviar Solicitud de Cotización",
+    "submitting": "Enviando...",
+    "required": "*",
+    "success_title": "¡Gracias!",
+    "success_body": "Tu solicitud de cotización ha sido recibida. Nuestro equipo revisará los detalles de tu proyecto y se comunicará contigo en un día hábil con una estimación detallada.",
+    "submit_another": "Enviar Otra Solicitud",
+    "back_home": "Volver al Inicio",
+    "error_generic": "Ocurrió un error. Por favor, inténtalo de nuevo.",
+    "error_submit": "Error al enviar la solicitud. Por favor, inténtalo de nuevo."
+  },
+  "footer": {
+    "back_to_website": "Volver al Sitio"
+  },
+  "dashboard": {
+    "administration": "Administración",
+    "settings": "Configuración",
+    "portals": "Portales",
+    "dashboard": "Panel",
+    "leads": "Leads",
+    "projects": "Proyectos",
+    "billing": "Facturación",
+    "employees": "Empleados",
+    "users": "Usuarios",
+    "reports": "Reportes",
+    "invoice_design": "Diseño de Facturas",
+    "cms_editor": "Editor CMS",
+    "client_portal": "Portal del Cliente",
+    "employee_app": "App Empleados",
+    "back_to_website": "Volver al Sitio"
+  }
+}

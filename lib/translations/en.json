@@ -1,0 +1,129 @@
+{
+  "nav": {
+    "home": "Home",
+    "construction": "Construction",
+    "hardscape": "Hardscape",
+    "maintenance": "Maintenance",
+    "portfolio": "Portfolio",
+    "client_portal": "Client Portal",
+    "get_quote": "Get a Quote"
+  },
+  "hero": {
+    "eyebrow": "Aménagement Monzon — Montréal, Québec",
+    "fallback_subtitle": "Finished with pride.",
+    "view_work": "View Our Work"
+  },
+  "stats": {
+    "years_experience": "Years of Experience",
+    "projects_delivered": "Projects Delivered",
+    "client_satisfaction": "Client Satisfaction",
+    "value_constructed": "Value Constructed"
+  },
+  "services": {
+    "section_label": "What We Do",
+    "section_title_1": "Three divisions.",
+    "section_title_2": "One standard of excellence.",
+    "get_quote": "Get a Quote",
+    "learn_more": "Learn More",
+    "construction_label": "Construction",
+    "construction_desc": "Interior renovations, French drains, foundation crack repair, basement waterproofing, and structural work.",
+    "hardscape_label": "Hardscape & Landscape",
+    "hardscape_desc": "Pavers, retaining walls, irrigation systems, lawn care, and full outdoor living design.",
+    "maintenance_label": "Maintenance",
+    "maintenance_desc": "Seasonal grass cutting plans, snow removal, power washing, and ongoing property upkeep."
+  },
+  "cta_mid": {
+    "title": "Start your project today.",
+    "subtitle": "Get your free, no-obligation quote within 24 hours. Our team is ready to help.",
+    "get_quote": "Get Your Free Quote",
+    "see_portfolio": "See Our Portfolio"
+  },
+  "why": {
+    "label": "Why Monzon",
+    "title": "The commitment behind every project.",
+    "licensed_label": "Licensed & Insured",
+    "licensed_desc": "Fully certified with comprehensive liability coverage on all projects.",
+    "ontime_label": "On-Time Delivery",
+    "ontime_desc": "We respect your schedule — all projects completed within agreed timelines.",
+    "premium_label": "Premium Materials",
+    "premium_desc": "We source only top-grade materials, including certified Techno-Bloc pavers."
+  },
+  "testimonials": {
+    "label": "Client Testimonials",
+    "title": "What our clients say."
+  },
+  "cta_bottom": {
+    "title": "Ready to start your project?",
+    "subtitle": "Get a free, no-obligation quote from our team today.",
+    "get_quote": "Get a Free Quote",
+    "client_portal": "Client Portal"
+  },
+  "contact": {
+    "breadcrumb": "Contact",
+    "title_form": "Let's talk about your project.",
+    "title_success": "Thank you for your inquiry",
+    "subtitle_form": "Request a free, no-obligation quote or simply ask us a question. Our team typically responds within one business day.",
+    "subtitle_success": "Your quote request has been received. We will contact you soon.",
+    "get_in_touch": "Get In Touch",
+    "phone_label": "Phone",
+    "email_label": "Email",
+    "area_label": "Service Area",
+    "area_value": "Montreal, Laval, Longueuil, and surrounding regions",
+    "hours_title": "Business Hours",
+    "hours_weekday": "Monday – Friday",
+    "hours_weekday_time": "7:00am – 6:00pm",
+    "hours_saturday": "Saturday",
+    "hours_saturday_time": "8:00am – 4:00pm",
+    "hours_sunday": "Sunday",
+    "hours_sunday_time": "Closed",
+    "form_label": "Get Your Free Quote",
+    "name_label": "Full Name",
+    "name_placeholder": "Jean Tremblay",
+    "email_label_form": "Email Address",
+    "email_placeholder": "jean@example.com",
+    "phone_label_form": "Phone Number",
+    "phone_placeholder": "(514) 000-0000",
+    "service_label": "Service Type",
+    "service_construction": "Construction & Renovations",
+    "service_hardscape": "Hardscape & Landscape",
+    "service_maintenance": "Property Maintenance",
+    "budget_label": "Budget Range",
+    "budget_placeholder": "Select a budget...",
+    "budget_1": "Under $5,000",
+    "budget_2": "$5,000 - $15,000",
+    "budget_3": "$15,000 - $50,000",
+    "budget_4": "$50,000+",
+    "date_label": "Preferred Start Date",
+    "description_label": "Project Description",
+    "description_placeholder": "Describe your project, timeline, and any specific requirements...",
+    "submit": "Submit Quote Request",
+    "submitting": "Sending...",
+    "required": "*",
+    "success_title": "Thank You!",
+    "success_body": "Your quote request has been received. Our team will review your project details and contact you within one business day with a detailed estimate and next steps.",
+    "submit_another": "Submit Another Request",
+    "back_home": "Back Home",
+    "error_generic": "An error occurred. Please try again.",
+    "error_submit": "Failed to submit quote request. Please try again."
+  },
+  "footer": {
+    "back_to_website": "Back to Website"
+  },
+  "dashboard": {
+    "administration": "Administration",
+    "settings": "Settings",
+    "portals": "Portals",
+    "dashboard": "Dashboard",
+    "leads": "Leads",
+    "projects": "Projects",
+    "billing": "Billing",
+    "employees": "Employees",
+    "users": "Users",
+    "reports": "Reports",
+    "invoice_design": "Invoice Design",
+    "cms_editor": "CMS Editor",
+    "client_portal": "Client Portal",
+    "employee_app": "Employee App",
+    "back_to_website": "Back to Website"
+  }
+}
