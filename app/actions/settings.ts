@@ -29,7 +29,7 @@ export async function getCompanySettings() {
       template_id: null,
       facebook_url: 'https://www.facebook.com/AmenagementMonzon/',
       instagram_url: 'https://www.instagram.com/amenagement_monzon',
-      tiktok_url: 'https://www.tiktok.com/@amenagement_monzon',
+      tiktok_url: 'https://www.tiktok.com/@amenagements_monzon',
     } as CompanySettings
   }
 
