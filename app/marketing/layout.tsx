@@ -1,91 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { MarketingHeader } from '@/components/marketing-header'
 import Link from 'next/link'
-import { Menu, X, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 export default function MarketingLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/95 backdrop-blur">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <Link href="/marketing" className="text-2xl font-bold">
-              <span className="text-yellow-600">Aménagement</span> Monzon
-            </Link>
-
-            {/* Desktop Menu */}
-            <div className="hidden md:flex gap-8">
-              <Link href="/marketing" className="hover:text-yellow-600 transition">
-                Home
-              </Link>
-              <Link href="/marketing/portfolio" className="hover:text-yellow-600 transition">
-                Portfolio
-              </Link>
-              <Link href="/marketing/contact" className="hover:text-yellow-600 transition">
-                Contact
-              </Link>
-            </div>
-
-            <div className="hidden md:flex gap-4 items-center">
-              <Link href="/marketing/contact" className="text-sm hover:text-yellow-600 transition">
-                Contact
-              </Link>
-              <Link href="/auth/login" className="hover:text-yellow-600 transition">
-                <Button variant="ghost" className="text-white hover:text-yellow-600">
-                  Client Portal
-                </Button>
-              </Link>
-              <Link href="/auth/sign-up">
-                <Button className="bg-yellow-600 hover:bg-yellow-700 text-black">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden pb-4 flex flex-col gap-4">
-              <Link href="/marketing" className="hover:text-yellow-600">
-                Home
-              </Link>
-              <Link href="/marketing/portfolio" className="hover:text-yellow-600">
-                Portfolio
-              </Link>
-              <Link href="/marketing/contact" className="hover:text-yellow-600">
-                Contact
-              </Link>
-              <Link href="/auth/login" className="hover:text-yellow-600">
-                Client Portal
-              </Link>
-            </div>
-          )}
-        </div>
-      </nav>
+      <MarketingHeader />
 
       {/* Content */}
-      <main>{children}</main>
+      <main className="page-transition">{children}</main>
 
       {/* Footer */}
       <footer className="border-t border-white/10 bg-black py-16">

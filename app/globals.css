@@ -3,9 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Aménagement Monzon — Black Matte & Gold Design System */
+/* Aménagement Monzon — Multi-Brand Design System */
 :root {
-  /* Core palette: deep matte black, warm gold, off-white, charcoal, slate */
+  /* Core palette: deep matte black */
   --background: oklch(0.08 0 0);         /* #0A0A0A matte black */
   --foreground: oklch(0.96 0.01 85);     /* #F5F0E8 warm off-white */
   --card: oklch(0.12 0 0);               /* #1A1A1A charcoal */
@@ -39,6 +39,23 @@
   --sidebar-accent-foreground: oklch(0.72 0.12 85);
   --sidebar-border: oklch(0.20 0 0);
   --sidebar-ring: oklch(0.72 0.12 85);
+  
+  /* Multi-Brand Division Colors */
+  /* Construction: Premium Gold */
+  --construction-accent: #C9A84C;
+  --construction-accent-light: #E5C878;
+  --construction-accent-dark: #A0845E;
+  
+  /* Hardscape & Landscape: Natural Green */
+  --hardscape-accent: #2E7D32;
+  --hardscape-accent-light: #66BB6A;
+  --hardscape-accent-dark: #1B5E20;
+  
+  /* Maintenance: Professional Blue */
+  --maintenance-accent: #1E88E5;
+  --maintenance-accent-light: #42A5F5;
+  --maintenance-accent-dark: #1565C0;
+  
   /* Custom tokens */
   --gold: oklch(0.72 0.12 85);
   --gold-dim: oklch(0.55 0.08 85);
@@ -95,5 +112,76 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Premium Animation Styles */
+@layer utilities {
+  /* Fade-in on scroll animations */
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Smooth page transitions */
+  .page-transition {
+    animation: pageTransition 0.4s ease-out;
+  }
+
+  @keyframes pageTransition {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Parallax hero effect */
+  .parallax-hero {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  /* Hover glow for premium feel */
+  .hover-glow {
+    transition: all 0.3s ease;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
+    transform: translateY(-2px);
+  }
+
+  /* Smooth gradient transitions */
+  .gradient-transition {
+    transition: background 0.3s ease;
+  }
+
+  /* Badge animations */
+  .badge-pulse {
+    animation: badge-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes badge-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
   }
 }

@@ -1,75 +1,29 @@
 'use client'
 
 import Link from 'next/link'
+import { DynamicHero } from '@/components/dynamic-hero'
 import { Button } from '@/components/ui/button'
-import { ChevronRight, CheckCircle, ArrowRight, Hammer, Leaf, Wrench, Star } from 'lucide-react'
+import { CheckCircle, ArrowRight, Hammer, Leaf, Wrench, Star } from 'lucide-react'
 
 export default function MarketingHome() {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center bg-gradient-to-br from-black via-black to-slate-900 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-600/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-600/5 rounded-full blur-3xl" />
-        </div>
-        
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight text-balance">
-                Premium Outdoor & Construction Solutions
-              </h1>
-              <p className="text-xl text-gray-300 mb-8 text-pretty">
-                Hardscape, Landscape, Renovation & Maintenance — Done Right. From design to completion, trust Aménagement Monzon for quality craftsmanship and professional service.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/marketing/contact">
-                <Button size="lg" className="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold w-full sm:w-auto">
-                  Get a Quote <ChevronRight className="ml-2 w-4 h-4" />
-                </Button>
-              </Link>
-              <Link href="/marketing/portfolio">
-                <Button size="lg" variant="outline" className="border-yellow-600/50 hover:bg-yellow-600/10 text-yellow-600 w-full sm:w-auto">
-                  View Our Work
-                </Button>
-              </Link>
-            </div>
-
-            <div className="flex gap-8 pt-8 border-t border-white/10">
-              <div>
-                <div className="font-bold text-3xl text-yellow-600">20+</div>
-                <div className="text-gray-400">Years Experience</div>
-              </div>
-              <div>
-                <div className="font-bold text-3xl text-yellow-600">500+</div>
-                <div className="text-gray-400">Projects Completed</div>
-              </div>
-              <div>
-                <div className="font-bold text-3xl text-yellow-600">100%</div>
-                <div className="text-gray-400">Client Satisfied</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative hidden md:block">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/20 to-yellow-600/5 blur-3xl rounded-2xl" />
-            <div className="relative bg-gradient-to-br from-white/10 to-white/0 border border-yellow-600/30 rounded-2xl p-12 backdrop-blur-xl h-96 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🏗️</div>
-                <p className="text-gray-300">Professional Construction & Landscaping</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Dynamic Hero Section */}
+      <DynamicHero
+        title="Premium Outdoor & Construction Solutions"
+        subtitle="Hardscape, Landscape, Renovation & Maintenance — Done Right. From design to completion, trust Aménagement Monzon for quality craftsmanship."
+        cta={{ text: 'Get a Quote', href: '/marketing/contact' }}
+        accentColor="#C9A84C"
+      />
 
       {/* Services: 3 Main Divisions */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-black">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-600 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-20 fade-in-up">
             <h2 className="text-5xl font-bold mb-4">Our Services</h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
               Complete solutions for all your construction, landscape, and maintenance needs
@@ -78,7 +32,10 @@ export default function MarketingHome() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Construction */}
-            <div className="group bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl p-8 hover:border-yellow-600/50 transition">
+            <div 
+              className="group fade-in-up bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl p-8 hover:border-yellow-600/50 transition hover-glow"
+              style={{ animationDelay: '0.1s' }}
+            >
               <div className="w-12 h-12 bg-yellow-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-yellow-600/30 transition">
                 <Hammer className="w-6 h-6 text-yellow-600" />
               </div>
@@ -105,54 +62,60 @@ export default function MarketingHome() {
             </div>
 
             {/* Hardscape & Landscape */}
-            <div className="group bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl p-8 hover:border-yellow-600/50 transition">
-              <div className="w-12 h-12 bg-yellow-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-yellow-600/30 transition">
-                <Leaf className="w-6 h-6 text-yellow-600" />
+            <div 
+              className="group fade-in-up bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl p-8 hover:border-green-600/50 transition hover-glow"
+              style={{ animationDelay: '0.2s' }}
+            >
+              <div className="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-green-600/30 transition">
+                <Leaf className="w-6 h-6 text-green-600" />
               </div>
               <h3 className="font-bold text-2xl mb-4">Hardscape & Landscape</h3>
               <ul className="space-y-3 mb-6 text-gray-300">
                 <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <span>Pavers (Techno Block)</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <span>Retaining walls</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                   <span>Irrigation & Lawn</span>
                 </li>
               </ul>
               <Link href="/marketing/services/hardscape">
-                <Button variant="ghost" className="text-yellow-600 hover:text-yellow-700 w-full justify-start pl-0">
+                <Button variant="ghost" className="text-green-600 hover:text-green-700 w-full justify-start pl-0">
                   Learn More <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
             </div>
 
             {/* Maintenance */}
-            <div className="group bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl p-8 hover:border-yellow-600/50 transition">
-              <div className="w-12 h-12 bg-yellow-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-yellow-600/30 transition">
-                <Wrench className="w-6 h-6 text-yellow-600" />
+            <div 
+              className="group fade-in-up bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl p-8 hover:border-blue-600/50 transition hover-glow"
+              style={{ animationDelay: '0.3s' }}
+            >
+              <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition">
+                <Wrench className="w-6 h-6 text-blue-600" />
               </div>
               <h3 className="font-bold text-2xl mb-4">Maintenance</h3>
               <ul className="space-y-3 mb-6 text-gray-300">
                 <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <span>Grass cutting plans</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <span>Snow removal</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <span>Power washing</span>
                 </li>
               </ul>
               <Link href="/marketing/services/maintenance">
-                <Button variant="ghost" className="text-yellow-600 hover:text-yellow-700 w-full justify-start pl-0">
+                <Button variant="ghost" className="text-blue-600 hover:text-blue-700 w-full justify-start pl-0">
                   Learn More <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
@@ -162,9 +125,13 @@ export default function MarketingHome() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-slate-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-slate-900 relative">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-600 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-20 fade-in-up">
             <h2 className="text-5xl font-bold mb-4">Client Testimonials</h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
               Hear from our satisfied clients about their experience with Aménagement Monzon
@@ -192,11 +159,17 @@ export default function MarketingHome() {
                 rating: 5,
               },
             ].map((testimonial, index) => (
-              <div key={index} className="bg-white/5 border border-white/10 rounded-xl p-8">
+              <div 
+                key={index} 
+                className="fade-in-up bg-white/5 border border-white/10 rounded-xl p-8 hover-glow"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
                 <div className="flex gap-1 mb-4">
-                  {Array(testimonial.rating).fill(0).map((_, i) => (
-                    <Star key={i} className="w-5 h-5 fill-yellow-600 text-yellow-600" />
-                  ))}
+                  {Array(testimonial.rating)
+                    .fill(0)
+                    .map((_, i) => (
+                      <Star key={i} className="w-5 h-5 fill-yellow-600 text-yellow-600" />
+                    ))}
                 </div>
                 <p className="text-gray-300 mb-6">{testimonial.text}</p>
                 <div>
@@ -210,20 +183,32 @@ export default function MarketingHome() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-600/10 via-black to-yellow-600/5 border-y border-yellow-600/20">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-yellow-600/10 via-black to-yellow-600/5 border-y border-yellow-600/20 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-yellow-600 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-600 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10 fade-in-up">
           <h2 className="text-5xl font-bold mb-4">Ready to Start Your Project?</h2>
-          <p className="text-gray-300 mb-8 text-lg">
+          <p className="text-gray-300 mb-12 text-lg">
             Contact Aménagement Monzon today for a free consultation and quote.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/marketing/contact">
-              <Button size="lg" className="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold">
+              <Button 
+                size="lg" 
+                className="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold hover-glow"
+              >
                 Request a Quote <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
             <Link href="/auth/login" className="flex-1 sm:flex-none">
-              <Button size="lg" variant="outline" className="border-yellow-600/50 hover:bg-yellow-600/10 text-yellow-600 w-full">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-yellow-600/50 hover:bg-yellow-600/10 text-yellow-600 w-full"
+              >
                 Client Portal
               </Button>
             </Link>
