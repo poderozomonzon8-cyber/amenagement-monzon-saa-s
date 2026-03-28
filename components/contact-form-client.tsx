@@ -6,7 +6,7 @@ import { createLead } from '@/app/actions/leads'
 import { useTranslation } from '@/lib/use-translation'
 
 export function ContactFormClient() {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [formData, setFormData] = useState({
     name: '',

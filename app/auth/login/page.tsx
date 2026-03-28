@@ -84,19 +84,16 @@ export default function Page() {
         {/* Left Side - Branding & Quotes */}
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-black/80 to-transparent">
           {/* Logo */}
-          <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16">
-              <Image
-                src="/logo.png"
-                alt="Aménagement Monzon"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <div>
-              <h1 className="text-2xl font-serif text-white tracking-wide">Aménagement</h1>
-              <p className="text-yellow-600 font-semibold tracking-widest text-sm">MONZON</p>
-            </div>
+          <div>
+            <Image
+              src="/logo-am.png"
+              alt="Aménagement Monzon"
+              width={180}
+              height={60}
+              style={{ height: '56px', width: 'auto' }}
+              className="w-auto"
+              priority
+            />
           </div>
 
           {/* Animated Quote Section */}
@@ -156,19 +153,16 @@ export default function Page() {
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12">
           <div className="w-full max-w-md">
             {/* Mobile Logo */}
-            <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-              <div className="relative w-12 h-12">
-                <Image
-                  src="/logo.png"
-                  alt="Aménagement Monzon"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <div>
-                <h1 className="text-xl font-serif text-white">Aménagement</h1>
-                <p className="text-yellow-600 font-semibold tracking-widest text-xs">MONZON</p>
-              </div>
+            <div className="lg:hidden flex items-center justify-center mb-8">
+              <Image
+                src="/logo-am.png"
+                alt="Aménagement Monzon"
+                width={160}
+                height={54}
+                style={{ height: '48px', width: 'auto' }}
+                className="w-auto"
+                priority
+              />
             </div>
 
             <div className="flex flex-col gap-6">
