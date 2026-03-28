@@ -23,16 +23,16 @@ export function ContactFormClient() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const services = [
-    { value: 'construction', label: t('contact.service_construction'), icon: Hammer, color: 'text-yellow-600' },
-    { value: 'hardscape', label: t('contact.service_hardscape'), icon: Leaf, color: 'text-green-500' },
-    { value: 'maintenance', label: t('contact.service_maintenance'), icon: Wrench, color: 'text-blue-400' },
+    { value: 'construction', label: 'Construction & Renovations', icon: Hammer, color: 'text-yellow-600' },
+    { value: 'hardscape', label: 'Hardscape & Landscape', icon: Leaf, color: 'text-green-500' },
+    { value: 'maintenance', label: 'Maintenance & Services', icon: Wrench, color: 'text-blue-400' },
   ]
 
   const budgets = [
-    { value: '<5000', label: t('contact.budget_under_5k') },
-    { value: '5000-15000', label: t('contact.budget_5k_15k') },
-    { value: '15000-50000', label: t('contact.budget_15k_50k') },
-    { value: '50000+', label: t('contact.budget_50k_plus') }
+    { value: '<5000', label: '$0 - $5,000' },
+    { value: '5000-15000', label: '$5,000 - $15,000' },
+    { value: '15000-50000', label: '$15,000 - $50,000' },
+    { value: '50000+', label: '$50,000+' }
   ]
 
   const handleSubmit = async (e: React.FormEvent) => {
