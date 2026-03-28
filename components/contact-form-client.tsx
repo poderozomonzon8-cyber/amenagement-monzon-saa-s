@@ -8,8 +8,6 @@ import { createLead } from '@/app/actions/leads'
 import { useLanguage } from '@/lib/i18n-context'
 
 export function ContactFormClient() {
-  const langContext = useLanguage()
-  const t = typeof langContext?.t === 'function' ? langContext.t : (key: string) => key
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [formData, setFormData] = useState({
     name: '',
