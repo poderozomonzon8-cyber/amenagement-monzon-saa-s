@@ -1,11 +1,10 @@
 'use client'
-
+// Force rebuild - all translations removed, using hardcoded English strings
 import { useState } from 'react'
 import { Phone, Mail, MapPin, ArrowRight, Check, AlertCircle, Hammer, Leaf, Wrench, Clock, Shield, Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { createLead } from '@/app/actions/leads'
-import { useLanguage } from '@/lib/i18n-context'
 
 export function ContactFormClient() {
   const [step, setStep] = useState<'form' | 'success'>('form')
@@ -52,10 +51,10 @@ export function ContactFormClient() {
         setStep('success')
         setFormData({ name: '', email: '', phone: '', serviceType: 'construction', budget: '', projectDescription: '', preferredDate: '' })
       } else {
-        setMessage({ type: 'error', text: result.error || t('contact.error_default') })
+        setMessage({ type: 'error', text: result.error || 'An error occurred. Please try again.' })
       }
     } catch {
-      setMessage({ type: 'error', text: t('contact.error_occurred') })
+      setMessage({ type: 'error', text: 'An error occurred. Please try again.' })
     } finally {
       setSubmitting(false)
     }
@@ -189,9 +188,9 @@ export function ContactFormClient() {
             {step === 'form' ? (
               <>
                 <div className="mb-8">
-                  <p className="text-xs tracking-[0.25em] uppercase text-yellow-600 mb-2">{t('contact.breadcrumb')}</p>
-                  <h1 className="font-serif text-2xl sm:text-3xl text-white mb-2">{t('contact.title_form')}</h1>
-                  <p className="text-gray-400 text-sm">{t('contact.subtitle_form')}</p>
+                  <p className="text-xs tracking-[0.25em] uppercase text-yellow-600 mb-2">Contact Us</p>
+                  <h1 className="font-serif text-2xl sm:text-3xl text-white mb-2">Request a Free Quote</h1>
+                  <p className="text-gray-400 text-sm">Fill out the form and we will get back to you within 24 hours.</p>
                 </div>
 
                 <div className="bg-white/3 backdrop-blur-sm border border-white/10 p-6 sm:p-8">
@@ -206,23 +205,23 @@ export function ContactFormClient() {
 
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-gray-400 uppercase tracking-wider">{t('contact.name_label')} *</label>
+                        <label className="text-xs text-gray-400 uppercase tracking-wider">Full Name *</label>
                         <input
                           required
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          placeholder={t('contact.name_placeholder')}
+                          placeholder="Your name"
                           className="bg-white/5 border border-white/15 focus:border-yellow-600/60 focus:bg-yellow-600/5 outline-none px-4 py-3 text-white text-sm transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-gray-400 uppercase tracking-wider">{t('contact.email_label')} *</label>
+                        <label className="text-xs text-gray-400 uppercase tracking-wider">Email *</label>
                         <input
                           required
                           type="email"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          placeholder={t('contact.email_placeholder')}
+                          placeholder="your@email.com"
                           className="bg-white/5 border border-white/15 focus:border-yellow-600/60 focus:bg-yellow-600/5 outline-none px-4 py-3 text-white text-sm transition-all placeholder:text-gray-600"
                         />
                       </div>
@@ -230,16 +229,16 @@ export function ContactFormClient() {
 
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-gray-400 uppercase tracking-wider">{t('contact.phone_label')}</label>
+                        <label className="text-xs text-gray-400 uppercase tracking-wider">Phone</label>
                         <input
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder={t('contact.phone_placeholder')}
+                          placeholder="(514) 123-4567"
                           className="bg-white/5 border border-white/15 focus:border-yellow-600/60 focus:bg-yellow-600/5 outline-none px-4 py-3 text-white text-sm transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-gray-400 uppercase tracking-wider">{t('contact.service_label')} *</label>
+                        <label className="text-xs text-gray-400 uppercase tracking-wider">Service *</label>
                         <select
                           required
                           value={formData.serviceType}
@@ -255,7 +254,7 @@ export function ContactFormClient() {
 
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-gray-400 uppercase tracking-wider">{t('contact.budget_label')} *</label>
+                        <label className="text-xs text-gray-400 uppercase tracking-wider">Budget *</label>
                         <select
                           required
                           value={formData.budget}
@@ -269,7 +268,7 @@ export function ContactFormClient() {
                         </select>
                       </div>
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-gray-400 uppercase tracking-wider">{t('contact.date_label')}</label>
+                        <label className="text-xs text-gray-400 uppercase tracking-wider">Preferred Date</label>
                         <input
                           type="date"
                           value={formData.preferredDate}
@@ -280,13 +279,13 @@ export function ContactFormClient() {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-gray-400 uppercase tracking-wider">{t('contact.description_label')} *</label>
+                      <label className="text-xs text-gray-400 uppercase tracking-wider">Project Description *</label>
                       <textarea
                         required
                         rows={4}
                         value={formData.projectDescription}
                         onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
-                        placeholder={t('contact.description_placeholder')}
+                        placeholder="Tell us about your project..."
                         className="bg-white/5 border border-white/15 focus:border-yellow-600/60 focus:bg-yellow-600/5 outline-none px-4 py-3 text-white text-sm transition-all resize-none placeholder:text-gray-600"
                       />
                     </div>
@@ -299,7 +298,7 @@ export function ContactFormClient() {
                       {submitting ? (
                         <span className="flex items-center gap-2">
                           <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                          {t('contact.submitting')}
+                          Sending...
                         </span>
                       ) : (
                         <>
@@ -329,22 +328,22 @@ export function ContactFormClient() {
                     <Check className="w-8 h-8 text-yellow-600" />
                   </div>
                 </div>
-                <h2 className="font-serif text-2xl sm:text-3xl text-white mb-3">{t('contact.success_title')}</h2>
-                <p className="text-gray-400 text-sm mb-8 leading-relaxed">{t('contact.success_description')}</p>
+                <h2 className="font-serif text-2xl sm:text-3xl text-white mb-3">Thank You!</h2>
+                <p className="text-gray-400 text-sm mb-8 leading-relaxed">Your request has been received. We will contact you within 24 hours to discuss your project.</p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     onClick={() => setStep('form')}
                     className="inline-flex items-center justify-center gap-2 border border-white/20 hover:border-yellow-600/50 text-white px-6 py-3 text-sm tracking-wide transition-all"
                   >
-                    {t('contact.another_request')}
+                    Submit Another Request
                   </button>
-                  <a
+                  <Link
                     href="/marketing"
                     className="inline-flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-500 text-black font-semibold px-6 py-3 text-sm tracking-wide transition-all hover:shadow-lg hover:shadow-yellow-600/20"
                   >
-                    {t('contact.back_home')}
+                    Back to Home
                     <ArrowRight className="w-4 h-4" />
-                  </a>
+                  </Link>
                 </div>
               </div>
             )}
