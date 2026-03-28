@@ -18,7 +18,7 @@ export async function getCompanySettings() {
       id: '',
       company_name: 'Aménagement Monzon',
       address: 'Montréal, QC',
-      phone: '',
+      phone: '438 526 2877',
       email: 'contact@amenagementmonzon.com',
       tax_number_1: '',
       tax_number_2: '',

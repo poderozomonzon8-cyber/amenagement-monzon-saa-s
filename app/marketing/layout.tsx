@@ -69,8 +69,8 @@ export default async function MarketingLayout({
             <div>
               <h4 className="font-bold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-400 text-sm">
-                <li>(438) 123-4567</li>
-                <li>info@amenagementmonzon.com</li>
+                <li>{settings.phone || '(438) 526-2877'}</li>
+                <li>{settings.email}</li>
                 <li>Licensed &amp; Insured</li>
               </ul>
             </div>
