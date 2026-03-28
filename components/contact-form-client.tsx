@@ -131,11 +131,11 @@ export function ContactFormClient() {
 
             {/* Contact Info Pills */}
             <div className="flex flex-col gap-3">
-              <a href="tel:4381234567" className="flex items-center gap-3 text-sm text-gray-400 hover:text-yellow-600 transition-colors group">
+              <a href="tel:4385262877" className="flex items-center gap-3 text-sm text-gray-400 hover:text-yellow-600 transition-colors group">
                 <div className="w-8 h-8 rounded-full bg-yellow-600/10 border border-yellow-600/20 flex items-center justify-center flex-shrink-0">
                   <Phone className="w-3.5 h-3.5 text-yellow-600" />
                 </div>
-                (438) 123-4567
+                438 526 2877
               </a>
               <a href="mailto:info@amenagementmonzon.com" className="flex items-center gap-3 text-sm text-gray-400 hover:text-yellow-600 transition-colors">
                 <div className="w-8 h-8 rounded-full bg-yellow-600/10 border border-yellow-600/20 flex items-center justify-center flex-shrink-0">
@@ -264,7 +264,7 @@ export function ContactFormClient() {
                           onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                           className="bg-black/80 border border-white/15 focus:border-yellow-600/60 outline-none px-4 py-3 text-white text-sm transition-all"
                         >
-                          <option value="">{t('contact.budget_select')}</option>
+                          <option value="">Select your budget</option>
                           {budgets.map((b) => (
                             <option key={b.value} value={b.value}>{b.label}</option>
                           ))}
@@ -305,7 +305,7 @@ export function ContactFormClient() {
                         </span>
                       ) : (
                         <>
-                          {t('contact.submit_button')}
+                          Get your Quote Now!
                           <ArrowRight className="w-4 h-4" />
                         </>
                       )}
@@ -315,8 +315,8 @@ export function ContactFormClient() {
 
                 {/* Mobile contact info */}
                 <div className="lg:hidden mt-8 flex flex-col gap-3 border-t border-white/10 pt-6">
-                  <a href="tel:4381234567" className="flex items-center gap-3 text-sm text-gray-400 hover:text-yellow-600 transition-colors">
-                    <Phone className="w-4 h-4 text-yellow-600" /> (438) 123-4567
+                  <a href="tel:4385262877" className="flex items-center gap-3 text-sm text-gray-400 hover:text-yellow-600 transition-colors">
+                    <Phone className="w-4 h-4 text-yellow-600" /> 438 526 2877
                   </a>
                   <a href="mailto:info@amenagementmonzon.com" className="flex items-center gap-3 text-sm text-gray-400 hover:text-yellow-600 transition-colors">
                     <Mail className="w-4 h-4 text-yellow-600" /> info@amenagementmonzon.com
