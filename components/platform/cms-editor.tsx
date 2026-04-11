@@ -8,8 +8,6 @@ import { CMSPortfolioManager } from "./cms-portfolio-manager"
 import { CMSAboutManager } from "./cms-about-manager"
 import { CMSReviewsManager } from "./cms-reviews-manager"
 import { CMSSocialManager } from "./cms-social-manager"
-import { VisualLiveEditor } from "./visual-live-editor"
-import { TranslationEditor } from "./translation-editor"
 import { ContentSectionsManager } from "./content-sections-manager"
 import { 
   Layout, 
@@ -17,15 +15,13 @@ import {
   User, 
   Star, 
   Share2, 
-  Eye, 
-  Languages, 
   FileText,
   Palette,
   Globe
 } from "lucide-react"
 
 export function CMSEditor() {
-  const [activeTab, setActiveTab] = useState("visual")
+  const [activeTab, setActiveTab] = useState("content")
   const [activeContentTab, setActiveContentTab] = useState("heroes")
 
   return (
@@ -54,16 +50,6 @@ export function CMSEditor() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent overflow-x-auto">
           <TabsTrigger 
-            value="visual"
-            className={cn(
-              "flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-600",
-              "data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 whitespace-nowrap"
-            )}
-          >
-            <Eye className="h-4 w-4" />
-            Visual Editor
-          </TabsTrigger>
-          <TabsTrigger 
             value="content"
             className={cn(
               "flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-600",
@@ -73,24 +59,9 @@ export function CMSEditor() {
             <FileText className="h-4 w-4" />
             Content Manager
           </TabsTrigger>
-          <TabsTrigger 
-            value="translations"
-            className={cn(
-              "flex items-center gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-600",
-              "data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 whitespace-nowrap"
-            )}
-          >
-            <Languages className="h-4 w-4" />
-            Translations
-          </TabsTrigger>
         </TabsList>
 
         <div className="mt-6">
-          {/* Visual Live Editor */}
-          <TabsContent value="visual" className="mt-0">
-            <VisualLiveEditor />
-          </TabsContent>
-
           {/* Content Manager */}
           <TabsContent value="content" className="mt-0">
             <Tabs value={activeContentTab} onValueChange={setActiveContentTab} className="w-full">
@@ -178,11 +149,6 @@ export function CMSEditor() {
                 </TabsContent>
               </div>
             </Tabs>
-          </TabsContent>
-
-          {/* Translation Editor */}
-          <TabsContent value="translations" className="mt-0">
-            <TranslationEditor />
           </TabsContent>
         </div>
       </Tabs>
