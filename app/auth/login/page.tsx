@@ -1,6 +1,6 @@
 'use client'
 
-import { signIn } from '@/app/actions/auth'
+import { signIn, sendMagicLink } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Hammer, Leaf, Wrench, Shield, Star, Award } from 'lucide-react'
+import { ArrowLeft, Hammer, Leaf, Wrench, Shield, Star, Award, Mail, Chrome } from 'lucide-react'
 import Image from 'next/image'
 
 const motivationalQuotes = [
@@ -25,12 +25,16 @@ const motivationalQuotes = [
   { text: "Growing together with nature", icon: Leaf },
 ]
 
+type LoginMethod = 'email' | 'magic-link'
+
 export default function Page() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [currentQuote, setCurrentQuote] = useState(0)
+  const [loginMethod, setLoginMethod] = useState<LoginMethod>('email')
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -39,17 +43,65 @@ export default function Page() {
     return () => clearInterval(interval)
   }, [])
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
 
     try {
-      await signIn(email, password)
+      const result = await signIn(email, password)
+      if (result?.error) {
+        setError(result.error)
+        setIsLoading(false)
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred')
       setIsLoading(false)
     }
+  }
+
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      const result = await sendMagicLink(email)
+      if (result.success) {
+        setSuccess('Check your email for a magic link to sign in!')
+      } else {
+        setError(result.error || 'Failed to send magic link')
+      }
+    } catch {
+      setError('Failed to send magic link')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGoogleLogin = () => {
+    // Redirect to Google OAuth
+    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+    if (!googleClientId) {
+      setError('Google login is not configured')
+      return
+    }
+    const redirectUri = `${window.location.origin}/api/auth/callback/google`
+    const scope = 'email profile'
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`
+  }
+
+  const handleAppleLogin = () => {
+    // Redirect to Apple OAuth
+    const appleClientId = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID
+    if (!appleClientId) {
+      setError('Apple login is not configured')
+      return
+    }
+    const redirectUri = `${window.location.origin}/api/auth/callback/apple`
+    const scope = 'email name'
+    window.location.href = `https://appleid.apple.com/auth/authorize?client_id=${appleClientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&response_mode=form_post`
   }
 
   const QuoteIcon = motivationalQuotes[currentQuote].icon
@@ -74,7 +126,6 @@ export default function Page() {
       <div className="relative z-10 flex min-h-screen">
         {/* Left Side - Branding & Quotes */}
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-black/80 to-transparent">
-          {/* Logo */}
           <div>
             <Image
               src="/logo-am.png"
@@ -87,10 +138,8 @@ export default function Page() {
             />
           </div>
 
-          {/* Animated Quote Section */}
           <div className="flex-1 flex flex-col justify-center max-w-lg">
             <div className="relative">
-              {/* Decorative Line */}
               <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-yellow-600 via-yellow-600/50 to-transparent" />
               
               <div className="transition-all duration-700 ease-in-out">
@@ -111,7 +160,6 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Service Icons */}
             <div className="flex gap-8 mt-16">
               <div className="text-center group">
                 <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-2 group-hover:border-yellow-600/50 group-hover:bg-yellow-600/10 transition-all duration-300">
@@ -134,7 +182,6 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Footer */}
           <div className="text-gray-500 text-sm">
             <p>Trusted by property owners across Montreal since 2014</p>
           </div>
@@ -143,7 +190,6 @@ export default function Page() {
         {/* Right Side - Login Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12">
           <div className="w-full max-w-md">
-            {/* Mobile Logo */}
             <div className="lg:hidden flex items-center justify-center mb-8">
               <Image
                 src="/logo-am.png"
@@ -169,12 +215,72 @@ export default function Page() {
                 <CardHeader className="pb-4">
                   <CardTitle className="text-2xl text-white font-serif">Welcome Back</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Sign in to access your dashboard and manage your projects
+                    Sign in to access your dashboard
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleLogin}>
-                    <div className="flex flex-col gap-5">
+                <CardContent className="space-y-6">
+                  {/* OAuth Buttons */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleGoogleLogin}
+                      className="bg-white/5 border-white/10 hover:bg-white/10 text-white gap-2"
+                    >
+                      <Chrome className="h-4 w-4" />
+                      Google
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleAppleLogin}
+                      className="bg-white/5 border-white/10 hover:bg-white/10 text-white gap-2"
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                      </svg>
+                      Apple
+                    </Button>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-white/10" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-black/50 px-2 text-gray-500">Or continue with</span>
+                    </div>
+                  </div>
+
+                  {/* Login Method Tabs */}
+                  <div className="flex gap-2 p-1 bg-white/5 rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => setLoginMethod('email')}
+                      className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
+                        loginMethod === 'email'
+                          ? 'bg-yellow-600 text-black'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      Password
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLoginMethod('magic-link')}
+                      className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                        loginMethod === 'magic-link'
+                          ? 'bg-yellow-600 text-black'
+                          : 'text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      <Mail className="h-4 w-4" />
+                      Magic Link
+                    </button>
+                  </div>
+
+                  {loginMethod === 'email' ? (
+                    <form onSubmit={handleEmailLogin} className="space-y-4">
                       <div className="grid gap-2">
                         <Label htmlFor="email" className="text-gray-300">Email</Label>
                         <Input
@@ -184,13 +290,13 @@ export default function Page() {
                           required
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-600/50 focus:ring-yellow-600/20 transition-all"
+                          className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-600/50 focus:ring-yellow-600/20"
                         />
                       </div>
                       <div className="grid gap-2">
                         <div className="flex items-center justify-between">
                           <Label htmlFor="password" className="text-gray-300">Password</Label>
-                          <Link href="/auth/forgot-password" className="text-xs text-yellow-600 hover:text-yellow-500 transition-colors">
+                          <Link href="/auth/forgot-password" className="text-xs text-yellow-600 hover:text-yellow-500">
                             Forgot password?
                           </Link>
                         </div>
@@ -200,7 +306,7 @@ export default function Page() {
                           required
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-600/50 focus:ring-yellow-600/20 transition-all"
+                          className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-600/50 focus:ring-yellow-600/20"
                         />
                       </div>
                       {error && (
@@ -210,7 +316,7 @@ export default function Page() {
                       )}
                       <Button 
                         type="submit" 
-                        className="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-semibold py-5 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-600/20" 
+                        className="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-semibold py-5" 
                         disabled={isLoading}
                       >
                         {isLoading ? (
@@ -222,23 +328,62 @@ export default function Page() {
                           'Sign In'
                         )}
                       </Button>
-                    </div>
-                    <div className="mt-6 text-center">
-                      <p className="text-sm text-gray-400">
-                        Don&apos;t have an account?{' '}
-                        <Link
-                          href="/auth/sign-up"
-                          className="text-yellow-600 hover:text-yellow-500 font-medium transition-colors"
-                        >
-                          Create account
-                        </Link>
-                      </p>
-                    </div>
-                  </form>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleMagicLink} className="space-y-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="magic-email" className="text-gray-300">Email</Label>
+                        <Input
+                          id="magic-email"
+                          type="email"
+                          placeholder="your@email.com"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-yellow-600/50 focus:ring-yellow-600/20"
+                        />
+                      </div>
+                      {error && (
+                        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+                          <p className="text-sm text-red-400">{error}</p>
+                        </div>
+                      )}
+                      {success && (
+                        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                          <p className="text-sm text-green-400">{success}</p>
+                        </div>
+                      )}
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-semibold py-5" 
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <span className="flex items-center gap-2">
+                            <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                            Sending...
+                          </span>
+                        ) : (
+                          <>
+                            <Mail className="w-4 h-4 mr-2" />
+                            Send Magic Link
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  )}
+
+                  <div className="text-center">
+                    <p className="text-sm text-gray-400">
+                      Don&apos;t have an account?{' '}
+                      <Link href="/auth/sign-up" className="text-yellow-600 hover:text-yellow-500 font-medium">
+                        Create account
+                      </Link>
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
 
-              {/* Trust Badges */}
               <div className="flex items-center justify-center gap-6 mt-4">
                 <div className="flex items-center gap-2 text-gray-500 text-xs">
                   <Shield className="w-4 h-4" />
