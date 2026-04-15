@@ -1,6 +1,7 @@
 'use client'
 
 import { signIn, sendMagicLink } from '@/app/actions/auth'
+import { isGoogleConfigured, isAppleConfigured, getGoogleAuthUrl, getAppleAuthUrl } from '@/lib/oauth-config'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -81,27 +82,13 @@ export default function Page() {
   }
 
   const handleGoogleLogin = () => {
-    // Redirect to Google OAuth
-    const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-    if (!googleClientId) {
-      setError('Google login is not configured')
-      return
-    }
     const redirectUri = `${window.location.origin}/api/auth/callback/google`
-    const scope = 'email profile'
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`
+    window.location.href = getGoogleAuthUrl(redirectUri)
   }
 
   const handleAppleLogin = () => {
-    // Redirect to Apple OAuth
-    const appleClientId = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID
-    if (!appleClientId) {
-      setError('Apple login is not configured')
-      return
-    }
     const redirectUri = `${window.location.origin}/api/auth/callback/apple`
-    const scope = 'email name'
-    window.location.href = `https://appleid.apple.com/auth/authorize?client_id=${appleClientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&response_mode=form_post`
+    window.location.href = getAppleAuthUrl(redirectUri)
   }
 
   const QuoteIcon = motivationalQuotes[currentQuote].icon
