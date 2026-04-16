@@ -65,6 +65,10 @@ export async function signIn(email: string, password: string) {
 
     redirect('/dashboard')
   } catch (error) {
+    // Re-throw redirect errors (Next.js uses exceptions for redirects)
+    if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
+      throw error
+    }
     console.error('Sign in error:', error)
     return { error: 'Failed to sign in' }
   }
