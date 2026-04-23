@@ -50,20 +50,19 @@ export default function Page() {
     setError(null)
 
     try {
-      await signIn(email, password)
-      // If signIn succeeds, it redirects automatically
-      // If we reach here, it means signIn returned an error
-    } catch (error: unknown) {
-      // Check if this is a redirect error (which is expected on success)
-      if (error instanceof Error) {
-        if (error.message.includes('NEXT_REDIRECT')) {
-          // This is a successful redirect, just exit
-          return
-        }
-        setError(error.message)
-      } else {
-        setError('An error occurred during sign in')
+      const result = await signIn(email, password)
+      // If signIn returns an error object, show it
+      if (result && result.error) {
+        setError(result.error)
+        setIsLoading(false)
       }
+      // If successful, the server action redirects automatically
+    } catch (error: unknown) {
+      // Re-throw redirect errors (Next.js uses these for navigation)
+      if (error && typeof error === 'object' && 'digest' in error) {
+        throw error
+      }
+      setError('An error occurred during sign in')
       setIsLoading(false)
     }
   }
