@@ -50,13 +50,20 @@ export default function Page() {
     setError(null)
 
     try {
-      const result = await signIn(email, password)
-      if (result?.error) {
-        setError(result.error)
-        setIsLoading(false)
-      }
+      await signIn(email, password)
+      // If signIn succeeds, it redirects automatically
+      // If we reach here, it means signIn returned an error
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An error occurred')
+      // Check if this is a redirect error (which is expected on success)
+      if (error instanceof Error) {
+        if (error.message.includes('NEXT_REDIRECT')) {
+          // This is a successful redirect, just exit
+          return
+        }
+        setError(error.message)
+      } else {
+        setError('An error occurred during sign in')
+      }
       setIsLoading(false)
     }
   }
