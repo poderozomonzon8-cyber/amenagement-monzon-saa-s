@@ -42,7 +42,7 @@ const navSections = [
     label: "Paramètres",
     items: [
       { icon: Settings, label: "Design Factures", href: "#invoice-design", id: "invoice-design" },
-      { icon: Globe, label: "Éditeur CMS", href: "#cms", id: "cms" },
+      { icon: Globe, label: "Website Editor", href: "#cms", id: "cms" },
     ],
   },
   {
